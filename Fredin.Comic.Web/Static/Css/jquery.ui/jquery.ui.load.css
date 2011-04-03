@@ -1,0 +1,30 @@
+﻿.ui-load
+{
+	display: block;
+}
+.ui-load .ui-loadimg
+{
+	background: url(images/loading.gif);
+	width: 43px;
+	height: 11px;
+	display: inline-block;
+}
+.ui-load .ui-loadtext
+{
+	display: inline-block;
+	margin: 0 10px;
+}
+.ui-load .ui-progressbar
+{
+	position: relative;
+}
+.ui-load .ui-progressbar .ui-loadtext
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+	padding: 0.4em 0;
+}

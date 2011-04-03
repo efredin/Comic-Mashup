@@ -1,0 +1,79 @@
+﻿#wizardCreate { display: block; width: 764px; }
+#wizardCreate #wizardContent { width: 764px; }
+#wizardCreate #wizardTitle { display: inline-block; }
+#wizardCreate #wizardLoad { width: 100%; }
+
+#wizardCreate .ui-state-highlight { margin: 0 5px; padding: 6px 4px; }
+
+#wizardCreate .ui-wizard-back { float: right; }
+#wizardCreate .ui-wizard-next { float: right; }
+#wizardCreate .ui-wizard-navPad { margin: 12px 0 0; }
+
+#wizardCreate .selectFilter { text-align: right; font-size: 0.8em; padding: 1em 2em 0 0; }
+#wizardCreate .selectFilter label { padding: 0 6px 0 1px; }
+
+#wizardCreate .ui-select ul { height: 475px; overflow: auto; padding: 0 2px; clear: both; }
+#wizardCreate .ui-select .feed { height: 50px; padding: 4px; font-size: 0.8em; }
+#wizardCreate .ui-select .feed .feed-picture { float: left; }
+#wizardCreate .ui-select .feed .feed-content { margin: 0 60px; font-weight: normal; }
+#wizardCreate .ui-select .feed .feed-from { margin: 0 4px 0 0; }
+#wizardCreate .ui-select .feed .feed-message { }
+#wizardCreate .ui-select .feed .feed-icon { position: relative; top: 4px; margin: 0 4px 0 0; }
+#wizardCreate .ui-select .feed .feed-time { font-size: 0.9em; }
+#wizardCreate .ui-select .feed .feed-commentCount { font-size: 0.9em; }
+#wizardCreate #stepOption .ui-select { display: inline-block; }
+#wizardCreate #stepOption .ui-select ul { width: 400px; height: 94px; }
+#wizardCreate #stepTemplate .ui-select ul li, #wizardCreate #stepOption .ui-select ul li { display: inline-block; text-align: center; vertical-align: middle; zoom: 1; *display: inline; }
+#wizardCreate .ui-select .template { height: 66px; display: inline-block; }
+#wizardCreate .ui-select .effect { height: 80px; font-size: 0.9em; }
+
+#wizardCreate #renderComic { padding: 10px 0; }
+
+#publishComic #publishImage { float: left; }
+#publishComic #publishForm { float: right; width: 384px; }
+#publishComic #publishImage img { height: 75px; border: 2px solid black; }
+#publishComic #comicTitle, #publishComic #comicDescription { width: 100%; }
+
+#comicRead { width: 800px; }
+#comicRead #comicDescription { margin: 10px 0; }
+#comicRead #comicInfo { float: right; font-size: 0.9em; }
+#comicRead #comic { clear: both; }
+#comicRead .fb_iframe_widget { margin: 10px 0; }
+#comicRead #reader { margin: 10px 0; }
+#comicRead #reader #readerRate { vertical-align: middle; }
+#comicRead #reader #readerRate #readerVote { display: inline-block; padding: 16px 0 0; }
+#comicRead #reader #readerAction { float: right; }
+#comicRead #reader label, #comicRead #reader a { font-size: 0.7em; }
+#comicRead #comments { float: left; display: inline-block; width: 522px; margin: 10px 10px 0 0; }
+#comicRead #navigate { float: left; display: inline-block; margin: 10px 0 0 0; width: 202px; }
+#comicRead #navigate ul { list-style: none; padding: 0; margin: 0; }
+#comicRead #navigate ul li { padding: 1px 0; }
+
+.author { height: 50px; margin: 0; }
+.author-photo { float: left; display: inline-block; padding: 0 10px 0 0; height: 50px; width: 50px; }
+.author-photo img { border: none; }
+.author-name { }
+.author-by { padding: 20px 0 0 0; }
+.author-title { margin: 4px 2px; }
+
+.comicList { }
+.comicList .comicList-item { float: left; display: inline-block; margin: 10px 15px 10px 0; width: 350px; }
+.comicList .comicList-item img { width: 350px; }
+.comicList .comicList-item .comicList-detail { display: block; padding: 4px 0; }
+.comicList .comicList-item .comicList-detail .comicList-title { font-size: 1.2em; font-weight: bold; }
+.comicList .comicList-item .comicList-detail .comicList-about { font-size: 0.8em; }
+.comicList .comicList-item .comicList-detail .comicList-rate { float: right; display: inline-block; padding: 14px 0 0; }
+
+#profile { width: 800px; }
+
+#directory { width: 800px; }
+
+/*
+#login-login input[type=text],
+#login-login input[type=password],
+#login-create input[type=text],
+#login-create input[type=password]
+{
+	width: 165px;
+	margin: 0 10px 5px 0;
+}*/

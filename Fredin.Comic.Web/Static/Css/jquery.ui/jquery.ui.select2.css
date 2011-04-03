@@ -1,0 +1,6 @@
+﻿.ui-select { padding: 0.5em 0; }
+.ui-select ul { margin: 0; padding: 0; list-style: none; }
+.ui-select ul li { display: block; margin: 3px; padding: 3px 6px; clear: both; overflow: hidden; cursor: pointer; }
+.ui-select ul li a { display: block; width: 100%;}
+.ui-select .ui-state-default, .ui-select .ui-state-hover, .ui-select .ui-state-active { background-position: 0 0; }
+.ui-select .ui-select-empty { padding: 2px 8px; }

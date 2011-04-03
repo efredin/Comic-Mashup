@@ -1,0 +1,4 @@
+﻿.ui-optionset { margin: 4px 0; padding: 4px; }
+.ui-optionset .ui-optionset-title { display: block; clear: both; }
+.ui-optionset .ui-optionset-caption { display: inline-block; float: left; font-size: 0.8em; }
+.ui-optionset .ui-optionset-content { display: block; text-align: right; }

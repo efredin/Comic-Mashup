@@ -1,0 +1,16 @@
+﻿/* toggle32 icons */
+.ui-icon-toggle32, .ui-state-default .ui-icon-toggle32 { display: inline-block; width: 32px; height: 32px; background-image: url(../Icon/ui-icon-toggle32.png); }
+.ui-state-hover .ui-icon-toggle32, .ui-state-active .ui-icon-toggle32 { background-image: url(../Icon/ui-icon-toggle32-active.png); }
+
+.ui-icon-toggle32-fb { background-position: 0 0; }
+.ui-icon-toggle32-funny { background-position: -32px 0; }
+.ui-icon-toggle32-smart { background-position: 0 -32px; }
+.ui-icon-toggle32-random { background-position: -32px -32px; }
+.ui-icon-toggle32-thumbup { background-position: -64px 0; }
+.ui-icon-toggle32-thumbdown { background-position: -64px -32px; }
+
+/* Expanded 16x16 icons */
+.ui-icon-toggle16 { display: inline-block; width: 16px; height: 16px; background-image: url(../Icon/ui-icon-toggle16.png); }
+.ui-icon-toggle16-funny { background-position: 0 0; }
+.ui-icon-toggle16-smart { background-position: 0 -16px; }
+.ui-icon-toggle16-random { background-position: 0 -32px; }

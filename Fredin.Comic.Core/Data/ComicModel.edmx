@@ -1,0 +1,971 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Fredin.Comic.Data.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="FredinComicWebModelsStoreContainer">
+          <EntitySet Name="Comic" EntityType="Fredin.Comic.Data.Store.Comic" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ComicPhoto" EntityType="Fredin.Comic.Data.Store.ComicPhoto" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ComicRead" EntityType="Fredin.Comic.Data.Store.ComicRead" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ComicStat" EntityType="Fredin.Comic.Data.Store.ComicStat" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ComicTextBubble" EntityType="Fredin.Comic.Data.Store.ComicTextBubble" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Photo" EntityType="Fredin.Comic.Data.Store.Photo" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Template" EntityType="Fredin.Comic.Data.Store.Template" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TemplateItem" EntityType="Fredin.Comic.Data.Store.TemplateItem" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TextBubble" EntityType="Fredin.Comic.Data.Store.TextBubble" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TextBubbleDirection" EntityType="Fredin.Comic.Data.Store.TextBubbleDirection" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="User" EntityType="Fredin.Comic.Data.Store.User" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Comic_Template" Association="Fredin.Comic.Data.Store.FK_Comic_Template">
+            <End Role="Template" EntitySet="Template" />
+            <End Role="Comic" EntitySet="Comic" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comic_User" Association="Fredin.Comic.Data.Store.FK_Comic_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Comic" EntitySet="Comic" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_Comic" Association="Fredin.Comic.Data.Store.FK_ComicPhoto_Comic">
+            <End Role="Comic" EntitySet="Comic" />
+            <End Role="ComicPhoto" EntitySet="ComicPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_Photo" Association="Fredin.Comic.Data.Store.FK_ComicPhoto_Photo">
+            <End Role="Photo" EntitySet="Photo" />
+            <End Role="ComicPhoto" EntitySet="ComicPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_TemplateItem" Association="Fredin.Comic.Data.Store.FK_ComicPhoto_TemplateItem">
+            <End Role="TemplateItem" EntitySet="TemplateItem" />
+            <End Role="ComicPhoto" EntitySet="ComicPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicRead_Comic" Association="Fredin.Comic.Data.Store.FK_ComicRead_Comic">
+            <End Role="Comic" EntitySet="Comic" />
+            <End Role="ComicRead" EntitySet="ComicRead" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicRead_User" Association="Fredin.Comic.Data.Store.FK_ComicRead_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="ComicRead" EntitySet="ComicRead" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicStat_Comic" Association="Fredin.Comic.Data.Store.FK_ComicStat_Comic">
+            <End Role="Comic" EntitySet="Comic" />
+            <End Role="ComicStat" EntitySet="ComicStat" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicTextBubble_Comic" Association="Fredin.Comic.Data.Store.FK_ComicTextBubble_Comic">
+            <End Role="Comic" EntitySet="Comic" />
+            <End Role="ComicTextBubble" EntitySet="ComicTextBubble" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicTextBubble_TextBubbleDirection" Association="Fredin.Comic.Data.Store.FK_ComicTextBubble_TextBubbleDirection">
+            <End Role="TextBubbleDirection" EntitySet="TextBubbleDirection" />
+            <End Role="ComicTextBubble" EntitySet="ComicTextBubble" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Photo_User" Association="Fredin.Comic.Data.Store.FK_Photo_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TemplateItem_Template" Association="Fredin.Comic.Data.Store.FK_TemplateItem_Template">
+            <End Role="Template" EntitySet="Template" />
+            <End Role="TemplateItem" EntitySet="TemplateItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TextBubbleDirection_TextBubble" Association="Fredin.Comic.Data.Store.FK_TextBubbleDirection_TextBubble">
+            <End Role="TextBubble" EntitySet="TextBubble" />
+            <End Role="TextBubbleDirection" EntitySet="TextBubbleDirection" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Comic">
+          <Key>
+            <PropertyRef Name="ComicId" />
+          </Key>
+          <Property Name="ComicId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Uid" Type="bigint" Nullable="false" />
+          <Property Name="TemplateId" Type="bigint" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" Nullable="false" />
+          <Property Name="UpdateTime" Type="datetime" Nullable="false" />
+          <Property Name="PublishTime" Type="datetime" />
+          <Property Name="FeatureTime" Type="datetime" />
+          <Property Name="IsPublished" Type="bit" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Description" Type="varchar(max)" Nullable="false" />
+          <Property Name="ShareText" Type="varchar" MaxLength="100" />
+          <Property Name="IsPrivate" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ComicPhoto">
+          <Key>
+            <PropertyRef Name="ComicPhotoId" />
+          </Key>
+          <Property Name="ComicPhotoId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ComicId" Type="bigint" Nullable="false" />
+          <Property Name="PhotoId" Type="bigint" Nullable="false" />
+          <Property Name="TemplateItemId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ComicRead">
+          <Key>
+            <PropertyRef Name="ComicId" />
+            <PropertyRef Name="Uid" />
+          </Key>
+          <Property Name="ComicId" Type="bigint" Nullable="false" />
+          <Property Name="Uid" Type="bigint" Nullable="false" />
+          <Property Name="ReadTime" Type="datetime" Nullable="false" />
+          <Property Name="IsFunny" Type="bit" Nullable="false" />
+          <Property Name="IsSmart" Type="bit" Nullable="false" />
+          <Property Name="IsRandom" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ComicStat">
+          <Key>
+            <PropertyRef Name="ComicId" />
+            <PropertyRef Name="Period" />
+          </Key>
+          <Property Name="ComicId" Type="bigint" Nullable="false" />
+          <Property Name="Period" Type="int" Nullable="false" />
+          <Property Name="Overall" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="Funny" Type="int" Nullable="false" />
+          <Property Name="Smart" Type="int" Nullable="false" />
+          <Property Name="Random" Type="int" Nullable="false" />
+          <Property Name="Readers" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ComicTextBubble">
+          <Key>
+            <PropertyRef Name="ComicTextBubbleId" />
+          </Key>
+          <Property Name="ComicTextBubbleId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ComicId" Type="bigint" Nullable="false" />
+          <Property Name="TextBubbleDirectionId" Type="bigint" Nullable="false" />
+          <Property Name="Text" Type="varchar(max)" Nullable="false" />
+          <Property Name="X" Type="int" Nullable="false" />
+          <Property Name="Y" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="PhotoId" />
+          </Key>
+          <Property Name="PhotoId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Uid" Type="bigint" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Template">
+          <Key>
+            <PropertyRef Name="TemplateId" />
+          </Key>
+          <Property Name="TemplateId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Width" Type="int" Nullable="false" />
+          <Property Name="Height" Type="int" Nullable="false" />
+          <Property Name="Size" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Ordinal" Type="int" Nullable="false" />
+          <Property Name="Thumb" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TemplateItem">
+          <Key>
+            <PropertyRef Name="TemplateItemId" />
+          </Key>
+          <Property Name="TemplateItemId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="TemplateId" Type="bigint" Nullable="false" />
+          <Property Name="X" Type="int" Nullable="false" />
+          <Property Name="Y" Type="int" Nullable="false" />
+          <Property Name="Width" Type="int" Nullable="false" />
+          <Property Name="Height" Type="int" Nullable="false" />
+          <Property Name="Ordinal" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TextBubble">
+          <Key>
+            <PropertyRef Name="TextBubbleId" />
+          </Key>
+          <Property Name="TextBubbleId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="BaseScaleX" Type="int" Nullable="false" />
+          <Property Name="BaseScaleY" Type="int" Nullable="false" />
+          <Property Name="TextScaleX" Type="int" Nullable="false" />
+          <Property Name="TextScaleY" Type="int" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TextBubbleDirection">
+          <Key>
+            <PropertyRef Name="TextBubbleDirectionId" />
+          </Key>
+          <Property Name="TextBubbleDirectionId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="TextBubbleId" Type="bigint" Nullable="false" />
+          <Property Name="Direction" Type="varchar" Nullable="false" MaxLength="2" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Uid" />
+          </Key>
+          <Property Name="Uid" Type="bigint" Nullable="false" />
+          <Property Name="Email" Type="varchar(max)" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Nickname" Type="varchar" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="FbLink" Type="varchar(max)" />
+        </EntityType>
+        <Association Name="FK_Comic_Template">
+          <End Role="Template" Type="Fredin.Comic.Data.Store.Template" Multiplicity="1" />
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Template">
+              <PropertyRef Name="TemplateId" />
+            </Principal>
+            <Dependent Role="Comic">
+              <PropertyRef Name="TemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Comic_User">
+          <End Role="User" Type="Fredin.Comic.Data.Store.User" Multiplicity="1" />
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="Comic">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_Comic">
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="1" />
+          <End Role="ComicPhoto" Type="Fredin.Comic.Data.Store.ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_Photo">
+          <End Role="Photo" Type="Fredin.Comic.Data.Store.Photo" Multiplicity="1" />
+          <End Role="ComicPhoto" Type="Fredin.Comic.Data.Store.ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Photo">
+              <PropertyRef Name="PhotoId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="PhotoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_TemplateItem">
+          <End Role="TemplateItem" Type="Fredin.Comic.Data.Store.TemplateItem" Multiplicity="1" />
+          <End Role="ComicPhoto" Type="Fredin.Comic.Data.Store.ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TemplateItem">
+              <PropertyRef Name="TemplateItemId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="TemplateItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicRead_Comic">
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="1" />
+          <End Role="ComicRead" Type="Fredin.Comic.Data.Store.ComicRead" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicRead">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicRead_User">
+          <End Role="User" Type="Fredin.Comic.Data.Store.User" Multiplicity="1" />
+          <End Role="ComicRead" Type="Fredin.Comic.Data.Store.ComicRead" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="ComicRead">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicStat_Comic">
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="1" />
+          <End Role="ComicStat" Type="Fredin.Comic.Data.Store.ComicStat" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicStat">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicTextBubble_Comic">
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="1" />
+          <End Role="ComicTextBubble" Type="Fredin.Comic.Data.Store.ComicTextBubble" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicTextBubble">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicTextBubble_TextBubbleDirection">
+          <End Role="TextBubbleDirection" Type="Fredin.Comic.Data.Store.TextBubbleDirection" Multiplicity="1" />
+          <End Role="ComicTextBubble" Type="Fredin.Comic.Data.Store.ComicTextBubble" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TextBubbleDirection">
+              <PropertyRef Name="TextBubbleDirectionId" />
+            </Principal>
+            <Dependent Role="ComicTextBubble">
+              <PropertyRef Name="TextBubbleDirectionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Photo_User">
+          <End Role="User" Type="Fredin.Comic.Data.Store.User" Multiplicity="1" />
+          <End Role="Photo" Type="Fredin.Comic.Data.Store.Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TemplateItem_Template">
+          <End Role="Template" Type="Fredin.Comic.Data.Store.Template" Multiplicity="1" />
+          <End Role="TemplateItem" Type="Fredin.Comic.Data.Store.TemplateItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Template">
+              <PropertyRef Name="TemplateId" />
+            </Principal>
+            <Dependent Role="TemplateItem">
+              <PropertyRef Name="TemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TextBubbleDirection_TextBubble">
+          <End Role="TextBubble" Type="Fredin.Comic.Data.Store.TextBubble" Multiplicity="1" />
+          <End Role="TextBubbleDirection" Type="Fredin.Comic.Data.Store.TextBubbleDirection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TextBubble">
+              <PropertyRef Name="TextBubbleId" />
+            </Principal>
+            <Dependent Role="TextBubbleDirection">
+              <PropertyRef Name="TextBubbleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="UpdateComicStat" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Period" Type="int" Mode="In" />
+          <Parameter Name="Cutoff" Type="datetime" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Fredin.Comic.Data" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ComicModelContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Comics" EntityType="Fredin.Comic.Data.Comic" />
+          <EntitySet Name="ComicPhotoes" EntityType="Fredin.Comic.Data.ComicPhoto" />
+          <EntitySet Name="ComicTextBubbles" EntityType="Fredin.Comic.Data.ComicTextBubble" />
+          <EntitySet Name="Photos" EntityType="Fredin.Comic.Data.Photo" />
+          <EntitySet Name="Templates" EntityType="Fredin.Comic.Data.Template" />
+          <EntitySet Name="TemplateItems" EntityType="Fredin.Comic.Data.TemplateItem" />
+          <EntitySet Name="TextBubbles" EntityType="Fredin.Comic.Data.TextBubble" />
+          <EntitySet Name="TextBubbleDirections" EntityType="Fredin.Comic.Data.TextBubbleDirection" />
+          <EntitySet Name="Users" EntityType="Fredin.Comic.Data.User" />
+          <AssociationSet Name="FK_Comic_Template" Association="Fredin.Comic.Data.FK_Comic_Template">
+            <End Role="Template" EntitySet="Templates" />
+            <End Role="Comic" EntitySet="Comics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comic_User" Association="Fredin.Comic.Data.FK_Comic_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Comic" EntitySet="Comics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_Comic" Association="Fredin.Comic.Data.FK_ComicPhoto_Comic">
+            <End Role="Comic" EntitySet="Comics" />
+            <End Role="ComicPhoto" EntitySet="ComicPhotoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicTextBubble_Comic" Association="Fredin.Comic.Data.FK_ComicTextBubble_Comic">
+            <End Role="Comic" EntitySet="Comics" />
+            <End Role="ComicTextBubble" EntitySet="ComicTextBubbles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_Photo" Association="Fredin.Comic.Data.FK_ComicPhoto_Photo">
+            <End Role="Photo" EntitySet="Photos" />
+            <End Role="ComicPhoto" EntitySet="ComicPhotoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicPhoto_TemplateItem" Association="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem">
+            <End Role="TemplateItem" EntitySet="TemplateItems" />
+            <End Role="ComicPhoto" EntitySet="ComicPhotoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicTextBubble_TextBubbleDirection" Association="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection">
+            <End Role="TextBubbleDirection" EntitySet="TextBubbleDirections" />
+            <End Role="ComicTextBubble" EntitySet="ComicTextBubbles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Photo_User" Association="Fredin.Comic.Data.FK_Photo_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Photo" EntitySet="Photos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TemplateItem_Template" Association="Fredin.Comic.Data.FK_TemplateItem_Template">
+            <End Role="Template" EntitySet="Templates" />
+            <End Role="TemplateItem" EntitySet="TemplateItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TextBubbleDirection_TextBubble" Association="Fredin.Comic.Data.FK_TextBubbleDirection_TextBubble">
+            <End Role="TextBubble" EntitySet="TextBubbles" />
+            <End Role="TextBubbleDirection" EntitySet="TextBubbleDirections" />
+          </AssociationSet>
+          <EntitySet Name="ComicRead" EntityType="Fredin.Comic.Data.ComicRead" />
+          <AssociationSet Name="FK_ComicRead_Comic" Association="Fredin.Comic.Data.FK_ComicRead_Comic">
+            <End Role="Comic" EntitySet="Comics" />
+            <End Role="ComicRead" EntitySet="ComicRead" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComicRead_User" Association="Fredin.Comic.Data.FK_ComicRead_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ComicRead" EntitySet="ComicRead" />
+          </AssociationSet>
+          <EntitySet Name="ComicStat" EntityType="Fredin.Comic.Data.ComicStat" />
+          <AssociationSet Name="FK_ComicStat_Comic" Association="Fredin.Comic.Data.FK_ComicStat_Comic">
+            <End Role="Comic" EntitySet="Comics" />
+            <End Role="ComicStat" EntitySet="ComicStat" />
+          </AssociationSet>
+          <FunctionImport Name="UpdateComicStat">
+            <Parameter Name="Period" Mode="In" Type="Int32" />
+            <Parameter Name="Cutoff" Mode="In" Type="DateTime" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="Comic">
+          <Key>
+            <PropertyRef Name="ComicId" />
+          </Key>
+          <Property Type="Int64" Name="ComicId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="Uid" Nullable="false" />
+          <Property Type="Int64" Name="TemplateId" Nullable="false" />
+          <Property Type="DateTime" Name="CreateTime" Nullable="false" />
+          <Property Type="DateTime" Name="UpdateTime" Nullable="false" />
+          <Property Type="DateTime" Name="PublishTime" />
+          <Property Type="DateTime" Name="FeatureTime" />
+          <Property Type="Boolean" Name="IsPublished" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ShareText" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsPrivate" Nullable="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <NavigationProperty Name="Template" Relationship="Fredin.Comic.Data.FK_Comic_Template" FromRole="Comic" ToRole="Template" />
+          <NavigationProperty Name="Author" Relationship="Fredin.Comic.Data.FK_Comic_User" FromRole="Comic" ToRole="User" />
+          <NavigationProperty Name="ComicPhotos" Relationship="Fredin.Comic.Data.FK_ComicPhoto_Comic" FromRole="Comic" ToRole="ComicPhoto" />
+          <NavigationProperty Name="ComicTextBubbles" Relationship="Fredin.Comic.Data.FK_ComicTextBubble_Comic" FromRole="Comic" ToRole="ComicTextBubble" />
+          <NavigationProperty Name="ComicRead" Relationship="Fredin.Comic.Data.FK_ComicRead_Comic" FromRole="Comic" ToRole="ComicRead" />
+          <NavigationProperty Name="ComicStat" Relationship="Fredin.Comic.Data.FK_ComicStat_Comic" FromRole="Comic" ToRole="ComicStat" />
+        </EntityType>
+        <EntityType Name="ComicPhoto">
+          <Key>
+            <PropertyRef Name="ComicPhotoId" />
+          </Key>
+          <Property Type="Int64" Name="ComicPhotoId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="ComicId" Nullable="false" />
+          <Property Type="Int64" Name="PhotoId" Nullable="false" />
+          <Property Type="Int64" Name="TemplateItemId" Nullable="false" />
+          <NavigationProperty Name="Comic" Relationship="Fredin.Comic.Data.FK_ComicPhoto_Comic" FromRole="ComicPhoto" ToRole="Comic" />
+          <NavigationProperty Name="Photo" Relationship="Fredin.Comic.Data.FK_ComicPhoto_Photo" FromRole="ComicPhoto" ToRole="Photo" />
+          <NavigationProperty Name="TemplateItem" Relationship="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem" FromRole="ComicPhoto" ToRole="TemplateItem" />
+        </EntityType>
+        <EntityType Name="ComicTextBubble">
+          <Key>
+            <PropertyRef Name="ComicTextBubbleId" />
+          </Key>
+          <Property Type="Int64" Name="ComicTextBubbleId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="ComicId" Nullable="false" />
+          <Property Type="Int64" Name="TextBubbleDirectionId" Nullable="false" />
+          <Property Type="String" Name="Text" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="X" Nullable="false" />
+          <Property Type="Int32" Name="Y" Nullable="false" />
+          <NavigationProperty Name="Comic" Relationship="Fredin.Comic.Data.FK_ComicTextBubble_Comic" FromRole="ComicTextBubble" ToRole="Comic" />
+          <NavigationProperty Name="TextBubbleDirection" Relationship="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection" FromRole="ComicTextBubble" ToRole="TextBubbleDirection" />
+        </EntityType>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="PhotoId" />
+          </Key>
+          <Property Type="Int64" Name="PhotoId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="Uid" Nullable="false" />
+          <Property Type="DateTime" Name="CreateTime" Nullable="false" />
+          <NavigationProperty Name="ComicPhotos" Relationship="Fredin.Comic.Data.FK_ComicPhoto_Photo" FromRole="Photo" ToRole="ComicPhoto" />
+          <NavigationProperty Name="User" Relationship="Fredin.Comic.Data.FK_Photo_User" FromRole="Photo" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Template">
+          <Key>
+            <PropertyRef Name="TemplateId" />
+          </Key>
+          <Property Type="Int64" Name="TemplateId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Width" Nullable="false" />
+          <Property Type="Int32" Name="Height" Nullable="false" />
+          <Property Type="Int32" Name="Ordinal" Nullable="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <NavigationProperty Name="Comics" Relationship="Fredin.Comic.Data.FK_Comic_Template" FromRole="Template" ToRole="Comic" />
+          <NavigationProperty Name="TemplateItems" Relationship="Fredin.Comic.Data.FK_TemplateItem_Template" FromRole="Template" ToRole="TemplateItem" />
+          <Property Type="String" Name="Size" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Thumb" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TemplateItem">
+          <Key>
+            <PropertyRef Name="TemplateItemId" />
+          </Key>
+          <Property Type="Int64" Name="TemplateItemId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="TemplateId" Nullable="false" />
+          <Property Type="Int32" Name="X" Nullable="false" />
+          <Property Type="Int32" Name="Y" Nullable="false" />
+          <Property Type="Int32" Name="Width" Nullable="false" />
+          <Property Type="Int32" Name="Height" Nullable="false" />
+          <Property Type="Int32" Name="Ordinal" Nullable="false" />
+          <NavigationProperty Name="ComicPhotos" Relationship="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem" FromRole="TemplateItem" ToRole="ComicPhoto" />
+          <NavigationProperty Name="Template" Relationship="Fredin.Comic.Data.FK_TemplateItem_Template" FromRole="TemplateItem" ToRole="Template" />
+        </EntityType>
+        <EntityType Name="TextBubble">
+          <Key>
+            <PropertyRef Name="TextBubbleId" />
+          </Key>
+          <Property Type="Int64" Name="TextBubbleId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="BaseScaleX" Nullable="false" />
+          <Property Type="Int32" Name="BaseScaleY" Nullable="false" />
+          <Property Type="Int32" Name="TextScaleX" Nullable="false" />
+          <Property Type="Int32" Name="TextScaleY" Nullable="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <NavigationProperty Name="TextBubbleDirections" Relationship="Fredin.Comic.Data.FK_TextBubbleDirection_TextBubble" FromRole="TextBubble" ToRole="TextBubbleDirection" />
+        </EntityType>
+        <EntityType Name="TextBubbleDirection">
+          <Key>
+            <PropertyRef Name="TextBubbleDirectionId" />
+          </Key>
+          <Property Type="Int64" Name="TextBubbleDirectionId" Nullable="false" />
+          <Property Type="Int64" Name="TextBubbleId" Nullable="false" />
+          <Property Type="String" Name="Direction" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <NavigationProperty Name="ComicTextBubbles" Relationship="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection" FromRole="TextBubbleDirection" ToRole="ComicTextBubble" />
+          <NavigationProperty Name="TextBubble" Relationship="Fredin.Comic.Data.FK_TextBubbleDirection_TextBubble" FromRole="TextBubbleDirection" ToRole="TextBubble" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Uid" />
+          </Key>
+          <Property Type="Int64" Name="Uid" Nullable="false" />
+          <Property Type="String" Name="Email" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Nickname" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <NavigationProperty Name="Comics" Relationship="Fredin.Comic.Data.FK_Comic_User" FromRole="User" ToRole="Comic" />
+          <NavigationProperty Name="Photos" Relationship="Fredin.Comic.Data.FK_Photo_User" FromRole="User" ToRole="Photo" />
+          <Property Type="String" Name="FbLink" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ComicRead" Relationship="Fredin.Comic.Data.FK_ComicRead_User" FromRole="User" ToRole="ComicRead" />
+        </EntityType>
+        <Association Name="FK_Comic_Template">
+          <End Type="Fredin.Comic.Data.Template" Role="Template" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Template">
+              <PropertyRef Name="TemplateId" />
+            </Principal>
+            <Dependent Role="Comic">
+              <PropertyRef Name="TemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Comic_User">
+          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="Comic">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_Comic">
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicPhoto" Role="ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicTextBubble_Comic">
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicTextBubble" Role="ComicTextBubble" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicTextBubble">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_Photo">
+          <End Type="Fredin.Comic.Data.Photo" Role="Photo" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicPhoto" Role="ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Photo">
+              <PropertyRef Name="PhotoId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="PhotoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicPhoto_TemplateItem">
+          <End Type="Fredin.Comic.Data.TemplateItem" Role="TemplateItem" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicPhoto" Role="ComicPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TemplateItem">
+              <PropertyRef Name="TemplateItemId" />
+            </Principal>
+            <Dependent Role="ComicPhoto">
+              <PropertyRef Name="TemplateItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicTextBubble_TextBubbleDirection">
+          <End Type="Fredin.Comic.Data.TextBubbleDirection" Role="TextBubbleDirection" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicTextBubble" Role="ComicTextBubble" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TextBubbleDirection">
+              <PropertyRef Name="TextBubbleDirectionId" />
+            </Principal>
+            <Dependent Role="ComicTextBubble">
+              <PropertyRef Name="TextBubbleDirectionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Photo_User">
+          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.Photo" Role="Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TemplateItem_Template">
+          <End Type="Fredin.Comic.Data.Template" Role="Template" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.TemplateItem" Role="TemplateItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Template">
+              <PropertyRef Name="TemplateId" />
+            </Principal>
+            <Dependent Role="TemplateItem">
+              <PropertyRef Name="TemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TextBubbleDirection_TextBubble">
+          <End Type="Fredin.Comic.Data.TextBubble" Role="TextBubble" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.TextBubbleDirection" Role="TextBubbleDirection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TextBubble">
+              <PropertyRef Name="TextBubbleId" />
+            </Principal>
+            <Dependent Role="TextBubbleDirection">
+              <PropertyRef Name="TextBubbleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ComicRead">
+          <Key>
+            <PropertyRef Name="ComicId" />
+            <PropertyRef Name="Uid" />
+          </Key>
+          <Property Type="Int64" Name="ComicId" Nullable="false" />
+          <Property Type="Int64" Name="Uid" Nullable="false" />
+          <Property Type="DateTime" Name="ReadTime" Nullable="false" />
+          <Property Type="Boolean" Name="IsFunny" Nullable="false" />
+          <Property Type="Boolean" Name="IsSmart" Nullable="false" />
+          <Property Type="Boolean" Name="IsRandom" Nullable="false" />
+          <NavigationProperty Name="Comic" Relationship="Fredin.Comic.Data.FK_ComicRead_Comic" FromRole="ComicRead" ToRole="Comic" />
+          <NavigationProperty Name="Reader" Relationship="Fredin.Comic.Data.FK_ComicRead_User" FromRole="ComicRead" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_ComicRead_Comic">
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicRead" Role="ComicRead" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicRead">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComicRead_User">
+          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicRead" Role="ComicRead" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="ComicRead">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ComicStat">
+          <Key>
+            <PropertyRef Name="ComicId" />
+            <PropertyRef Name="Period" />
+          </Key>
+          <Property Type="Int64" Name="ComicId" Nullable="false" />
+          <Property Type="Int32" Name="Period" Nullable="false" />
+          <Property Type="Int32" Name="Funny" Nullable="false" />
+          <Property Type="Int32" Name="Smart" Nullable="false" />
+          <Property Type="Int32" Name="Random" Nullable="false" />
+          <NavigationProperty Name="Comic" Relationship="Fredin.Comic.Data.FK_ComicStat_Comic" FromRole="ComicStat" ToRole="Comic" />
+          <Property Type="Int32" Name="Overall" annotation:StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Type="Int32" Name="Readers" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ComicStat_Comic">
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ComicStat" Role="ComicStat" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="ComicStat">
+              <PropertyRef Name="ComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FredinComicWebModelsStoreContainer" CdmEntityContainer="ComicModelContext">
+          <EntitySetMapping Name="Comics">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.Comic">
+              <MappingFragment StoreEntitySet="Comic">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsPrivate" ColumnName="IsPrivate" />
+                <ScalarProperty Name="ShareText" ColumnName="ShareText" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="IsPublished" ColumnName="IsPublished" />
+                <ScalarProperty Name="FeatureTime" ColumnName="FeatureTime" />
+                <ScalarProperty Name="PublishTime" ColumnName="PublishTime" />
+                <ScalarProperty Name="UpdateTime" ColumnName="UpdateTime" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="TemplateId" ColumnName="TemplateId" />
+                <ScalarProperty Name="Uid" ColumnName="Uid" />
+                <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ComicPhotoes">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.ComicPhoto">
+              <MappingFragment StoreEntitySet="ComicPhoto">
+                <ScalarProperty Name="TemplateItemId" ColumnName="TemplateItemId" />
+                <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+                <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+                <ScalarProperty Name="ComicPhotoId" ColumnName="ComicPhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ComicTextBubbles">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.ComicTextBubble">
+              <MappingFragment StoreEntitySet="ComicTextBubble">
+                <ScalarProperty Name="Y" ColumnName="Y" />
+                <ScalarProperty Name="X" ColumnName="X" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="TextBubbleDirectionId" ColumnName="TextBubbleDirectionId" />
+                <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+                <ScalarProperty Name="ComicTextBubbleId" ColumnName="ComicTextBubbleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Photos">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.Photo">
+              <MappingFragment StoreEntitySet="Photo">
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="Uid" ColumnName="Uid" />
+                <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Templates">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.Template">
+              <MappingFragment StoreEntitySet="Template">
+                <ScalarProperty Name="Thumb" ColumnName="Thumb" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Ordinal" ColumnName="Ordinal" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="TemplateId" ColumnName="TemplateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TemplateItems">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.TemplateItem">
+              <MappingFragment StoreEntitySet="TemplateItem">
+                <ScalarProperty Name="Ordinal" ColumnName="Ordinal" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Y" ColumnName="Y" />
+                <ScalarProperty Name="X" ColumnName="X" />
+                <ScalarProperty Name="TemplateId" ColumnName="TemplateId" />
+                <ScalarProperty Name="TemplateItemId" ColumnName="TemplateItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TextBubbles">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.TextBubble">
+              <MappingFragment StoreEntitySet="TextBubble">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="TextScaleY" ColumnName="TextScaleY" />
+                <ScalarProperty Name="TextScaleX" ColumnName="TextScaleX" />
+                <ScalarProperty Name="BaseScaleY" ColumnName="BaseScaleY" />
+                <ScalarProperty Name="BaseScaleX" ColumnName="BaseScaleX" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="TextBubbleId" ColumnName="TextBubbleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TextBubbleDirections">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.TextBubbleDirection">
+              <MappingFragment StoreEntitySet="TextBubbleDirection">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Direction" ColumnName="Direction" />
+                <ScalarProperty Name="TextBubbleId" ColumnName="TextBubbleId" />
+                <ScalarProperty Name="TextBubbleDirectionId" ColumnName="TextBubbleDirectionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="FbLink" ColumnName="FbLink" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Uid" ColumnName="Uid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ComicRead">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.ComicRead">
+              <MappingFragment StoreEntitySet="ComicRead">
+                <ScalarProperty Name="IsRandom" ColumnName="IsRandom" />
+                <ScalarProperty Name="IsSmart" ColumnName="IsSmart" />
+                <ScalarProperty Name="IsFunny" ColumnName="IsFunny" />
+                <ScalarProperty Name="ReadTime" ColumnName="ReadTime" />
+                <ScalarProperty Name="Uid" ColumnName="Uid" />
+                <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ComicStat">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.ComicStat">
+              <MappingFragment StoreEntitySet="ComicStat">
+                <ScalarProperty Name="Readers" ColumnName="Readers" />
+                <ScalarProperty Name="Overall" ColumnName="Overall" />
+                <ScalarProperty Name="Random" ColumnName="Random" />
+                <ScalarProperty Name="Smart" ColumnName="Smart" />
+                <ScalarProperty Name="Funny" ColumnName="Funny" />
+                <ScalarProperty Name="Period" ColumnName="Period" />
+                <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="UpdateComicStat" FunctionName="Fredin.Comic.Data.Store.UpdateComicStat" />
+        </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="ComicModel" ZoomLevel="112">
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Comic" Width="2" PointX="3" PointY="5.25" Height="4.2879036458333317" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="3.125" PointY="11" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTextBubble" Width="2.375" PointX="2.75" PointY="1.75" Height="2.5571907552083388" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Photo" Width="1.5" PointX="0.75" PointY="10.625" Height="1.9802864583333335" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Template" Width="1.5" PointX="6.25" PointY="7.75" Height="2.7494921874999987" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TemplateItem" Width="1.5" PointX="6.125" PointY="11" Height="2.749492187499996" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubble" Width="1.875" PointX="8.875" PointY="2.25" Height="2.5571907552083317" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubbleDirection" Width="1.75" PointX="6.375" PointY="2.375" Height="2.1725878906249996" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.User" Width="1.5" PointX="0.75" PointY="6.25" Height="2.5571907552083335" />
+        <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_Template" >
+          <ConnectorPoint PointX="6.25" PointY="8.8362532552083337" />
+          <ConnectorPoint PointX="5" PointY="8.8362532552083337" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_User" >
+          <ConnectorPoint PointX="2.25" PointY="7.62474609375" />
+          <ConnectorPoint PointX="3" PointY="7.62474609375" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Comic" >
+          <ConnectorPoint PointX="3.875" PointY="9.9225065104166656" />
+          <ConnectorPoint PointX="3.875" PointY="11" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_Comic" >
+          <ConnectorPoint PointX="4" PointY="5.25" />
+          <ConnectorPoint PointX="4" PointY="4.3071907552083388" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Photo" >
+          <ConnectorPoint PointX="2.25" PointY="11.802643229166666" />
+          <ConnectorPoint PointX="3.125" PointY="11.802643229166666" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem" >
+          <ConnectorPoint PointX="6.125" PointY="12.182444661458334" />
+          <ConnectorPoint PointX="4.625" PointY="12.182444661458334" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection" >
+          <ConnectorPoint PointX="6.375" PointY="3.3410953776041694" />
+          <ConnectorPoint PointX="5.125" PointY="3.3410953776041694" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_Photo_User" >
+          <ConnectorPoint PointX="1.5" PointY="8.9994921875" />
+          <ConnectorPoint PointX="1.5" PointY="10.625" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_TemplateItem_Template" >
+          <ConnectorPoint PointX="6.9375" PointY="10.4994921875" />
+          <ConnectorPoint PointX="6.9375" PointY="11" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_TextBubbleDirection_TextBubble" >
+          <ConnectorPoint PointX="8.875" PointY="3.4612939453125" />
+          <ConnectorPoint PointX="8.125" PointY="3.4612939453125" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicRead" Width="1.5" PointX="0.75" PointY="3.125" Height="2.5571907552083353" />
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_Comic" >
+          <ConnectorPoint PointX="3" PointY="5.4660953776041676" />
+          <ConnectorPoint PointX="2.25" PointY="5.4660953776041676" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_User" >
+          <ConnectorPoint PointX="1.5" PointY="6.25" />
+          <ConnectorPoint PointX="1.5" PointY="5.6821907552083353" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicStat" Width="1.5" PointX="6.25" PointY="5" Height="2.1725878906250031" />
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ComicStat_Comic" >
+          <ConnectorPoint PointX="5" PointY="6.2112939453125016" />
+          <ConnectorPoint PointX="6.25" PointY="6.2112939453125016" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

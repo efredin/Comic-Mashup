@@ -1,0 +1,6 @@
+﻿.ui-list { padding: 0.5em 0; }
+.ui-list ul { margin: 0; padding: 0; }
+.ui-list ul li { list-style: none; display: block; margin: 3px; clear: both; overflow: hidden; }
+.ui-list ul li a { display: block; padding: 3px 6px; }
+.ui-list .ui-state-default, .ui-list .ui-state-hover, .ui-list .ui-state-active { background-position: 0 0; }
+.ui-list .ui-list-empty { padding: 2px 8px; }

@@ -1,0 +1,574 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BD63B17E-CED5-470F-B0E8-D0F7CE40C36F}</ProjectGuid>
+    <ProjectTypeGuids>{F85E285D-A4E0-4152-9332-AB1D724D3325};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Fredin.Comic.Web</RootNamespace>
+    <AssemblyName>Fredin.Comic.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;STAGE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Fredin.Comic.Web.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EcmaScript.NET.modified, Version=0.1.1.0, Culture=neutral, PublicKeyToken=7d53ba4f537753a5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\EcmaScript.NET.modified.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook">
+      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Web">
+      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Web.Mvc">
+      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\FacebookSDK\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ComicMasterPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ComicStatUpdate.cs" />
+    <Compile Include="ComicUrlHelper.cs" />
+    <Compile Include="Controllers\ComicController.cs" />
+    <Compile Include="Controllers\ComicControllerBase.cs" />
+    <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\JsonActionAttribute.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ClientComicRead.cs" />
+    <Compile Include="Models\ClientComicStat.cs" />
+    <Compile Include="Models\ClientRenderTask.cs" />
+    <Compile Include="Models\ClientUser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\ClientComic.cs" />
+    <Compile Include="Models\ClientEffect.cs" />
+    <Compile Include="Models\ClientTemplate.cs" />
+    <Compile Include="Models\ClientTemplateItem.cs" />
+    <Compile Include="Models\ViewCreateWizard.cs" />
+    <Compile Include="Models\ViewDirectory.cs" />
+    <Compile Include="Models\ViewProfile.cs" />
+    <Compile Include="Models\ViewRead.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlHelperExtension.cs" />
+    <Compile Include="WebRole.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Affirma.ThreeSharp.dll" />
+    <Content Include="bin\AForge.dll" />
+    <Content Include="bin\AForge.Imaging.dll" />
+    <Content Include="bin\AForge.Imaging.Formats.dll" />
+    <Content Include="bin\AForge.Math.dll" />
+    <Content Include="bin\Azure.Utilities.dll" />
+    <Content Include="bin\Emgu.CV.dll" />
+    <Content Include="bin\Emgu.CV.ML.dll" />
+    <Content Include="bin\Emgu.CV.UI.dll" />
+    <Content Include="bin\Emgu.Util.dll" />
+    <None Include="Build\Compress.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Global.asax" />
+    <Content Include="Static\Css\facebookbutton.css" />
+    <Content Include="Static\Css\icon.css" />
+    <Content Include="Static\Css\images\loading.gif" />
+    <Content Include="Static\Css\images\funny.png" />
+    <Content Include="Static\Css\images\ui-anim_basic_16x16.gif" />
+    <Content Include="Static\Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Static\Css\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Static\Css\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Static\Css\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Static\Css\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Static\Css\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Static\Css\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Static\Css\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Static\Css\images\ui-icons_222222_256x240.png" />
+    <Content Include="Static\Css\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Static\Css\images\ui-icons_454545_256x240.png" />
+    <Content Include="Static\Css\images\ui-icons_888888_256x240.png" />
+    <Content Include="Static\Css\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.list.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.input.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.load.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.tooltip.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.wizard.css" />
+    <Content Include="Static\Css\jquery\fg.menu.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.select2.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.tabmenu.css" />
+    <Content Include="Static\Css\jquery\jquery.form.wizard.css" />
+    <Content Include="Static\Css\component.css" />
+    <Content Include="Static\Css\mashup.css" />
+    <Content Include="Static\Image\cm16.png" />
+    <Content Include="Static\Image\cm64.png" />
+    <Content Include="Static\Image\Effect\none.png" />
+    <Content Include="Static\Image\Effect\color-sketch.png" />
+    <Content Include="Static\Image\Effect\comic.png" />
+    <Content Include="Static\Image\Effect\pencil-sketch.png" />
+    <Content Include="Static\Image\search.png" />
+    <Content Include="Static\Image\Template\large-aa.png" />
+    <Content Include="Static\Image\Template\large-ab.png" />
+    <Content Include="Static\Image\Template\large-ac.png" />
+    <Content Include="Static\Image\Template\large-ad.png" />
+    <Content Include="Static\Image\Template\large-ae.png" />
+    <Content Include="Static\Image\Template\large-af.png" />
+    <Content Include="Static\Image\Template\large-ag.png" />
+    <Content Include="Static\Image\Template\large-ah.png" />
+    <Content Include="Static\Image\Template\large-ai.png" />
+    <Content Include="Static\Image\Template\large-aj.png" />
+    <Content Include="Static\Image\Template\large-ak.png" />
+    <Content Include="Static\Image\Template\large-al.png" />
+    <Content Include="Static\Image\Template\large-am.png" />
+    <Content Include="Static\Image\Template\large-an.png" />
+    <Content Include="Static\Image\Template\large-ao.png" />
+    <Content Include="Static\Image\Template\medium-aa.png" />
+    <Content Include="Static\Image\Template\medium-ab.png" />
+    <Content Include="Static\Image\Template\medium-ac.png" />
+    <Content Include="Static\Image\Template\medium-ad.png" />
+    <Content Include="Static\Image\Template\medium-ae.png" />
+    <Content Include="Static\Image\Template\medium-af.png" />
+    <Content Include="Static\Image\Template\medium-ag.png" />
+    <Content Include="Static\Image\Template\medium-ah.png" />
+    <Content Include="Static\Image\Template\small-aa.png" />
+    <Content Include="Static\Image\Template\small-ab.png" />
+    <Content Include="Static\Image\Template\small-ac.png" />
+    <Content Include="Static\Image\Template\small-ad.png" />
+    <Content Include="Static\Image\Template\small-ae.png" />
+    <Content Include="Static\Image\TextBubble\base.png" />
+    <Content Include="Static\Image\TextBubble\bubble-move.png" />
+    <Content Include="Static\Image\TextBubble\bubble-remove.png" />
+    <Content Include="Static\Image\TextBubble\shout-b.png" />
+    <Content Include="Static\Image\TextBubble\shout-bl.png" />
+    <Content Include="Static\Image\TextBubble\shout-br.png" />
+    <Content Include="Static\Image\TextBubble\shout-n.png" />
+    <Content Include="Static\Image\TextBubble\shout-thumb.png" />
+    <Content Include="Static\Image\TextBubble\shout-tl.png" />
+    <Content Include="Static\Image\TextBubble\shout-tr.png" />
+    <Content Include="Static\Image\TextBubble\speech-b.png" />
+    <Content Include="Static\Image\TextBubble\speech-bl.png" />
+    <Content Include="Static\Image\TextBubble\speech-br.png" />
+    <Content Include="Static\Image\TextBubble\speech-l.png" />
+    <Content Include="Static\Image\TextBubble\speech-n.png" />
+    <Content Include="Static\Image\TextBubble\speech-r.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-b.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-bl.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-br.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-l.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-n.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-r.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-t.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-thumb.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-tl.png" />
+    <Content Include="Static\Image\TextBubble\speech-rect-tr.png" />
+    <Content Include="Static\Image\TextBubble\speech-t.png" />
+    <Content Include="Static\Image\TextBubble\speech-thumb.png" />
+    <Content Include="Static\Image\TextBubble\speech-tl.png" />
+    <Content Include="Static\Image\TextBubble\speech-tr.png" />
+    <Content Include="Static\Image\TextBubble\square-b.png" />
+    <Content Include="Static\Image\TextBubble\square-bl.png" />
+    <Content Include="Static\Image\TextBubble\square-br.png" />
+    <Content Include="Static\Image\TextBubble\square-l.png" />
+    <Content Include="Static\Image\TextBubble\square-n.png" />
+    <Content Include="Static\Image\TextBubble\square-r.png" />
+    <Content Include="Static\Image\TextBubble\square-t.png" />
+    <Content Include="Static\Image\TextBubble\square-thumb.png" />
+    <Content Include="Static\Image\TextBubble\square-tl.png" />
+    <Content Include="Static\Image\TextBubble\square-tr.png" />
+    <Content Include="Static\Image\TextBubble\thought-bl.png" />
+    <Content Include="Static\Image\TextBubble\thought-br.png" />
+    <Content Include="Static\Image\TextBubble\thought-thumb.png" />
+    <Content Include="Static\Image\TextBubble\thought-tl.png" />
+    <Content Include="Static\Image\TextBubble\thought-tr.png" />
+    <Content Include="Static\Script\Application.js" />
+    <Content Include="Static\Script\Date.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.optionset.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.list.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.input.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.load.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.tooltip.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.wizard.js" />
+    <Content Include="Static\Script\jquery\fg.menu.js" />
+    <Content Include="Static\Script\jquery\hoverIntent.js" />
+    <Content Include="Static\Script\jquery\jquery.ba-bbq.js" />
+    <Content Include="Static\Script\jquery\jquery.data.js" />
+    <Content Include="Static\Script\jquery\jquery.disable.js" />
+    <Content Include="Static\Script\jquery\jquery.form.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.select2.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.tabmenu.js" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.accordion.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.autocomplete.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.button.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.core.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.datepicker.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.dialog.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.progressbar.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.resizable.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.slider.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.tabs.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.theme.css" />
+    <Content Include="Static\Css\Comic.min.css" />
+    <Content Include="Static\Script\jquery\jquery.guid.js" />
+    <Content Include="Static\Script\jquery\jquery.history.js" />
+    <Content Include="Static\Script\jquery\jquery.jqote2.js" />
+    <Content Include="Static\Script\jquery\jquery.postify.js" />
+    <Content Include="Static\Script\jquery\jquery.scrollTo-1.4.2.js" />
+    <Content Include="Static\Script\Array.js" />
+    <Content Include="Static\Script\jquery\jquery.watermark.js" />
+    <Content Include="Static\Script\Math.js" />
+    <Content Include="Static\Script\String.js" />
+    <Content Include="Static\Script\Views\Comic.CreateWizard.js" />
+    <Content Include="Static\Script\Views\Comic.Read.js" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_dots-small_65_a6a6a6_2x2.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_flat_0_333333_40x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_flat_65_ffffff_40x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_glass_55_fbf8ee_1x400.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_highlight-hard_100_eeeeee_1x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-bg_highlight-soft_15_cc0000_1x100.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-icons_004276_256x240.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Static\Theme\blitzer\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Static\Theme\blitzer\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\flick\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_flat_0_eeeeee_40x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_flat_55_ffffff_40x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_highlight-soft_100_f6f6f6_1x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_highlight-soft_25_0073ea_1x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-bg_highlight-soft_50_dddddd_1x100.png" />
+    <Content Include="Static\Theme\flick\images\ui-icons_0073ea_256x240.png" />
+    <Content Include="Static\Theme\flick\images\ui-icons_454545_256x240.png" />
+    <Content Include="Static\Theme\flick\images\ui-icons_666666_256x240.png" />
+    <Content Include="Static\Theme\flick\images\ui-icons_ff0084_256x240.png" />
+    <Content Include="Static\Theme\flick\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Static\Theme\flick\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_diagonals-thick_50_aaaaaa_40x40.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_0_ededed_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_0582c2_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_91bed5_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_ededed_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_f4f4f4_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_fbec88_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-bg_flat_100_fef1ec_40x100.png" />
+    <Content Include="Static\Theme\mashup\images\ui-icons_046a99_256x240.png" />
+    <Content Include="Static\Theme\mashup\images\ui-icons_91bed5_256x240.png" />
+    <Content Include="Static\Theme\mashup\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Static\Theme\mashup\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Static\Theme\mashup\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_diagonal-maze_20_6e4f1c_10x10.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_diagonal-maze_40_000000_10x10.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_10_eceadf_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_10_f8f7f6_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_15_eceadf_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_15_f7f3de_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_15_ffffff_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_65_654b24_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-bg_fine-grain_68_b83400_60x60.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_222222_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_3572ac_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_8c291d_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_b83400_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_fbdb93_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Static\Theme\pepper-grinder\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-icons_454545_256x240.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-icons_888888_256x240.png" />
+    <Content Include="Static\Theme\smoothness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Static\Theme\smoothness\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\redmond\images\loading.gif" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_flat_55_fbec88_40x100.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="Static\Theme\redmond\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="Static\Theme\redmond\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="Static\Theme\redmond\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\redmond\jquery.ui.theme.min.css" />
+    <Content Include="Static\Theme\smoothness\jquery.ui.theme.min.css" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_diagonals-medium_20_d34d17_40x40.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_flat_30_cccccc_40x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_flat_50_5c5c5c_40x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_gloss-wave_45_817865_500x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_gloss-wave_60_fece2f_500x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_gloss-wave_70_ffdd57_500x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_gloss-wave_90_fff9e5_500x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_highlight-soft_100_feeebd_1x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-bg_inset-soft_30_ffffff_1x100.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_3d3d3d_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_bd7b00_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_d19405_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_eb990f_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_ed9f26_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_fadc7a_256x240.png" />
+    <Content Include="Static\Theme\sunny\images\ui-icons_ffe180_256x240.png" />
+    <Content Include="Static\Theme\sunny\jquery.ui.theme.css" />
+    <Content Include="Static\Theme\ui-lightness\images\loading.gif" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_flat_10_000000_40x100.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_glass_100_f6f6f6_1x400.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_glass_100_fdf5ce_1x400.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_gloss-wave_35_f6a828_500x100.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_highlight-soft_100_eeeeee_1x100.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-bg_highlight-soft_75_ffe45c_1x100.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-icons_228ef1_256x240.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-icons_ef8c08_256x240.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-icons_ffd27a_256x240.png" />
+    <Content Include="Static\Theme\ui-lightness\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Static\Theme\ui-lightness\jquery.ui.theme.css" />
+    <Content Include="Static\Image\loading.gif" />
+    <Content Include="Static\Image\mashup.png" />
+    <Content Include="Static\Script\Comic.debug.js" />
+    <Content Include="Static\Script\Comic.min.js" />
+    <Content Include="Static\Script\jquery\jquery.js" />
+    <Content Include="Static\Script\jquery\jquery.bgiframe-2.1.1.js" />
+    <Content Include="Static\Script\jquery\jquery.cookie.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.blind.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.bounce.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.clip.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.core.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.drop.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.explode.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.fade.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.fold.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.highlight.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.pulsate.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.scale.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.shake.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.slide.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.effects.transfer.js" />
+    <Content Include="Static\Script\jquery\jquery.metadata.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.accordion.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.autocomplete.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.button.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.core.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.datepicker.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.dialog.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.draggable.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.droppable.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.mouse.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.position.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.progressbar.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.resizable.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.selectable.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.slider.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.sortable.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.tabs.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.widget.js" />
+    <Content Include="Static\Script\jquery\jquery.plugins.js" />
+    <Content Include="Static\Theme\ui-lightness\jquery.ui.theme.min.css" />
+    <Content Include="Static\Theme\ui-lightness\layout.css" />
+    <Content Include="Views\Comic\Author.ascx" />
+    <Content Include="Views\Comic\ComicList.ascx" />
+    <Content Include="Views\Comic\CreateWizard.aspx" />
+    <Content Include="Views\Directory\Directory.aspx" />
+    <Content Include="Views\Comic\Read.aspx" />
+    <Content Include="Views\Shared\AdSkyscraper.ascx" />
+    <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Shared\Web.Master" />
+    <Content Include="Views\User\Login.aspx" />
+    <Content Include="Views\User\Profile.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Static\Script\jquery\jquery.validate.js" />
+    <Content Include="Web.Staging.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\" />
+    <Folder Include="Static\Icon\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\log4net-1.2.10\src\log4net.csproj">
+      <Project>{F6A02431-167E-4347-BC43-65532C31CDB7}</Project>
+      <Name>log4net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\YUICompressor\Projects\Yahoo.Yui.Compressor\Model.Net20\Model.Net20\Model.Net20.csproj">
+      <Project>{3B2CB1E0-80D8-4B41-8D43-6E289D532B1C}</Project>
+      <Name>Model.Net20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Face\Face.csproj">
+      <Project>{4B7285DC-6FBD-4F8E-9B5F-4E0377BA19AE}</Project>
+      <Name>Face</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fredin.Comic.Core\Fredin.Comic.Core.csproj">
+      <Project>{CCCD7BAD-06F8-4D7B-8951-BFF7A81C7616}</Project>
+      <Name>Fredin.Comic.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fredin.Comic.Image\Fredin.Comic.Image.csproj">
+      <Project>{6AA7265D-C9F5-445C-AD9F-C920DC57D276}</Project>
+      <Name>Fredin.Comic.Image</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fredin.Util\Fredin.Util.csproj">
+      <Project>{A05CA1D6-44EB-48AE-AA70-5093CAE85757}</Project>
+      <Name>Fredin.Util</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Static\Css\jquery.ui\jquery.ui.optionset.css" />
+    <None Include="Static\Font\smackattackbb_reg.eot" />
+    <None Include="Static\Font\smackattackbb_reg.ttf" />
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>8080</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:8080</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>http://fredin.dyndns-home.com:8080</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe $(ProjectDir)\Build\Compress.xml /p:Configuration=$(ConfigurationName)
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

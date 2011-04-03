@@ -1,0 +1,11 @@
+﻿/* Tabs
+----------------------------------*/
+.ui-tabmenu { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+.ui-tabmenu .ui-tabmenu-nav { margin: 0; padding: .2em .2em 0; }
+.ui-tabmenu .ui-tabmenu-nav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
+.ui-tabmenu .ui-tabmenu-nav li.right { float: right; }
+.ui-tabmenu .ui-tabmenu-nav li a { float: left; padding: .5em 1em; text-decoration: none; }
+.ui-tabmenu .ui-tabmenu-nav li a.ui-state-active { border: 0; }
+.ui-tabmenu .ui-tabmenu-nav li.ui-tabmenu-selected { margin-bottom: 0; padding-bottom: 1px; }
+.ui-tabmenu .ui-tabmenu-panel { display: block; border-width: 0; padding: 1em 1.4em; background: none; }
+.ui-tabmenu .ui-tabmenu-hide { display: none !important; }

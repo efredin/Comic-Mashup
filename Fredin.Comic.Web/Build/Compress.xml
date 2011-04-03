@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/MsBuild/2003">
+	<UsingTask
+		TaskName="CompressorTask"
+		AssemblyFile="..\bin\Yahoo.Yui.Compressor.NET20.dll" />
+
+	<Choose>
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<PropertyGroup>
+				<ModeExt>debug</ModeExt>
+				<ObfuscateJs>False</ObfuscateJs>
+				<PreserveSemi>True</PreserveSemi>
+				<LineBreakPosition>0</LineBreakPosition>
+				<DisableOptimize>True</DisableOptimize>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<ModeExt>min</ModeExt>
+				<ObfuscateJs>True</ObfuscateJs>
+				<PreserveSemi>False</PreserveSemi>
+				<LineBreakPosition>400</LineBreakPosition>
+				<DisableOptimize>False</DisableOptimize>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<PropertyGroup>
+		<CssDir>..\Static\Css</CssDir>
+		<ThemeDir>..\Static\Theme</ThemeDir>
+		<ScriptDir>..\Static\Script</ScriptDir>
+		<JqueryDir>..\Static\Script\jquery</JqueryDir>
+		<JqueryUiDir>..\Static\Script\jquery.ui</JqueryUiDir>
+		<JqueryCore>$(JqueryDir)\jquery.js;$(JqueryUiDir)\jquery.ui.core.js;$(JqueryUiDir)\jquery.ui.widget.js;$(JqueryUiDir)\jquery.ui.mouse.js;$(JqueryUiDir)\jquery.ui.draggable.js;$(JqueryUiDir)\jquery.ui.droppable.js;$(JqueryUiDir)\jquery.ui.resizable.js;$(JqueryUiDir)\jquery.ui.selectable.js;$(JqueryUiDir)\jquery.ui.sortable.js;$(JqueryUiDir)\jquery.effects.core.js</JqueryCore>
+		
+		<CssOutputFile>$(CssDir)\Comic.min.css</CssOutputFile>
+		<JsOutputFile>.$(ScriptDir)\Comic.$(ModeExt).js</JsOutputFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Jquery Plugin Css -->
+		<CssFiles Include="$(CssDir)\jquery\*.css" />
+
+		<!-- Jquery UI Css -->
+		<CssFiles Include="$(CssDir)\jquery.ui\jquery.ui.core.css" />
+		<CssFiles Include="$(CssDir)\jquery.ui\jquery.ui.*.css" Exclude="$(CssDir)\jquery.ui\jquery.ui.core.css;$(CssDir)\jquery.ui\jquery.ui.theme.css" />
+		<CssFiles Include="$(CssDir)\jquery.ui\jquery.ui.theme.css" />
+		
+		<!-- Themes -->
+		<ThemeFiles Include="$(ThemeDir)\**\*.css" Exclude="$(ThemeDir)\**\jquery.ui.theme.min.css" />
+
+		<!-- Site CSS -->
+		<CssFiles Include="$(CssDir)\mashup.css" />
+		<CssFiles Include="$(CssDir)\*.css" Exclude="$(CssDir)\mashup.css;$(CssDir)\*.min.css;" />
+
+		<!-- jquery ui build order -->
+		<JsFiles Include="$(JqueryCore)" />
+		<JsFiles Include="$(JqueryUiDir)\jquery.ui.*.js;$(JqueryUiDir)\jquery.effects.*.js" Exclude="$(JqueryCore)" />
+
+		<!-- Everything else -->
+		<JsFiles Include="$(ScriptDir)\Application.js" />
+		<JsFiles Include="$(ScriptDir)\*.js;$(JqueryDir)\*.js" Exclude="$(ScriptDir)\Application.js;$(ScriptDir)\Comic.min.js;$(ScriptDir)\Comic.debug.js;$(JqueryCore)" />
+		<JsFiles Include="$(ScriptDir)\Views\*.js" />
+	</ItemGroup>
+	
+	<Target Name="Compress">
+		<!--
+            ItemGroup\CssFiles or ItemGroup\JavaScriptFiles: add zero to many files you wish to include in this compression task.
+                                                             Don't forget, you can use the wildcard (eg. *.css, *.js) if you feel up to it.
+                                                             Finally, at least one item is required - either a css file or a js file.
+                                                             
+            CssFiles/JavaScriptFiles data format: Please do not touch this.
+            DeleteCssFiles: [Optional] True | Yes | Yeah | Yep | True | FoSho | Fo Sho. Default is False. Anything else is False. (eg. blah = false, xxxx111 = false, etc)
+            CssCompressionType: YuiStockCompression | MichaelAshsRegexEnhancements | HaveMyCakeAndEatIt or BestOfBothWorlds or Hybrid; Default is YuiStockCompression.
+            ObfuscateJavaScript: [Optional] refer to DeleteCssFiles, above.
+            PreserveAllSemicolons: [Optional] refer to DeleteCssFiles, above.
+            DisableOptimizations: [Optional] refer to DeleteCssFiles, above.
+            EncodingType: [Optional] ASCII, BigEndianUnicode, Unicode, UTF32, UTF7, UTF8, Default. Default is 'Default'.
+            DeleteJavaScriptFiles: [Optional] refer to DeleteCssFiles, above.
+            LineBreakPosition: [Optional] the position where a line feed is appened when the next semicolon is reached. Default is -1 (never add a line break).
+                               0 (zero) means add a line break after every semicolon. (This might help with debugging troublesome files).          
+            LoggingType: None | ALittleBit | HardcoreBringItOn;  Hardcore also lists javascript verbose warnings, if there are any (and there usually is :P ).
+            ThreadCulture: [Optional] the culture you want the thread to run under. Default is 'en-gb'.
+            IsEvalIgnored: [Optional] compress any functions that contain 'eval'. Default is False, which means a function that contains
+                           'eval' will NOT be compressed. It's deemed risky to compress a function containing 'eval'. That said,
+                           if the usages are deemed safe this check can be disabled by setting this value to True.
+        -->
+
+		<CompressorTask
+			CssFiles="@(CssFiles)"
+			DeleteCssFiles="false"
+			CssOutputFile="$(CssOutputFile)"
+			CssCompressionType="YuiStockCompression"
+			JavaScriptFiles="@(JsFiles)"
+			JavaScriptOutputFile="$(JsOutputFile)"
+			ObfuscateJavaScript="$(ObfuscateJs)"
+			PreserveAllSemicolons="$(PreserveSemi)"
+			DisableOptimizations="$(DisableOptimize)"
+			EncodingType="Default"
+			DeleteJavaScriptFiles="false"
+			LineBreakPosition="$(LineBreakPosition)"
+			LoggingType="ALittleBit"
+			ThreadCulture="en-au"
+			IsEvalIgnored="false"
+		/>
+		
+		<CompressorTask
+			CssFiles="@(ThemeFiles)"
+			DeleteCssFiles="false"
+			CssOutputFile="$(ThemeDir)\%(ThemeFiles.RecursiveDir)jquery.ui.theme.min.css"
+			CssCompressionType="YuiStockCompression"
+			JavaScriptFiles=""
+			JavaScriptOutputFile=""
+			ObfuscateJavaScript="$(ObfuscateJs)"
+			PreserveAllSemicolons="$(PreserveSemi)"
+			DisableOptimizations="$(DisableOptimize)"
+			EncodingType="Default"
+			DeleteJavaScriptFiles="false"
+			LineBreakPosition="$(LineBreakPosition)"
+			LoggingType="ALittleBit"
+			ThreadCulture="en-au"
+			IsEvalIgnored="false"
+    />
+		
+	</Target>
+	
+</Project>

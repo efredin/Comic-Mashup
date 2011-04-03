@@ -1,0 +1,5 @@
+﻿.wizard { }
+.wizard .wizard-nav { }
+.wizard .wizard-nav ul { list-style: none; }
+.wizard .wizard-nav ul li { display: inline-block; }
+.wizard .step { margin: 10px; }

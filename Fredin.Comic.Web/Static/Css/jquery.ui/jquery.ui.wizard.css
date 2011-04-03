@@ -1,0 +1,7 @@
+﻿.ui-wizard {  }
+.ui-wizard .ui-wizard-steps { overflow: hidden; position: relative; }
+.ui-wizard .ui-wizard-scroll { clear: both; }
+.ui-wizard .ui-wizard-step { display: block; float: left; }
+.ui-wizard .ui-wizard-title { padding: 0; margin: 2px 0 10px 0; }
+.ui-wizard .ui-wizard-title a, .ui-wizard .ui-wizard-stepTitle a:hover { text-decoration: none; font-size: 1.6em; display: inline-block; border: 0; margin: 0 20px 0 0; padding: 4px; }
+.ui-wizard .ui-wizard-title a .caption { display: block; font-size: 0.5em; }
