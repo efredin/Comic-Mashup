@@ -57,11 +57,14 @@ namespace Fredin.Comic.Web
 			AreaRegistration.RegisterAllAreas();
 			RegisterRoutes(RouteTable.Routes);
 
+			XmlConfigurator.Configure();
+			ILog log = LogManager.GetLogger(typeof(WebRole));
+
 			//XmlConfigurator.Configure();
-			TraceAppender appender = new TraceAppender();
-			appender.Layout = new log4net.Layout.PatternLayout("%date [%thread] %-5level %logger [%property{NDC}] - %message%newline");
-			appender.ActivateOptions();
-			BasicConfigurator.Configure(appender);
+			//TraceAppender appender = new TraceAppender();
+			//appender.Layout = new log4net.Layout.PatternLayout("%date [%thread] %-5level %logger [%property{NDC}] - %message%newline");
+			//appender.ActivateOptions();
+			//BasicConfigurator.Configure(appender);
 
 			//ILog log = LogManager.GetLogger(typeof(Global));
 

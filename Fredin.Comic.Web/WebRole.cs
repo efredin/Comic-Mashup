@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using log4net.Appender;
+using log4net.Config;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
+using Microsoft.WindowsAzure.Diagnostics.Management;
 using Microsoft.WindowsAzure.ServiceRuntime;
-
-using log4net.Config;
-using log4net.Appender;
+using log4net;
 
 namespace Fredin.Comic.Web
 {
@@ -20,12 +21,19 @@ namespace Fredin.Comic.Web
 				configSetter(RoleEnvironment.GetConfigurationSettingValue(configName));
 			});
 
-			//// Role and IIS execute under a different domain on Azure so we cannot see the web.config file from here.
-			//// Manually configure a trace appender for log4net to use
-			//TraceAppender appender = new TraceAppender();
-			//appender.ActivateOptions();
-			//BasicConfigurator.Configure(appender);
+			string wadConnectionString = "Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString";
+			CloudStorageAccount storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue(wadConnectionString));
+			RoleInstanceDiagnosticManager roleInstanceDiagnosticManager = storageAccount.CreateRoleInstanceDiagnosticManager(RoleEnvironment.DeploymentId, RoleEnvironment.CurrentRoleInstance.Role.Name, RoleEnvironment.CurrentRoleInstance.Id);
+			DiagnosticMonitorConfiguration config = roleInstanceDiagnosticManager.GetCurrentConfiguration();
 
+			config.Logs.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+			config.Logs.ScheduledTransferLogLevelFilter = LogLevel.Undefined;
+			config.DiagnosticInfrastructureLogs.ScheduledTransferLogLevelFilter = LogLevel.Warning;
+			config.DiagnosticInfrastructureLogs.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+			config.Directories.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+
+			roleInstanceDiagnosticManager.SetCurrentConfiguration(config);
+			
 			return base.OnStart();
 		}
 

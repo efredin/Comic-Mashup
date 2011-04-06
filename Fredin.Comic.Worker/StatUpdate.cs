@@ -38,6 +38,7 @@ namespace Fredin.Comic.Worker
 
 		public void Start()
 		{
+			Log.Info("Starting");
 			this.UpdateTimer = new System.Threading.Timer(delegate(object state)
 			{
 				// Attempt to find a connection string matching the current namespace
@@ -52,13 +53,17 @@ namespace Fredin.Comic.Worker
 				}
 
 			}, null, new TimeSpan(0, 0, 0), new TimeSpan(0, 15, 0));
-
 		}
 
 		public void Stop()
 		{
-			this.UpdateTimer.Dispose();
-			this.UpdateTimer = null;
+			Log.Info("Stopping");
+
+			if (this.UpdateTimer != null)
+			{
+				this.UpdateTimer.Dispose();
+				this.UpdateTimer = null;
+			}
 		}
 	}
 }

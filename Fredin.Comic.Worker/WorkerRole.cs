@@ -8,6 +8,9 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.StorageClient;
+using log4net;
+using log4net.Config;
+using Microsoft.WindowsAzure.Diagnostics.Management;
 
 namespace Fredin.Comic.Worker
 {
@@ -28,6 +31,23 @@ namespace Fredin.Comic.Worker
 		{
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
+
+			XmlConfigurator.Configure();
+			ILog log = LogManager.GetLogger(typeof(WorkerRole));
+
+			string wadConnectionString = "Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString";
+			CloudStorageAccount storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue(wadConnectionString));
+			RoleInstanceDiagnosticManager roleInstanceDiagnosticManager = storageAccount.CreateRoleInstanceDiagnosticManager(RoleEnvironment.DeploymentId, RoleEnvironment.CurrentRoleInstance.Role.Name, RoleEnvironment.CurrentRoleInstance.Id);
+			DiagnosticMonitorConfiguration config = roleInstanceDiagnosticManager.GetCurrentConfiguration();
+			
+			config.Logs.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+			config.Logs.ScheduledTransferLogLevelFilter = LogLevel.Undefined;
+			config.DiagnosticInfrastructureLogs.ScheduledTransferLogLevelFilter = LogLevel.Warning;
+			config.DiagnosticInfrastructureLogs.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+			config.Directories.ScheduledTransferPeriod = TimeSpan.FromMinutes(1D);
+
+			roleInstanceDiagnosticManager.SetCurrentConfiguration(config);
+
 
 			RenderTaskManager.Instance.Start();
 			StatUpdate.Instance.Start();

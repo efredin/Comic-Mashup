@@ -56,11 +56,7 @@ namespace Fredin.Comic.Worker
 
 		private void InitAzure()
 		{
-#if DEBUG
-			this.StorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
-#else
 			this.StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["ComicStorage"].ConnectionString);
-#endif
 
 			this.BlobClient = this.StorageAccount.CreateCloudBlobClient();
 			this.BlobClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
@@ -92,18 +88,31 @@ namespace Fredin.Comic.Worker
 
 		public void Start()
 		{
-			CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.RenderTaskQueue);
-			queue.CreateIfNotExist();
+			this.Log.Info("Starting");
 
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
-			container.CreateIfNotExist();
+			try
+			{
+				CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.RenderTaskQueue);
+				queue.CreateIfNotExist();
 
+				CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+				container.CreateIfNotExist();
+			}
+			catch (Exception x)
+			{
+				this.Log.Error("Error while starting", x);
+			}
 			this.ExecuteTimer = new Timer(new TimerCallback(this.Execute), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5));
 		}
 
 		public void Stop()
 		{
-			this.ExecuteTimer.Dispose();
+			this.Log.Info("Stopping");
+
+			if (this.ExecuteTimer != null)
+			{
+				this.ExecuteTimer.Dispose();
+			}
 		}
 
 		public void Execute(object state)
@@ -119,7 +128,6 @@ namespace Fredin.Comic.Worker
 
 			if (execute)
 			{
-				this.Log.DebugFormat("Executing");
 				try
 				{
 					// Pop a task off the queue
