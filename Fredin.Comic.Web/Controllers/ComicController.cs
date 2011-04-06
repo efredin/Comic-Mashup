@@ -23,6 +23,7 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using Facebook.Web.Mvc;
 using Fredin.Comic.Data;
+using System.Xml.Serialization;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -166,32 +167,83 @@ namespace Fredin.Comic.Web.Controllers
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
 		[HandleError(View = "JsonError")]
-		public JsonResult RenderWizard(ComicEffectType effect, string photoSource, long templateId, List<RenderFrame> frames)
+		public JsonResult QueueRender(ComicEffectType effect, string photoSource, long templateId, List<RenderFrame> frames)
 		{
 			// Generate render task
 			RenderTask task = new RenderTask();
 			task.TaskId = Guid.NewGuid();
-			task.Status = TaskStatus.Pending;
-			task.CompletedOperations = 0;
+			task.Status = TaskStatus.Queued;
+			task.CompletedOperations = 1;
 			task.TotalOperations = frames.Count + 1; // Operations = 1 per frame + save
 			task.Effect = effect;
 			task.PhotoSource = photoSource;
 			task.TemplateId = templateId;
 			task.Frames = frames;
+			task.OwnerUid = this.ActiveUser.Uid;
 			task.FacebookToken = this.Facebook.AccessToken;
 
-			// Save task to storage and it will be processed by RenderWorker
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.TaskContainer);
-			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Storage.RenderTaskDirectory);
-			CloudBlob progressBlob = directory.GetBlobReference(task.TaskId.ToString());
-			progressBlob.UploadText(new JavaScriptSerializer().Serialize(task));
+			// Queue the task up using Azure Queue services.  Store full task information using Blob storage.  Only the task id is queued.
+			// This is done because we need public visibility on render tasks before, during and after the task completes.
+
+			// Save task to storage
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
+			CloudBlob blob = directory.GetBlobReference(task.TaskId.ToString());
+			blob.UploadText(task.ToXml());
+
+			// Queue up task
+			CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.RenderTaskQueue);
+			CloudQueueMessage message = new CloudQueueMessage(task.TaskId.ToString());
+			queue.AddMessage(message, TimeSpan.FromMinutes(5));
 
 			return this.Json(new ClientRenderTask(task), JsonRequestBehavior.DenyGet);
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
 		[HandleError(View = "JsonError")]
-		public JsonResult PublishWizard(long comicId, string title, string description, bool isPrivate)
+		public JsonResult RenderProgress(string taskId)
+		{
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
+			CloudBlob blob = directory.GetBlobReference(taskId);
+
+			XmlSerializer serializer = new XmlSerializer(typeof(RenderTask));
+			using(MemoryStream stream = new MemoryStream())
+			{
+				blob.DownloadToStream(stream);
+				stream.Seek(0, SeekOrigin.Begin);
+				RenderTask task = (RenderTask)serializer.Deserialize(stream);
+
+				if (task.OwnerUid != this.ActiveUser.Uid)
+				{
+					throw new Exception("Unknown task");
+				}
+
+				ClientRenderTask clientTask = new ClientRenderTask(task);
+				if (task.Status == TaskStatus.Complete && task.ComicId.HasValue)
+				{
+					// Load completed comic from database
+					try
+					{
+						this.EntityContext.TryAttach(this.ActiveUser);
+						Data.Comic comic = this.EntityContext.TryGetUnpublishedComic(task.ComicId.Value, this.ActiveUser);
+						clientTask.Comic = new ClientComic(comic);
+					}
+					finally
+					{
+						this.EntityContext.TryDetach(this.ActiveUser);
+					}
+				}
+
+				return this.Json(clientTask, JsonRequestBehavior.AllowGet);
+			}
+
+			throw new Exception("Unknown task");
+		}
+
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HandleError(View = "JsonError")]
+		public JsonResult Publish(long comicId, string title, string description, bool isPrivate)
 		{
 			Data.Comic comic = null;
 

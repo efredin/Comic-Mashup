@@ -66,7 +66,9 @@
     <Compile Include="Config\ComicConfigSectionGroup.cs" />
     <Compile Include="Config\FacebookConfigSection.cs" />
     <Compile Include="Config\FaceConfigSection.cs" />
-    <Compile Include="Config\StorageConfigSection.cs" />
+    <Compile Include="Config\QueueConfigSection.cs" />
+    <Compile Include="Config\BlobConfigSection.cs" />
+    <Compile Include="Config\SmtpConfigSection.cs" />
     <Compile Include="Config\WebConfigSection.cs" />
     <Compile Include="Data\Comic.cs" />
     <Compile Include="Data\ComicModel.Designer.cs">
@@ -77,6 +79,7 @@
     <Compile Include="Data\ComicModelContext.cs" />
     <Compile Include="Data\ComicModelExtensions.cs" />
     <Compile Include="Data\ComicPhoto.cs" />
+    <Compile Include="Data\ComicRead.cs" />
     <Compile Include="Data\ComicStat.cs" />
     <Compile Include="Data\ComicTextBubble.cs" />
     <Compile Include="Data\Photo.cs" />

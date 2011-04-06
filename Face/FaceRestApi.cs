@@ -31,6 +31,7 @@ public class FaceRestAPI
 	private bool getRawData;
 	private string format;
 	private string api_server = "http://api.face.com/";
+	private int timeout = 1000 * 10;
 
 	private Dictionary<string, string> userAuth = new Dictionary<string, string>();
 	public FaceRestAPI()
@@ -38,12 +39,13 @@ public class FaceRestAPI
 	}
 
 
-	public FaceRestAPI(string apiKey, string apiSecret, string password, bool getRawData, string format, string fb_user, string fb_oauth_token)
+	public FaceRestAPI(string apiKey, string apiSecret, string password, bool getRawData, string format, string fb_user, string fb_oauth_token, int timeout)
 	{
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
 		this.password = password;
 		this.getRawData = getRawData;
+		this.timeout = timeout;
 
 		userAuth.Add("fb_user", fb_user);
 		userAuth.Add("fb_oauth_token", fb_oauth_token);
@@ -311,6 +313,7 @@ public class FaceRestAPI
 
 		HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 
+		req.Timeout = this.timeout;
 		req.Method = "POST";
 
 		string filename;

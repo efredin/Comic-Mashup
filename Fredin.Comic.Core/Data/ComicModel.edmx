@@ -5,7 +5,7 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="Fredin.Comic.Data.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="FredinComicWebModelsStoreContainer">
+        <EntityContainer Name="FredinComicDataStoreContainer">
           <EntitySet Name="Comic" EntityType="Fredin.Comic.Data.Store.Comic" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ComicPhoto" EntityType="Fredin.Comic.Data.Store.ComicPhoto" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ComicRead" EntityType="Fredin.Comic.Data.Store.ComicRead" store:Type="Tables" Schema="dbo" />
@@ -87,6 +87,7 @@
           <Property Name="ShareText" Type="varchar" MaxLength="100" />
           <Property Name="IsPrivate" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="StorageKey" Type="varchar" Nullable="false" MaxLength="36" />
         </EntityType>
         <EntityType Name="ComicPhoto">
           <Key>
@@ -453,6 +454,7 @@
           <NavigationProperty Name="ComicTextBubbles" Relationship="Fredin.Comic.Data.FK_ComicTextBubble_Comic" FromRole="Comic" ToRole="ComicTextBubble" />
           <NavigationProperty Name="ComicRead" Relationship="Fredin.Comic.Data.FK_ComicRead_Comic" FromRole="Comic" ToRole="ComicRead" />
           <NavigationProperty Name="ComicStat" Relationship="Fredin.Comic.Data.FK_ComicStat_Comic" FromRole="Comic" ToRole="ComicStat" />
+          <Property Type="String" Name="StorageKey" Nullable="false" />
         </EntityType>
         <EntityType Name="ComicPhoto">
           <Key>
@@ -744,10 +746,11 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
     <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="FredinComicWebModelsStoreContainer" CdmEntityContainer="ComicModelContext">
+  <EntityContainerMapping StorageEntityContainer="FredinComicDataStoreContainer" CdmEntityContainer="ComicModelContext">
           <EntitySetMapping Name="Comics">
             <EntityTypeMapping TypeName="Fredin.Comic.Data.Comic">
               <MappingFragment StoreEntitySet="Comic">
+                <ScalarProperty Name="StorageKey" ColumnName="StorageKey" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsPrivate" ColumnName="IsPrivate" />
                 <ScalarProperty Name="ShareText" ColumnName="ShareText" />

@@ -53,6 +53,7 @@
     		var sessionChangeCallback = function (response)
     		{
     			self.initComplete = true;
+    			console.debug(response);
     			if (response.session && response.status == "connected")
     			{
     				self.onConnect(response.session.uid);
@@ -114,12 +115,13 @@
     			$('div:first', this).hide();
     		};
 
-    		$('#menubar > ul > li')
+    		$('.menu > ul > li')
 				.hoverIntent
 				({
+					sensitivity: 20,
 					over: menuOpen,
 					out: menuClose,
-					timeout: 500
+					timeout: 200
 				})
 				.each(function ()
 				{
@@ -130,10 +132,16 @@
 				});
 
     		// Search
-    		$('#search-text').watermark('Search');
+    		$('#search-text').watermark('Comic Search');
 
-    		// Tab menu
-    		//$('#layout-nav').tabmenu({ selected: this.options.menuSelected });
+    		// Styling for even /odd list items
+    		$('ul,ol').each(function ()
+    		{
+    			$('li:odd', this).addClass('odd');
+    		});
+
+    		// Make links ui state awesome
+    		$('a.ui-state-default').hover(function () { $(this).addClass('ui-state-hover'); }, function () { $(this).removeClass('ui-state-hover'); });
 
     		// Application state
     		$(window).bind('hashchange', function () { self.loadState(); });

@@ -9,7 +9,7 @@ using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.StorageClient;
 
-namespace Fredin.Comic.RenderWorker
+namespace Fredin.Comic.Worker
 {
 	public class WorkerRole : RoleEntryPoint
 	{
@@ -30,15 +30,14 @@ namespace Fredin.Comic.RenderWorker
 			ServicePointManager.DefaultConnectionLimit = 12;
 
 			RenderTaskManager.Instance.Start();
-
-			// For information on handling configuration changes
-			// see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
+			StatUpdate.Instance.Start();
 
 			return base.OnStart();
 		}
 
 		public override void OnStop()
 		{
+			StatUpdate.Instance.Stop();
 			RenderTaskManager.Instance.Stop();
 			base.OnStop();
 		}

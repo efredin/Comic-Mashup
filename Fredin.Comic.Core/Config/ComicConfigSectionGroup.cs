@@ -13,9 +13,14 @@ namespace Fredin.Comic.Config
 			get { return ConfigurationManager.GetSection("fredin.comic/web") as WebConfigSection; }
 		}
 
-		public static StorageConfigSection Storage
+		public static BlobConfigSection Blob
 		{
-			get { return ConfigurationManager.GetSection("fredin.comic/storage") as StorageConfigSection; }
+			get { return ConfigurationManager.GetSection("fredin.comic/blob") as BlobConfigSection; }
+		}
+
+		public static QueueConfigSection Queue
+		{
+			get { return ConfigurationManager.GetSection("fredin.comic/queue") as QueueConfigSection; }
 		}
 
 		public static FacebookConfigSection Facebook
@@ -26,6 +31,11 @@ namespace Fredin.Comic.Config
 		public static FaceConfigSection Face
 		{
 			get { return ConfigurationManager.GetSection("fredin.comic/face") as FaceConfigSection; }
+		}
+
+		public static SmtpConfigSection Smtp
+		{
+			get { return ConfigurationManager.GetSection("fredin.comic/smtp") as SmtpConfigSection; }
 		}
 	}
 }

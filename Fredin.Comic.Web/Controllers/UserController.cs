@@ -30,7 +30,6 @@ namespace Fredin.Comic.Web.Controllers
 			return null;
 		}
 
-		[FacebookAuthorize(LoginUrl = "~/User/Login")]
 		public JsonResult Me()
 		{
 			ClientUser user = null;
@@ -65,7 +64,7 @@ namespace Fredin.Comic.Web.Controllers
 				if (user != null)
 				{
 					// Load published comics
-					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriend(user))
+					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriend(user), ComicStat.ComicStatPeriod.AllTime)
 						.OrderByDescending(c => c.PublishTime)
 						.ToList();
 

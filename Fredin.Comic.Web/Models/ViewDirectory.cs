@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel;
+using Fredin.Comic.Data;
 
 namespace Fredin.Comic.Web.Models
 {
@@ -10,11 +11,25 @@ namespace Fredin.Comic.Web.Models
 	{
 		public List<ClientComic> Comics { get; set; }
 		public DirectoryMode Mode { get; set; }
+		public ComicStat.ComicStatPeriod Period { get; set; }
+		
+		/// <summary>
+		/// 1-based page index
+		/// </summary>
+		public int Page { get; set; }
 
-		public ViewDirectory(List<Data.Comic> comics, DirectoryMode mode)
+		/// <summary>
+		/// 1-based max page index
+		/// </summary>
+		public int MaxPage { get; set; }
+
+		public ViewDirectory(List<Data.Comic> comics, DirectoryMode mode, ComicStat.ComicStatPeriod period, int page, int maxPage)
 		{
 			this.Comics = comics.Select(c => new ClientComic(c)).ToList();
 			this.Mode = mode;
+			this.Period = period;
+			this.Page = page;
+			this.MaxPage = maxPage;
 		}
 
 		public enum DirectoryMode
@@ -28,11 +43,14 @@ namespace Fredin.Comic.Web.Models
 			[Description("Smartest")]
 			Smartest,
 
-			[Description("Best Random")]
-			BestRandom,
+			[Description("Most Random")]
+			MostRandom,
 
-			[Description("Most Recent")]
-			MostRecent
+			[Description("Newest")]
+			Newest,
+
+			[Description("Search")]
+			Search
 		}
 	}
 }

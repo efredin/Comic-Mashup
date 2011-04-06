@@ -1,4 +1,12 @@
-﻿#wizardCreate { display: block; width: 764px; }
+﻿#home { }
+#home .actionButton { display: inline-block; width: 210px; margin: 10px; padding: 10px; text-align: center; font-size: 2em; }
+#home .actionButton:hover { text-decoration: none; }
+#home #home-buttonCreate { }
+#home #home-buttonDirectory { }
+#home #home-buttonShare { }
+#home-directory { margin: 20px 0 0 0; }
+
+#wizardCreate { display: block; }
 #wizardCreate #wizardContent { width: 764px; }
 #wizardCreate #wizardTitle { display: inline-block; }
 #wizardCreate #wizardLoad { width: 100%; }
@@ -34,7 +42,7 @@
 #publishComic #publishImage img { height: 75px; border: 2px solid black; }
 #publishComic #comicTitle, #publishComic #comicDescription { width: 100%; }
 
-#comicRead { width: 800px; }
+#comicRead { }
 #comicRead #comicDescription { margin: 10px 0; }
 #comicRead #comicInfo { float: right; font-size: 0.9em; }
 #comicRead #comic { clear: both; }
@@ -45,9 +53,12 @@
 #comicRead #reader #readerAction { float: right; }
 #comicRead #reader label, #comicRead #reader a { font-size: 0.7em; }
 #comicRead #comments { float: left; display: inline-block; width: 522px; margin: 10px 10px 0 0; }
-#comicRead #navigate { float: left; display: inline-block; margin: 10px 0 0 0; width: 202px; }
+#comicRead #navigate { float: left; display: inline-block; margin: 10px 0 0 0; width: 206px; }
 #comicRead #navigate ul { list-style: none; padding: 0; margin: 0; }
 #comicRead #navigate ul li { padding: 1px 0; }
+#comicRead #edit { float: left; display: inline-block; margin: 10px 0 0 0; width: 206px; }
+#comicRead #edit ul { list-style: none; padding: 0; margin: 0; }
+#comicRead #edit ul li { padding: 1px 0; }
 
 .author { height: 50px; margin: 0; }
 .author-photo { float: left; display: inline-block; padding: 0 10px 0 0; height: 50px; width: 50px; }
@@ -56,17 +67,34 @@
 .author-by { padding: 20px 0 0 0; }
 .author-title { margin: 4px 2px; }
 
-.comicList { }
-.comicList .comicList-item { float: left; display: inline-block; margin: 10px 15px 10px 0; width: 350px; }
-.comicList .comicList-item img { width: 350px; }
-.comicList .comicList-item .comicList-detail { display: block; padding: 4px 0; }
-.comicList .comicList-item .comicList-detail .comicList-title { font-size: 1.2em; font-weight: bold; }
-.comicList .comicList-item .comicList-detail .comicList-about { font-size: 0.8em; }
-.comicList .comicList-item .comicList-detail .comicList-rate { float: right; display: inline-block; padding: 14px 0 0; }
+.comicList { list-style: none; margin: 0; padding: 0; }
+.comicList li { float: left; display: inline-block; margin: 6px 10px 6px 0; width: 364px; }
+.comicList li.odd { margin-right: 0; }
 
-#profile { width: 800px; }
+.comicList li img { width: 364px; }
+.comicList li .comicList-detail { display: block; padding: 4px 0; }
+.comicList li .comicList-detail .comicList-title { font-size: 1.2em; font-weight: bold; }
+.comicList li .comicList-detail .comicList-about { font-size: 0.8em; }
+.comicList li .comicList-detail .comicList-rate { float: right; display: inline-block; padding: 14px 0 0; }
 
-#directory { width: 800px; }
+#directory #directoryFilter { text-align: right; }
+#directory #directoryFilter ul li { text-align: left; margin: 0 8px; }
+#directory #directoryFilter ul li.active div ul li { padding: 2px; }
+#directory #directoryPaging { clear: left; text-align: right; padding: 2px 7px; font-size: 0.7em; }
+
+.content800 { width: 800px; }
+.content764 { width: 764px; }
+
+#profile { }
+#directory { }
+
+#faq { }
+#faq ul { list-style: none; padding: 0; margin: 0; }
+#faq .question { font-weight: bold; }
+#faq .answer { }
+
+#contact { width: 300px; }
+#contact input, #contact textarea { width: 100%; }
 
 /*
 #login-login input[type=text],

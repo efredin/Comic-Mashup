@@ -31,7 +31,7 @@ namespace Fredin.Comic.Render
 			CustomFont = new PrivateFontCollection();
 			unsafe
 			{
-				Stream fontStream = typeof(ComicGenerator).Assembly.GetManifestResourceStream("Fredin.Comic.Image.smackattackbb_reg.ttf");
+				Stream fontStream = typeof(ComicGenerator).Assembly.GetManifestResourceStream("Fredin.Comic.smackattackbb_reg.ttf");
 				byte[] fontBuffer = new byte[fontStream.Length];
 				fontStream.Read(fontBuffer, 0, fontBuffer.Length);
 				fontStream.Close();

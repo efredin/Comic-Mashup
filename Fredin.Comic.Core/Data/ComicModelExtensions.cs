@@ -48,7 +48,7 @@ namespace Fredin.Comic.Data
 
 		public static IQueryable<Comic> FilterComicVisibility(this IQueryable<Comic> comics, User user, bool isFriend)
 		{
-			return comics.FilterComicVisibility(user, new long[]{ user.Uid }.ToList());
+			return comics.FilterComicVisibility(user, user != null ? new long[]{ user.Uid }.ToList() : new long[] {}.ToList());
 		}
 
 		public static IQueryable<Comic> FilterComicVisibility(this IQueryable<Comic> comics, User user, List<long> friends)

@@ -413,7 +413,8 @@ namespace Fredin.Comic.Data
         /// <param name="description">Initial value of the Description property.</param>
         /// <param name="isPrivate">Initial value of the IsPrivate property.</param>
         /// <param name="isDeleted">Initial value of the IsDeleted property.</param>
-        public static Comic CreateComic(global::System.Int64 comicId, global::System.Int64 uid, global::System.Int64 templateId, global::System.DateTime createTime, global::System.DateTime updateTime, global::System.Boolean isPublished, global::System.String title, global::System.String description, global::System.Boolean isPrivate, global::System.Boolean isDeleted)
+        /// <param name="storageKey">Initial value of the StorageKey property.</param>
+        public static Comic CreateComic(global::System.Int64 comicId, global::System.Int64 uid, global::System.Int64 templateId, global::System.DateTime createTime, global::System.DateTime updateTime, global::System.Boolean isPublished, global::System.String title, global::System.String description, global::System.Boolean isPrivate, global::System.Boolean isDeleted, global::System.String storageKey)
         {
             Comic comic = new Comic();
             comic.ComicId = comicId;
@@ -426,6 +427,7 @@ namespace Fredin.Comic.Data
             comic.Description = description;
             comic.IsPrivate = isPrivate;
             comic.IsDeleted = isDeleted;
+            comic.StorageKey = storageKey;
             return comic;
         }
 
@@ -746,6 +748,30 @@ namespace Fredin.Comic.Data
         private global::System.Boolean _IsDeleted;
         partial void OnIsDeletedChanging(global::System.Boolean value);
         partial void OnIsDeletedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String StorageKey
+        {
+            get
+            {
+                return _StorageKey;
+            }
+            set
+            {
+                OnStorageKeyChanging(value);
+                ReportPropertyChanging("StorageKey");
+                _StorageKey = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("StorageKey");
+                OnStorageKeyChanged();
+            }
+        }
+        private global::System.String _StorageKey;
+        partial void OnStorageKeyChanging(global::System.String value);
+        partial void OnStorageKeyChanged();
 
         #endregion
     

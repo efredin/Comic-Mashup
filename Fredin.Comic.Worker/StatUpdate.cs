@@ -3,37 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Configuration;
-using Fredin.Comic.Web.Models;
 using log4net;
 using Fredin.Comic.Data;
 
-namespace Fredin.Comic.Web
+namespace Fredin.Comic.Worker
 {
-	public class ComicStatUpdate
+	public class StatUpdate
 	{
 		#region [Singelton]
-		private static ComicStatUpdate _instance;
-		public static ComicStatUpdate Instance
+		private static StatUpdate _instance;
+		public static StatUpdate Instance
 		{
 			get
 			{
 				if (_instance == null)
 				{
-					_instance = new ComicStatUpdate();
+					_instance = new StatUpdate();
 				}
 				return _instance;
 			}
 		}
-		static ComicStatUpdate()
+		static StatUpdate()
 		{
-			Log = LogManager.GetLogger(typeof(ComicStatUpdate));
+			Log = LogManager.GetLogger(typeof(StatUpdate));
 		}
 		#endregion
 
 		private static ILog Log { get; set; }
 		private System.Threading.Timer UpdateTimer { get; set; }
 
-		private ComicStatUpdate()
+		private StatUpdate()
 		{
 		}
 
@@ -42,19 +41,14 @@ namespace Fredin.Comic.Web
 			this.UpdateTimer = new System.Threading.Timer(delegate(object state)
 			{
 				// Attempt to find a connection string matching the current namespace
-				ConnectionStringSettings connectionString = ConfigurationManager.ConnectionStrings[typeof(ComicStatUpdate).Namespace];
-				if (connectionString != null)
-				{
-					Log.InfoFormat("Entity context using connection string '{0}'.", this.GetType().Namespace);
-				}
-				else
-				{
-					throw new Exception(String.Format("Unable to find connection string '{0}' for entity context.", typeof(ComicStatUpdate).Namespace));
-				}
-
+				ConnectionStringSettings connectionString = ConfigurationManager.ConnectionStrings["ComicModelContext"];
 				using (ComicModelContext context = new ComicModelContext(connectionString.ConnectionString))
 				{
 					context.UpdateComicStat((int)ComicStat.ComicStatPeriod.AllTime, ComicStat.PeriodToCutoff(ComicStat.ComicStatPeriod.AllTime));
+					context.UpdateComicStat((int)ComicStat.ComicStatPeriod.Year, ComicStat.PeriodToCutoff(ComicStat.ComicStatPeriod.Year));
+					context.UpdateComicStat((int)ComicStat.ComicStatPeriod.Month, ComicStat.PeriodToCutoff(ComicStat.ComicStatPeriod.Month));
+					context.UpdateComicStat((int)ComicStat.ComicStatPeriod.Week, ComicStat.PeriodToCutoff(ComicStat.ComicStatPeriod.Week));
+					context.UpdateComicStat((int)ComicStat.ComicStatPeriod.Day, ComicStat.PeriodToCutoff(ComicStat.ComicStatPeriod.Day));
 				}
 
 			}, null, new TimeSpan(0, 0, 0), new TimeSpan(0, 15, 0));

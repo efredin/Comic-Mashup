@@ -38,19 +38,19 @@
     <ServiceConfiguration Include="ServiceConfiguration.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fredin.Comic.RenderWorker\Fredin.Comic.RenderWorker.csproj">
-      <Name>Fredin.Comic.RenderWorker</Name>
-      <Project>{d884f24e-9f44-48db-940b-68c23b0c2c6a}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>Fredin.Comic.RenderWorker</RoleName>
-    </ProjectReference>
     <ProjectReference Include="..\Fredin.Comic.Web\Fredin.Comic.Web.csproj">
       <Name>Fredin.Comic.Web</Name>
       <Project>{bd63b17e-ced5-470f-b0e8-d0f7ce40c36f}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>Fredin.Comic.Web</RoleName>
+    </ProjectReference>
+    <ProjectReference Include="..\Fredin.Comic.Worker\Fredin.Comic.Worker.csproj">
+      <Name>Fredin.Comic.Worker</Name>
+      <Project>{d884f24e-9f44-48db-940b-68c23b0c2c6a}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Fredin.Comic.Worker</RoleName>
     </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->

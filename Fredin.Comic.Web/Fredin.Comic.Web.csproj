@@ -55,15 +55,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\EcmaScript.NET.modified.dll</HintPath>
     </Reference>
-    <Reference Include="Facebook">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Web">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Web.Mvc">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
@@ -76,8 +67,9 @@
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FacebookSDK\Bin\Release\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -118,11 +110,11 @@
     <Compile Include="ComicMasterPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ComicStatUpdate.cs" />
     <Compile Include="ComicUrlHelper.cs" />
     <Compile Include="Controllers\ComicController.cs" />
     <Compile Include="Controllers\ComicControllerBase.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\JsonActionAttribute.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -138,6 +130,7 @@
     <Compile Include="Models\ClientEffect.cs" />
     <Compile Include="Models\ClientTemplate.cs" />
     <Compile Include="Models\ClientTemplateItem.cs" />
+    <Compile Include="Models\ViewContact.cs" />
     <Compile Include="Models\ViewCreateWizard.cs" />
     <Compile Include="Models\ViewDirectory.cs" />
     <Compile Include="Models\ViewProfile.cs" />
@@ -157,6 +150,7 @@
     <Content Include="bin\Emgu.CV.ML.dll" />
     <Content Include="bin\Emgu.CV.UI.dll" />
     <Content Include="bin\Emgu.Util.dll" />
+    <None Include="Build\Compress-Debug.bat" />
     <None Include="Build\Compress.xml">
       <SubType>Designer</SubType>
     </None>
@@ -309,6 +303,8 @@
     <Content Include="Static\Script\String.js" />
     <Content Include="Static\Script\Views\Comic.CreateWizard.js" />
     <Content Include="Static\Script\Views\Comic.Read.js" />
+    <Content Include="Static\Script\Views\Directory.Directory.js" />
+    <Content Include="Static\Script\Views\Help.Contact.js" />
     <Content Include="Static\Theme\blitzer\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png" />
     <Content Include="Static\Theme\blitzer\images\ui-bg_dots-small_65_a6a6a6_2x2.png" />
     <Content Include="Static\Theme\blitzer\images\ui-bg_flat_0_333333_40x100.png" />
@@ -477,8 +473,13 @@
     <Content Include="Views\Comic\Author.ascx" />
     <Content Include="Views\Comic\ComicList.ascx" />
     <Content Include="Views\Comic\CreateWizard.aspx" />
+    <Content Include="Views\Directory\Paging.ascx" />
+    <Content Include="Views\Directory\Home.aspx" />
     <Content Include="Views\Directory\Directory.aspx" />
     <Content Include="Views\Comic\Read.aspx" />
+    <Content Include="Views\Help\Contact.aspx" />
+    <Content Include="Views\Help\ContactConfirm.aspx" />
+    <Content Include="Views\Help\Faq.aspx" />
     <Content Include="Views\Shared\AdSkyscraper.ascx" />
     <Content Include="Views\Shared\Error.aspx" />
     <Content Include="Views\Shared\Web.Master" />
@@ -507,6 +508,18 @@
     <Folder Include="Static\Icon\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook.Web.Mvc\Facebook.Web.Mvc.csproj">
+      <Project>{7DC5C10F-E871-4202-9014-0F958358389E}</Project>
+      <Name>Facebook.Web.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook.Web\Facebook.Web.csproj">
+      <Project>{73333465-710D-4143-BA9B-201D90EE2BAF}</Project>
+      <Name>Facebook.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook\Facebook.csproj">
+      <Project>{857E540C-0092-4590-A279-F98A6B77AC0A}</Project>
+      <Name>Facebook</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\log4net-1.2.10\src\log4net.csproj">
       <Project>{F6A02431-167E-4347-BC43-65532C31CDB7}</Project>
       <Name>log4net</Name>

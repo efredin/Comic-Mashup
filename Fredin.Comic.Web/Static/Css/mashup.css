@@ -15,7 +15,6 @@ a img, a:active img, a:hover img
 }
 a, a:active, a:visited
 {
-	border: 0;
 	color: #046A99;
 	text-decoration: none;
 	font-weight: bold;
@@ -69,6 +68,7 @@ input, textarea
 	color: #404040;
 	margin: 0;
 	padding: 3px 0;
+	font-family: "Lucida Grande", "Lucida Sans", Arial, sans-serif;
 }
 
 /*********************
@@ -118,25 +118,15 @@ input, textarea
 	width: 960px;
 	margin: 0 auto;
 	background: #EDEDED;
-	z-index: 101;
 }
 #menubar ul
 {
-	list-style: none;
-	margin: 0;
-	padding: 2px 8px;
 	font-size: 1.1em;
 }
 #menubar li
 {
-	position: relative;
-	display: inline-block;
 	padding: 8px 12px;
 	background: #EDEDED;
-	border: 1px solid transparent;
-	vertical-align: middle; 
-	zoom: 1; 
-	*display: inline;
 }
 #menubar li.active
 {
@@ -146,7 +136,6 @@ input, textarea
 #menubar a
 {
 	color: #57678B;
-	text-decoration: none;
 }
 #menubar li.active a, #menubar li.active a:hover
 {
@@ -154,32 +143,18 @@ input, textarea
 }
 #menubar ul li a span.ui-icon
 {
-	display: inline-block;
-	vertical-align: middle; 
-	zoom: 1; 
-	*display: inline;
 }
 #menubar ul li div
 {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	padding: 4px 0;
-	border: 1px solid #06416B;
-	background: #EDEDED;
 	font-size: 0.9em;
 }
 #menubar ul li.active div
 {
-	display: inline-block;
-	zoom: 1; 
-	*display: inline;
-	z-index: 100;
+	color: #404040;
 }
 #menubar ul li.active div a
 {
-	color: #404040;
-	text-decoration: none;
+	color: #57678B;
 }
 #menubar ul li.active div a:hover
 {
@@ -188,21 +163,14 @@ input, textarea
 }
 #menubar ul li.active div ul
 {
-	list-style: none;
 	font-size: 1.0em;
-	width: 100%;
-	padding: 2px 0;
 }
 #menubar ul li.active div ul li
 {
-	display: block;
-	padding: 4px 12px;
 }
 #menubar ul li.active div ul li:hover 
 {
-	background: transparent;
 }
-
 #search
 {
 	position: absolute;
@@ -348,11 +316,89 @@ input, textarea
 /*****************
 * Mashup Classes *
 *****************/
+.menu
+{
+	z-index: 101;
+}
+.menu ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 2px 8px;
+}
+.menu li
+{
+	position: relative;
+	display: inline-block;
+	border: 1px solid transparent;
+	vertical-align: middle; 
+	zoom: 1; 
+	*display: inline;
+}
+.menu li.active
+{
+}
+.menu a
+{
+	text-decoration: none;
+}
+.menu li.active a, .menu li.active a:hover
+{
+}
+.menu ul li a span.ui-icon
+{
+	display: inline-block;
+	vertical-align: middle; 
+	zoom: 1; 
+	*display: inline;
+}
+.menu ul li div
+{
+	position: absolute;
+	top: 100%;
+	left: 0;
+	padding: 4px 0;
+	border: 1px solid #06416B;
+	background: #EDEDED;
+}
+.menu ul li.active div
+{
+	display: inline-block;
+	zoom: 1; 
+	*display: inline;
+	z-index: 100;
+	text-decoration: none;
+}
+.menu ul li.active div a
+{
+}
+.menu ul li.active div a:hover
+{
+}
+.menu ul li.active div ul
+{
+	list-style: none;
+	width: 100%;
+	padding: 2px 0;
+}
+.menu ul li.active div ul li
+{
+	display: block;
+	padding: 2px 12px;
+}
+.menu ul li.active div ul li:hover 
+{
+	background: transparent;
+}
 .menu-directory
 {
 	width: 120px;
 }
 .menu-help
+{
+	width: 120px;
+}
+.menu-misc
 {
 	width: 120px;
 }

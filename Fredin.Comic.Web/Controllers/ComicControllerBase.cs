@@ -4,18 +4,17 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web.Security;
 using System.Web.Mvc;
-
-using log4net;
+using System.Web.Security;
 using Facebook;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.StorageClient;
-
+using Facebook.Web;
 using Fredin.Comic.Config;
+using Fredin.Comic.Data;
 using Fredin.Comic.Web.Models;
 using Fredin.Util;
-using Fredin.Comic.Data;
+using log4net;
+using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.StorageClient;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -84,12 +83,13 @@ namespace Fredin.Comic.Web.Controllers
 
 		#endregion
 
-		#region [Azure Storage]
+		#region [Azure Services]
 
 		protected CloudStorageAccount StorageAccount { get; set; }
 		protected CloudBlobClient BlobClient { get; set; }
+		protected CloudQueueClient QueueClient { get; set; }
 
-		protected virtual void InitStorage()
+		protected virtual void InitAzure()
 		{
 #if DEBUG
 			this.StorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
@@ -99,6 +99,9 @@ namespace Fredin.Comic.Web.Controllers
 
 			this.BlobClient = this.StorageAccount.CreateCloudBlobClient();
 			this.BlobClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
+
+			this.QueueClient = this.StorageAccount.CreateCloudQueueClient();
+			this.QueueClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
 		}
 
 		#endregion
@@ -127,6 +130,9 @@ namespace Fredin.Comic.Web.Controllers
 		public const string KEY_ACTIVE_USER = "user";
 		public const string KEY_FRIENDS = "friends";
 
+		/// <summary>
+		/// Active session user. Guest users will return null
+		/// </summary>
 		protected virtual User ActiveUser
 		{
 			get { return this.Session[KEY_ACTIVE_USER] as User; }
@@ -149,17 +155,17 @@ namespace Fredin.Comic.Web.Controllers
 		{
 			try
 			{
-				if (this.Facebook.AccessToken != null)//&& this.Facebook.UserId > 0)
+				if(FacebookWebContext.Current.IsAuthenticated())
 				{
-					if (this.ActiveUser == null || (this.ActiveUser != null && this.Facebook.UserId != this.ActiveUser.Uid))
+					if (this.ActiveUser == null || (this.ActiveUser != null && this.Facebook.Session.UserId != this.ActiveUser.Uid))
 					{
 						// Load user details into session
-						this.ActiveUser = this.EntityContext.TryGetUser(this.Facebook.UserId);
+						this.ActiveUser = this.EntityContext.TryGetUser(this.Facebook.Session.UserId);
 						if (this.ActiveUser == null)
 						{
 							// User not yet created - Create the user
 							this.ActiveUser = new User();
-							this.ActiveUser.Uid = this.Facebook.UserId;
+							this.ActiveUser.Uid = this.Facebook.Session.UserId;
 
 							this.EntityContext.AddToUsers(this.ActiveUser);
 						}
@@ -255,7 +261,7 @@ namespace Fredin.Comic.Web.Controllers
 			this.Log = LogManager.GetLogger(this.GetType());
 
 			this.InitEntityContext();
-			this.InitStorage();
+			this.InitAzure();
 			this.InitFacebook();
 			this.InitActiveUser();
 		}

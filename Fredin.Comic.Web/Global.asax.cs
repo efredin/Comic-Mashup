@@ -9,6 +9,10 @@ using System.Web.Mvc;
 using log4net.Config;
 using log4net.Appender;
 using Microsoft.WindowsAzure.StorageClient;
+using Microsoft.WindowsAzure;
+using System.Configuration;
+using Fredin.Comic.Config;
+using log4net;
 
 namespace Fredin.Comic.Web
 {
@@ -36,15 +40,15 @@ namespace Fredin.Comic.Web
 			routes.MapRoute
 			(
 				"Directory",
-				"Directory/{action}/{period}",
-				new { controller = "Directory", action = "BestOverall", period = UrlParameter.Optional }
+				"Directory/{action}/{period}/{page}",
+				new { controller = "Directory", action = "BestOverall", period = UrlParameter.Optional, page = UrlParameter.Optional }
 			);
 
 			routes.MapRoute
 			(
 				"Default",
 				"{controller}/{action}",
-				new { controller = "Directory", action = "BestOverall" }
+				new { controller = "Directory", action = "Home" }
 			);
 		}
 
@@ -58,6 +62,24 @@ namespace Fredin.Comic.Web
 			appender.Layout = new log4net.Layout.PatternLayout("%date [%thread] %-5level %logger [%property{NDC}] - %message%newline");
 			appender.ActivateOptions();
 			BasicConfigurator.Configure(appender);
+
+			//ILog log = LogManager.GetLogger(typeof(Global));
+
+			//// Ensure storage is initialized
+			//log.Info("Initializing azure storage containers");
+			//CloudStorageAccount account = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["ComicStorage"].ConnectionString);
+			//CloudBlobClient blobClient = account.CreateCloudBlobClient();
+
+			//// Render Container
+			//CloudBlobContainer renderContainer = blobClient.GetContainerReference(ComicConfigSectionGroup.Blob.RenderContainer);
+			//renderContainer.CreateIfNotExist();
+			//BlobContainerPermissions renderPermission = new BlobContainerPermissions();
+			//renderPermission.PublicAccess = BlobContainerPublicAccessType.Container;
+			//renderContainer.SetPermissions(renderPermission);
+
+			//// Task Container
+			//CloudBlobContainer taskContainer = blobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			//renderContainer.CreateIfNotExist();
 		}
 
 		protected void Session_Start(object sender, EventArgs e)
@@ -66,27 +88,23 @@ namespace Fredin.Comic.Web
 
 		protected void Application_BeginRequest(object sender, EventArgs e)
 		{
-
+			HttpContext.Current.Response.AddHeader("p3p", "CP=\"CAO PSA OUR\"");
 		}
 
 		protected void Application_AuthenticateRequest(object sender, EventArgs e)
 		{
-
 		}
 
 		protected void Application_Error(object sender, EventArgs e)
 		{
-
 		}
 
 		protected void Session_End(object sender, EventArgs e)
 		{
-
 		}
 
 		protected void Application_End(object sender, EventArgs e)
 		{
-
 		}
 	}
 }

@@ -42,7 +42,7 @@
 			</div>
 
 			<%--Logo--%>
-			<img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup.png") %>" alt="Comic Mashup" />
+			<a href="<%= this.Url.Action("Home", "Directory") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup.png") %>" alt="Comic Mashup" /></a>
 
 		</div>
     </div>
@@ -50,7 +50,7 @@
         <div id="titlebar">
 
 			<%--Navigation--%>
-            <div id="menubar" class="ui-corner-all">
+            <div id="menubar" class="ui-corner-all menu">
 				<ul>
 					<li>
 						<a href="<%= this.Url.Action("BestOverall", "Directory") %>">Browse</a>
@@ -60,7 +60,6 @@
 								<li><a href="<%= this.Url.Action("Funniest", "Directory") %>">Funniest</a></li>
 								<li><a href="<%= this.Url.Action("Smartest", "Directory") %>">Smartest</a></li>
 								<li><a href="<%= this.Url.Action("MostRandom", "Directory") %>">Most Random</a></li>
-								<li><a href="#">Newest</a></li>
 							</ul>
 						</div>
 					</li>
@@ -71,17 +70,18 @@
 						<a href="<%= this.Url.Content("~/User/Profile") %>">Profile</a>
 					</li>
 					<li>
-						<a href="#">Help</a>
+						<a href="<%= this.Url.Action("Faq", "Help") %>">Help</a>
 						<div class="ui-helper-hidden menu-help">
 							<ul>
-								<li><a href="#">FAQs</a></li>
-								<li><a href="#">Contact Us</a></li>
+								<li><a href="<%= this.Url.Action("Faq", "Help") %>">FAQ</a></li>
+								<li><a href="<%= this.Url.Action("Contact", "Help") %>">Contact Us</a></li>
 							</ul>
 						</div>
 					</li>
 				</ul>
-				<form id="search">
-					<input id="search-text" name="query" type="text" />
+				
+				<form id="search" method="post" action="<%= this.Url.Action("Search", "Directory") %>">
+					<input id="search-text" name="search" type="text" />
 					<button id="search-go" type="submit"></button>
 				</form>
 			</div>
@@ -94,7 +94,7 @@
 	<script type="text/javascript">
 	appOptions =
 	{
-		appId: '<%= FacebookSettings.Current.AppId %>',
+		appId: '<%= ComicConfigSectionGroup.Facebook.AppId %>',
 		permissions: '<%= ComicConfigSectionGroup.Facebook.Permissions %>',
 		cookieSupport: <%= ComicConfigSectionGroup.Facebook.CookieSupport ? "true" : "false" %>,
 		useXfbml: <%= ComicConfigSectionGroup.Facebook.UseXfbml ? "true" : "false" %>,
@@ -113,13 +113,11 @@
 	</div>
 
 	<%-- Footer --%>
-	<div id="footer-wrapper">
+	<%--<div id="footer-wrapper">
 		<div id="footer">
-		
-			<%-- FB Like Button --%>
 			<div id="footer-like"><fb:like href="" layout="box_count" show_faces="false" width="450" font=""></fb:like></div>
 		</div>
-	</div>
+	</div>--%>
 	<div id="footer2-wrapper">
 		<div id="footer2">
 			<div id="attribution">
@@ -143,7 +141,7 @@
 
 	<%-- Facebook Connect --%>
 	<div id="fb-root"></div>
-	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js#appId=<%= FacebookSettings.Current.AppId %>&amp;xfbml=1"></script>
+	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
 
 	<asp:ContentPlaceHolder id="cphScript" runat="server">
 		<script type="text/javascript">

@@ -19,6 +19,8 @@ namespace Fredin.Comic.Web.Models
 		public long TemplateId { get; set; }
 		public List<RenderFrame> Frames { get; set; }
 
+		public ClientComic Comic { get; set; }
+
 		public ClientRenderTask(RenderTask source)
 		{
 			this.TaskId = source.TaskId;

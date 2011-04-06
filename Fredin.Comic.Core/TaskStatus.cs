@@ -7,9 +7,9 @@ namespace Fredin.Comic
 {
 	public enum TaskStatus
 	{
-		Pending,
 		Queued,
 		Executing,
-		Complete
+		Complete,
+		Failed
 	}
 }

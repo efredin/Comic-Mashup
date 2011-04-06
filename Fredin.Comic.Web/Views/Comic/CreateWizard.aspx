@@ -12,7 +12,7 @@
 
 	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
 
-	<div id="wizardCreate" class="box">
+	<div id="wizardCreate" class="box content764">
 		<div id="wizardLoad"></div>
 		<div id="wizardContent" class="ui-wizard">
 			<div id="wizardTitle" class="ui-wizard-title">
@@ -81,11 +81,11 @@
 				</div>
 			</div>
 			<div id="stepRender" class="ui-wizard-step ui-wizard-navPad">
-				<a class='ui-wizard-back'>Back</a>
 				<div id="renderLoad">
 					Your comic is being created - This may take a moment . . .
 				</div>
 				<div id="renderContent">
+					<a class='ui-wizard-back'>Back</a>
 					<h2>Your comic has been created</h2>
 					Publish your comic to share it with your friends, or refresh to make another.<br /><br />
 					<a id="buttonPublish">Publish</a>
@@ -125,7 +125,6 @@
 	<script type="text/javascript">
 	appOptions.templates = <%= new JavaScriptSerializer().Serialize(this.Model.Templates) %>;
 	appOptions.effects = <%= new JavaScriptSerializer().Serialize(this.Model.Effects) %>;
-	appOptions.taskBaseHref = '<%= ComicUrlHelper.GetTaskUrl("") %>';
 	Comic.CreateWizard(appOptions);
 	</script>
 

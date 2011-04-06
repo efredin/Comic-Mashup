@@ -75,38 +75,32 @@ namespace Fredin.Comic.Web
 
 		public static string GetRenderUrl(Fredin.Comic.Data.Comic comic, RenderMode render)
 		{
-			StorageConfigSection storage = ComicConfigSectionGroup.Storage;
+			BlobConfigSection storage = ComicConfigSectionGroup.Blob;
 
-			string prefix;
+			string directory;
 			switch(render)
 			{
 				case RenderMode.Comic:
 				default:
-					prefix = storage.ComicPrefix;
+					directory = storage.ComicDirectory;
 					break;
 
 				case RenderMode.Frame:
-					prefix = storage.FramePrefix;
+					directory = storage.FrameDirectory;
 					break;
 
 				case RenderMode.Thumb:
-					prefix = storage.ThumbPrefix;
+					directory = storage.ThumbDirectory;
 					break;
 
 				case RenderMode.FrameThumb:
-					prefix = storage.FrameThumbPrefix;
+					directory = storage.FrameThumbDirectory;
 					break;
 			}
 
-			string url = String.Format("{0}{1}", prefix, comic.ComicId);
+			string url = String.Format("{0}{1}", directory, comic.StorageKey);
 			Uri renderUri = new Uri(new Uri(ComicConfigSectionGroup.Web.RenderBaseUrl), url);
 			return renderUri.AbsoluteUri;
-		}
-
-		public static string GetTaskUrl(string taskId)
-		{
-			Uri taskUrl = new Uri(new Uri(ComicConfigSectionGroup.Web.TaskBaseUrl), taskId);
-			return taskUrl.AbsoluteUri;
 		}
 
 		#endregion

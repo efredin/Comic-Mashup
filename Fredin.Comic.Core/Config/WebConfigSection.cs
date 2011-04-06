@@ -21,13 +21,6 @@ namespace Fredin.Comic.Config
 			set { this["renderBaseUrl"] = value; }
 		}
 
-		[ConfigurationProperty("taskBaseUrl", IsRequired = true)]
-		public string TaskBaseUrl
-		{
-			get { return (string)this["taskBaseUrl"]; }
-			set { this["taskBaseUrl"] = value; }
-		}
-
 		[ConfigurationProperty("trackerId", IsRequired = true)]
 		public string TrackerId
 		{

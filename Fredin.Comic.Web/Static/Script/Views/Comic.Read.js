@@ -34,10 +34,24 @@
 						offset: "0 0"
 					}
 				});
+
+				// Get comment count
+				FB.api('/?&ids=' + this.options.comic.ReadUrl, function (response)
+				{
+					if (!response || response.error)
+					{
+						console.info('Unable to retrieve comment count from facebook');
+					}
+					else
+					{
+						$('#commentCount').html(response[self.options.comic.ReadUrl].comments);
+					}
+				});
 			},
 
 			rate: function (source, action)
 			{
+				var self = this;
 				this.requestConnect(false, function ()
 				{
 					var count = $('.readerCount', 'label[for=' + source.id + ']').text();
@@ -61,12 +75,12 @@
 
 					$('.readerCount', 'label[for=' + source.id + ']').text(count <= 0 ? '-' : count);
 
-					var args = { comicId: this.options.comic.ComicId };
+					var args = { comicId: self.options.comic.ComicId };
 					$.ajax(
 					{
 						dataType: 'json',
 						type: 'POST',
-						url: this.options.baseHref + 'Comic/' + action,
+						url: self.options.baseHref + 'Comic/' + action,
 						data: $.postify(args)
 					});
 				});

@@ -9,7 +9,7 @@
       </Site>
     </Sites>
     <Endpoints>
-      <InputEndpoint name="http" protocol="http" port="8080" />
+      <InputEndpoint name="http" protocol="http" port="80" />
     </Endpoints>
     <Imports>
       <Import moduleName="Diagnostics" />
@@ -19,7 +19,7 @@
     <ConfigurationSettings>
     </ConfigurationSettings>
   </WebRole>
-  <WorkerRole name="Fredin.Comic.RenderWorker" vmsize="ExtraSmall">
+  <WorkerRole name="Fredin.Comic.Worker" vmsize="ExtraSmall">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>

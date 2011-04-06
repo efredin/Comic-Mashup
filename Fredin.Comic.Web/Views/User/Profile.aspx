@@ -14,22 +14,10 @@
 	
 	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
 
-	<div id="profile">
-
-		
-
+	<div id="profile" class="content800">
 		<div id="profile-comics">
 			<%= Html.Partial("~/Views/Comic/ComicList.ascx", Model.Comics) %>
 		</div>
-
-		<div class="columnRight">
-			<p class="wideskyscraper">Ad Here</p>
-		</div>
-
 	</div>
-
-	<script type="text/javascript">
-	appOptions.menuSelected = 2;
-	</script>
 
 </asp:Content>

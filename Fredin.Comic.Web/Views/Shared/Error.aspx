@@ -2,7 +2,7 @@
 
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Error | Comic Mashup</asp:Content>
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Error</asp:Content>
-<asp:Content ID="Content1" ContentPlaceHolderID="cphCanvas" runat="server">
+<asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
     <h1>Error</h1>
 	<%: Model.Exception.Message %>

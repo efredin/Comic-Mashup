@@ -21,22 +21,35 @@ namespace Fredin.Comic.Data
 
 		#region [Comic]
 
-		public IQueryable<Comic> ListPublishedComics(User reader, List<long> friends)
+		public IQueryable<Comic> ListPublishedComics(User reader, List<long> friends, ComicStat.ComicStatPeriod period)
 		{
+			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
+
 			return this.Comics
-				.Where(c => c.IsPublished)
+				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff)
 				.FilterComicVisibility(reader, friends);
 				//.IncludeAuthor()
 				//.IncludeStats();
 		}
 
-		public IQueryable<Comic> ListPublishedComics(User author, User reader, bool isFriend)
+		public IQueryable<Comic> ListPublishedComics(User author, User reader, bool isFriend, ComicStat.ComicStatPeriod period)
 		{
+			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
+
 			return this.Comics
-				.Where(c => c.IsPublished)
+				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff)
 				.FilterComicVisibility(reader, isFriend);
 				//.IncludeAuthor()
 				//.IncludeStats();
+		}
+
+		public IQueryable<Comic> SearchPublishedComics(string search, User reader, List<long> friends, ComicStat.ComicStatPeriod period)
+		{
+			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
+
+			return this.Comics
+				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff && (c.Title.Contains(search) || c.Description.Contains(search)))
+				.FilterComicVisibility(reader, friends);
 		}
 
 		public IQueryable<Comic> ListFeaturedComics(User reader)

@@ -17,8 +17,9 @@ using System.Net;
 using System.IO;
 using log4net;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
-namespace Fredin.Comic.RenderWorker
+namespace Fredin.Comic.Worker
 {
 	public sealed class RenderTaskManager
 	{
@@ -39,21 +40,21 @@ namespace Fredin.Comic.RenderWorker
 		private RenderTaskManager()
 		{
 			this.ExecuteMutex = new Mutex();
-			this.TaskMutex = new Mutex();
 
 			this.Log = LogManager.GetLogger(typeof(RenderTaskManager));
 			this.InitEntityContext();
-			this.InitStorage();
+			this.InitAzure();
 		}
 
 		#endregion
 
-		#region [Azure Storage]
+		#region [Azure Services]
 
 		private CloudStorageAccount StorageAccount { get; set; }
 		private CloudBlobClient BlobClient { get; set; }
+		private CloudQueueClient QueueClient { get; set; }
 
-		private void InitStorage()
+		private void InitAzure()
 		{
 #if DEBUG
 			this.StorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
@@ -63,6 +64,9 @@ namespace Fredin.Comic.RenderWorker
 
 			this.BlobClient = this.StorageAccount.CreateCloudBlobClient();
 			this.BlobClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
+
+			this.QueueClient = this.StorageAccount.CreateCloudQueueClient();
+			this.QueueClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
 		}
 
 		#endregion
@@ -84,12 +88,16 @@ namespace Fredin.Comic.RenderWorker
 		private ILog Log { get; set; }
 		private bool IsExecuting { get; set; }
 		private Mutex ExecuteMutex { get; set; }
-		private Mutex TaskMutex { get; set; }
 		private Timer ExecuteTimer { get; set; }
-		private List<RenderTask> Tasks { get; set; }
 
 		public void Start()
 		{
+			CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.RenderTaskQueue);
+			queue.CreateIfNotExist();
+
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			container.CreateIfNotExist();
+
 			this.ExecuteTimer = new Timer(new TimerCallback(this.Execute), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5));
 		}
 
@@ -111,22 +119,24 @@ namespace Fredin.Comic.RenderWorker
 
 			if (execute)
 			{
-				this.LoadTasks();
-
-				// Use thread pooling to queue up all the pending tasks
-				this.TaskMutex.WaitOne();
-				foreach (RenderTask task in this.Tasks)
+				this.Log.DebugFormat("Executing");
+				try
 				{
-					if (task.Status == TaskStatus.Pending)
-					{
-						task.Status = TaskStatus.Queued;
-						ThreadPool.QueueUserWorkItem(new WaitCallback(this.ExecuteTask), task);
-						this.UpdateTask(task);
-					}
-				}
-				this.TaskMutex.ReleaseMutex();
+					// Pop a task off the queue
+					CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.RenderTaskQueue);
 
-				this.CleanupTasks();
+					foreach(CloudQueueMessage message in queue.GetMessages(10))
+					{
+						ThreadPool.QueueUserWorkItem(new WaitCallback(this.ExecuteTask), message);
+						queue.DeleteMessage(message);
+					}
+
+					this.CleanupTasks();
+				}
+				catch(Exception x)
+				{
+					this.Log.Error("Failed to execute.", x);
+				}
 
 				this.ExecuteMutex.WaitOne();
 				this.IsExecuting = false;
@@ -134,92 +144,71 @@ namespace Fredin.Comic.RenderWorker
 			}
 		}
 
-		/// <summary>
-		/// Load tasks from storage and merge with existing task list
-		/// </summary>
-		private void LoadTasks()
-		{
-			this.TaskMutex.WaitOne();
-
-			JavaScriptSerializer serializer = new JavaScriptSerializer();
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.TaskContainer);
-			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Storage.RenderTaskDirectory);
-			foreach (IListBlobItem item in directory.ListBlobs())
-			{
-				if (item is CloudBlob && this.Tasks.FirstOrDefault(t => t.TaskId.ToString() == item.Uri.Segments.Last()) == null)
-				{
-					CloudBlob blob = (CloudBlob)item;
-					RenderTask task = serializer.Deserialize<RenderTask>(blob.DownloadText());
-					this.Tasks.Add(task);
-				}
-			}
-
-			this.TaskMutex.ReleaseMutex();
-		}
-
 		private void CleanupTasks()
 		{
-			this.TaskMutex.WaitOne();
-
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.TaskContainer);
-			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Storage.RenderTaskDirectory);
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
 			foreach (IListBlobItem item in directory.ListBlobs())
 			{
 				if (item is CloudBlob)
 				{
 					CloudBlob blob = (CloudBlob)item;
-					DateTime modified;
-					DateTime.TryParse(blob.Metadata["Last-Modified"], out modified);
-					if (modified <= DateTime.Now.AddMinutes(20))
+					if (blob.Properties.LastModifiedUtc.AddMinutes(10) < DateTime.UtcNow)
 					{
 						blob.DeleteIfExists();
 					}
 				}
 			}
-
-			this.TaskMutex.ReleaseMutex();
 		}
 
 		private void UpdateTask(RenderTask task)
 		{
-			this.TaskMutex.WaitOne();
 			try
 			{
-				CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.TaskContainer);
-				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Storage.RenderTaskDirectory);
+				CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
 				CloudBlob progressBlob = directory.GetBlobReference(task.TaskId.ToString());
-				progressBlob.UploadText(new JavaScriptSerializer().Serialize(task));
+				progressBlob.UploadText(task.ToXml());
 			}
 			catch (Exception x)
 			{
 				this.Log.Error("Unable to update render progress", x);
 			}
-			this.TaskMutex.ReleaseMutex();
 		}
 
 		private void RemoveTask(RenderTask task)
 		{
-			this.TaskMutex.WaitOne();
-
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.TaskContainer);
-			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Storage.RenderTaskDirectory);
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
 			CloudBlob blob = directory.GetBlobReference(task.TaskId.ToString());
 			blob.DeleteIfExists();
-			this.Tasks.Remove(task);
-
-			this.TaskMutex.ReleaseMutex();
 		}
 
 		private void ExecuteTask(object state)
 		{
-			RenderTask task = (RenderTask)state;
-			task.Status = TaskStatus.Executing;
-			this.UpdateTask(task);
-
+			CloudQueueMessage queueMessage = (CloudQueueMessage)state;
+			this.Log.DebugFormat("Executing render task {0}", queueMessage.AsString);
 			Data.Comic comic = null;
+			RenderTask task = null;
 
 			try
 			{
+				// Read task details from storage
+				CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.RenderTaskDirectory);
+				CloudBlob blob = directory.GetBlobReference(queueMessage.AsString);
+
+				XmlSerializer serializer = new XmlSerializer(typeof(RenderTask));
+
+				using(MemoryStream stream = new MemoryStream())
+				{
+					blob.DownloadToStream(stream);
+					stream.Seek(0, SeekOrigin.Begin);
+					task = (RenderTask)serializer.Deserialize(stream);
+					task.Status = TaskStatus.Executing;
+					this.UpdateTask(task);
+				}
+
 				User user = this.EntityContext.TryGetUser(task.OwnerUid);
 
 				FacebookApp facebook = new FacebookApp(task.FacebookToken);
@@ -248,6 +237,7 @@ namespace Fredin.Comic.RenderWorker
 				comic.IsPublished = false;
 				comic.IsPrivate = false;
 				comic.IsDeleted = false;
+				comic.StorageKey = Guid.NewGuid().ToString();
 
 				// Comic generator only used to size text
 				ComicGenerator generator = new ComicGenerator(template.Width, template.Height);
@@ -267,48 +257,62 @@ namespace Fredin.Comic.RenderWorker
 					// Tagged facebook photos
 					if (task.PhotoSource == "Tagged")
 					{
-						// List photos of the user
-						Dictionary<string, object> args = new Dictionary<string, object>();
-						args.Add("limit", "50");
-
-						dynamic photoResult = facebook.Get(String.Format("/{0}/photos", task.Frames[f].Id), args);
-
-						if (photoResult.data.Count > 0)
+						try
 						{
-							// Pick a random photo with only 1 tagged person
-							dynamic photoData = ((IList<dynamic>)photoResult.data)
-								.OrderBy(p => Guid.NewGuid())
-								.FirstOrDefault(p => p.tags.data.Count <= 3);
+							// List photos of the user
+							Dictionary<string, object> args = new Dictionary<string, object>();
+							args.Add("limit", "50");
 
-							if (photoData != null)
+							dynamic photoResult = facebook.Get(String.Format("/{0}/photos", task.Frames[f].Id), args);
+
+							if (photoResult.data.Count > 0)
 							{
-								imageUrl = (string)photoData.source;
+								// Pick a random photo with only 1 tagged person
+								dynamic photoData = ((IList<dynamic>)photoResult.data)
+									.OrderBy(p => Guid.NewGuid())
+									.FirstOrDefault(p => p.tags.data.Count <= 3);
 
-								// Look for user tag location
-								int id;
-								dynamic tagData = ((IList<dynamic>)photoData.tags.data)
-									.FirstOrDefault(t => int.TryParse(t.id, out id) && id == task.Frames[f].Id);
-
-								if (tagData != null)
+								if (photoData != null)
 								{
-									tag = new Point((int)Math.Round((double)tagData.x), (int)Math.Round((double)tagData.y));
+									imageUrl = (string)photoData.source;
+
+									// Look for user tag location
+									int id;
+									dynamic tagData = ((IList<dynamic>)photoData.tags.data)
+										.FirstOrDefault(t => int.TryParse(t.id, out id) && id == task.Frames[f].Id);
+
+									if (tagData != null)
+									{
+										tag = new Point((int)Math.Round((double)tagData.x), (int)Math.Round((double)tagData.y));
+									}
 								}
 							}
+						}
+						catch (Exception x)
+						{
+							this.Log.Error("Unable to retrieve tagged photo from facebook.", x);
 						}
 					}
 
 					// Look for any photo of the user
 					else// if(photoSource == "Any")
 					{
-						FaceRestAPI faceApi = this.CreateFaceApi(facebook);
-						List<string> ids = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
-						FaceRestAPI.FaceAPI anyResult = faceApi.facebook_get(ids, null, "1", null, "random");
-
-						if (anyResult.status == "success" && anyResult.photos.Count > 0)
+						try
 						{
-							FaceRestAPI.Photo p = anyResult.photos[0];
-							imageUrl = p.url;
-							tag = new Point((int)Math.Round(p.tags.First().mouth_center.x), (int)Math.Round(p.tags.First().mouth_center.y));
+							FaceRestAPI faceApi = this.CreateFaceApi(facebook);
+							List<string> ids = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
+							FaceRestAPI.FaceAPI anyResult = faceApi.facebook_get(ids, null, "1", null, "random");
+
+							if (anyResult.status == "success" && anyResult.photos.Count > 0)
+							{
+								FaceRestAPI.Photo p = anyResult.photos[0];
+								imageUrl = p.url;
+								tag = new Point((int)Math.Round(p.tags.First().mouth_center.x), (int)Math.Round(p.tags.First().mouth_center.y));
+							}
+						}
+						catch (Exception x)
+						{
+							this.Log.Error("Unable to retrieve photo through face.com api.", x);
 						}
 					}
 
@@ -403,15 +407,20 @@ namespace Fredin.Comic.RenderWorker
 				}
 
 				this.SaveComic(comic);
+
+				task.Status = TaskStatus.Complete;
+				task.ComicId = comic.ComicId;
+				this.UpdateTask(task);
 			}
 			catch (Exception x)
 			{
 				this.Log.Error("Unable to complete render task.", x);
-			}
-			finally
-			{
-				task.Status = TaskStatus.Complete;
-				this.UpdateTask(task);
+
+				if (task != null)
+				{
+					task.Status = TaskStatus.Failed;
+					this.UpdateTask(task);
+				}
 			}
 		}
 
@@ -636,7 +645,7 @@ namespace Fredin.Comic.RenderWorker
 			this.EntityContext.SaveChanges();
 
 			// Storage container for all renders
-			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Storage.RenderContainer);
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.RenderContainer);
 
 			// Push full size comic to render storage
 			using (MemoryStream comicStream = new MemoryStream())
@@ -644,20 +653,22 @@ namespace Fredin.Comic.RenderWorker
 				generator.ComicImage.Save(comicStream, System.Drawing.Imaging.ImageFormat.Jpeg);
 				comicStream.Seek(0, SeekOrigin.Begin);
 
-				string comicPath = String.Format("{0}{1}", ComicConfigSectionGroup.Storage.ComicPrefix, comic.ComicId);
-				CloudBlob comicBlob = container.GetBlobReference(comicPath);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.ComicDirectory);
+				CloudBlob comicBlob = directory.GetBlobReference(comic.StorageKey);
+				comicBlob.Properties.ContentType = "image/jpeg";
 				comicBlob.UploadFromStream(comicStream);
 			}
 
 			// Push thumb comic
 			using (MemoryStream thumbStream = new MemoryStream())
 			{
-				ComicGenerator.CropImage(new Size(350, 109), generator.GenerateThumb(350), ComicGenerator.ImageAlign.Top)
+				ComicGenerator.CropImage(new Size(364, 113), generator.GenerateThumb(364), ComicGenerator.ImageAlign.Top)
 					 .Save(thumbStream, System.Drawing.Imaging.ImageFormat.Jpeg);
 				thumbStream.Seek(0, SeekOrigin.Begin);
 
-				string thumbPath = String.Format("{0}{1}", ComicConfigSectionGroup.Storage.ThumbPrefix, comic.ComicId);
-				CloudBlob thumbBlob = container.GetBlobReference(thumbPath);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.ThumbDirectory);
+				CloudBlob thumbBlob = directory.GetBlobReference(comic.StorageKey);
+				thumbBlob.Properties.ContentType = "image/jpeg";
 				thumbBlob.UploadFromStream(thumbStream);
 			}
 
@@ -667,8 +678,9 @@ namespace Fredin.Comic.RenderWorker
 				frameGenerator.ComicImage.Save(frameStream, System.Drawing.Imaging.ImageFormat.Jpeg);
 				frameStream.Seek(0, SeekOrigin.Begin);
 
-				string framePath = String.Format("{0}{1}", ComicConfigSectionGroup.Storage.FramePrefix, comic.ComicId);
-				CloudBlob frameBlob = container.GetBlobReference(framePath);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.FrameDirectory);
+				CloudBlob frameBlob = directory.GetBlobReference(comic.StorageKey);
+				frameBlob.Properties.ContentType = "image/jpeg";
 				frameBlob.UploadFromStream(frameStream);
 			}
 
@@ -678,15 +690,16 @@ namespace Fredin.Comic.RenderWorker
 				frameGenerator.GenerateThumb(150).Save(frameThumbStream, System.Drawing.Imaging.ImageFormat.Jpeg);
 				frameThumbStream.Seek(0, SeekOrigin.Begin);
 
-				string frameThumbPath = String.Format("{0}{1}", ComicConfigSectionGroup.Storage.FrameThumbPrefix, comic.ComicId);
-				CloudBlob frameThumbBlob = container.GetBlobReference(frameThumbPath);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.FrameThumbDirectory);
+				CloudBlob frameThumbBlob = directory.GetBlobReference(comic.StorageKey);
+				frameThumbBlob.Properties.ContentType = "image/jpeg";
 				frameThumbBlob.UploadFromStream(frameThumbStream);
 			}
 		}
 
 		private FaceRestAPI CreateFaceApi(FacebookApp facebook)
 		{
-			return new FaceRestAPI(ComicConfigSectionGroup.Face.ApiKey, ComicConfigSectionGroup.Face.ApiSecret, null, false, "json", facebook.UserId.ToString(), facebook.AccessToken);
+			return new FaceRestAPI(ComicConfigSectionGroup.Face.ApiKey, ComicConfigSectionGroup.Face.ApiSecret, null, false, "json", facebook.UserId.ToString(), facebook.AccessToken, 1000 * 20);
 		}
 	}
 }

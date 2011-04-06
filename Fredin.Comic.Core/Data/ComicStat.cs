@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel;
 
 namespace Fredin.Comic.Data
 {
@@ -9,10 +10,15 @@ namespace Fredin.Comic.Data
 	{
 		public enum ComicStatPeriod
 		{
+			[Description("All Time")]
 			AllTime,
+			[Description("This Year")]
 			Year,
+			[Description("This Month")]
 			Month,
+			[Description("This Week")]
 			Week,
+			[Description("Today")]
 			Day
 		}
 

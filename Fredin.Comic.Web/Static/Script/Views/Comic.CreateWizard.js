@@ -15,8 +15,7 @@
 				friends: [],
 				selectedStory: null,
 				selectedComments: [],
-				comic: null,
-				taskBaseHref: null
+				comic: null
 			},
 
 			init: function ()
@@ -349,48 +348,12 @@
 			renderComic: function ()
 			{
 				var self = this;
+				var task = null;
 				var load = $('#renderLoad').load("reset");
-
-				// Request render progress from server on an interval
-				var taskId = $.Guid.New();
-				var progressCallback = function ()
-				{
-					if ($.Guid.IsEmpty(taskId))
-					{
-						// render is complete - clear interval
-						window.clearInterval(progressInterval);
-					}
-					else
-					{
-						// get progress from server
-						$.ajax
-						({
-							dataType: 'json',
-							type: 'GET',
-							async: true,
-							timeout: 10000, // cancel request if another is about to begin
-							url: self.options.taskBaseHref + taskId,
-							success: function (data, textStatus, request)
-							{
-								// Update render progress ui
-								if (data)
-								{
-									$('#renderLoad').load('progress', data.Progress / data.Operations);
-								}
-							},
-							error: function (xhr, textStatus, x)
-							{
-								// Prevent application default error handler from firing
-							}
-						});
-					}
-				}
-				var progressInterval = window.setInterval(progressCallback, 10000);
 
 				// Translate to request params
 				var data =
 				{
-					taskId: taskId,
 					effect: $('#effectSelector').val(),
 					photoSource: $('[name=optionPhoto]:checked').val(),
 					templateId: $('#templateSelector').val(),
@@ -402,30 +365,77 @@
 					data.frames.push({ message: comment.message, id: comment.from.id });
 				});
 
+				var timeout = 1000 * 60 * 2; // 2 minute timeout!
+				var progressFrequency = 1000 * 5; // check every 5 seconds
+				var progressTime = 0;
+				var progressInterval = null;
+				var progressCallback = function ()
+				{
+					progressTime += progressFrequency;
+					if (progressTime > timeout)
+					{
+						window.clearInterval(progressInterval);
+						self.error("Unable to render your comic. Please try again.");
+					}
+
+					// get progress from server
+					$.ajax
+					({
+						dataType: 'json',
+						type: 'GET',
+						url: self.options.baseHref + 'Comic/RenderProgress',
+						data: { taskId: task.TaskId },
+						success: function (data, textStatus, request)
+						{
+							// Update render progress ui
+							if (data)
+							{
+								task = data;
+								$('#renderLoad').load('progress', task.CompletedOperations / task.TotalOperations * 100);
+								if (task.Status == 2)
+								{
+									// Render complete
+									window.clearInterval(progressInterval);
+									self.options.comic = task.Comic;
+									$('#renderComic').html('<img src="' + self.options.comic.ComicUrl + '" alt="' + self.options.comic.Title + '" />');
+									$('#renderLoad').load("complete");
+								}
+								else if (task.Status == 3)
+								{
+									window.clearInterval(progressInterval);
+									self.error('Unable to render your comic. Please try again');
+									$('#renderLoad').load("complete");
+								}
+							}
+						},
+						error: function (xhr, textStatus, x)
+						{
+							// Prevent application default error handler from firing
+						}
+					});
+				}
+
 				console.log(data);
 				$.ajax(
 				{
 					dataType: 'json',
 					type: 'POST',
-					async: true,
-					url: this.options.baseHref + 'Comic/RenderWizard',
+					url: this.options.baseHref + 'Comic/QueueRender',
 					data: $.postify(data),
 					success: function (data, textStatus, request)
 					{
 						if (data)
 						{
-							self.options.comic = data;
-							console.log('Created comic ' + data.ComicId);
-							console.log(data);
-							$('#renderComic').html('<img src="' + data.ComicUrl + '" alt="' + data.Title + '" />');
+							task = data;
+							console.debug("Queued comic render task");
+							console.debug(task);
 
-							taskId = $.Guid.Empty();
-							$('#renderLoad').load("complete");
+							// Callback to check on render progress
+							progressCallback();
+							progressInterval = window.setInterval(progressCallback, progressFrequency);
 						}
 					}
 				});
-
-				progressCallback();
 			},
 
 			showPublishComic: function ()
@@ -460,7 +470,7 @@
 					{
 						dataType: 'json',
 						type: 'POST',
-						url: this.options.baseHref + 'Comic/PublishWizard',
+						url: this.options.baseHref + 'Comic/Publish',
 						data: $.postify(data),
 						success: function (data, textStatus, request)
 						{

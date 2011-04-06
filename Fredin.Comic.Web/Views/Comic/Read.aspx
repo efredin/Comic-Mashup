@@ -18,11 +18,11 @@
 	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
 
 	<div id="comicRead">
-		<div class="box">
+		<div class="box content764">
 			
 			<span id="comicInfo">
-				<%: Model.Comic.Stats.Readers %> reads | 
-				<a href="javascript:$.scrollTo('#comments', 200);"><fb:comments-count href="<%: Model.Comic.ReadUrl %>"></fb:comments-count> comments</a>
+				<%: Model.Comic.Stats.Readers %> readers | 
+				<a href="javascript:$.scrollTo('#comments', 200);"><span id="commentCount">0</span> comments</a>
 			</span>
 
 			<%= Html.Partial("~/Views/Comic/Author.ascx", Model.Comic) %>
@@ -31,7 +31,17 @@
 
 			<div id="reader">
 				<div id="readerAction">
-					<a id="readerFb" title="Post to Wall"><span class="ui-icon-toggle32 ui-icon-toggle32-fb"></span></a>
+					<!-- AddThis Button BEGIN -->
+					<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+					<a class="addthis_button_preferred_1"></a>
+					<a class="addthis_button_preferred_2"></a>
+					<a class="addthis_button_preferred_3"></a>
+					<a class="addthis_button_preferred_4"></a>
+					<a class="addthis_button_compact"></a>
+					</div>
+					<script type="text/javascript">	var addthis_config = { "data_track_clickback": true };</script>
+					<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4d9a88e114b59f84"></script>
+					<!-- AddThis Button END -->
 				</div>
 				<div id="readerRate">
 					<%: Html.CheckBox("readerFunny", Model.Reader.IsFunny) %>
@@ -58,6 +68,10 @@
 			</ul>
 		</div>
 
+		<%-- Author Edit Control --%>
+		<% if(this.Model.Comic.Uid == this.Model.Reader.Uid) { %>
+		<% } %>
+
 	</div>
 
 </asp:Content>
@@ -65,7 +79,6 @@
 <asp:Content ID="cScript" ContentPlaceHolderID="cphScript" runat="server">
 	<script type="text/javascript">
 	appOptions.comic = <%= new JavaScriptSerializer().Serialize(this.Model.Comic) %>;
-	appOptions.menuSelected = 0;
 	Comic.Read(appOptions);
 	</script>
 </asp:Content>

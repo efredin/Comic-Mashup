@@ -1,16 +1,24 @@
-﻿/* toggle32 icons */
-.ui-icon-toggle32, .ui-state-default .ui-icon-toggle32 { display: inline-block; width: 32px; height: 32px; background-image: url(../Icon/ui-icon-toggle32.png); }
-.ui-state-hover .ui-icon-toggle32, .ui-state-active .ui-icon-toggle32 { background-image: url(../Icon/ui-icon-toggle32-active.png); }
+﻿/* generic icons */
+a.ui-state-hover { color: #ffffff; }
 
-.ui-icon-toggle32-fb { background-position: 0 0; }
-.ui-icon-toggle32-funny { background-position: -32px 0; }
-.ui-icon-toggle32-smart { background-position: 0 -32px; }
-.ui-icon-toggle32-random { background-position: -32px -32px; }
-.ui-icon-toggle32-thumbup { background-position: -64px 0; }
-.ui-icon-toggle32-thumbdown { background-position: -64px -32px; }
+/* toggle32 icons */
+.ui-icon-toggle32, .ui-state-default .ui-icon-toggle32 { display: inline-block; width: 32px; height: 32px; background-image: url(../Icon/sprite32-reader-046A99.png); }
+.ui-state-hover .ui-icon-toggle32, .ui-state-active .ui-icon-toggle32 { background-image: url(../Icon/sprite32-reader-ffffff.png); }
+
+.ui-icon-toggle32-funny { background-position: 0 0; }
+.ui-icon-toggle32-smart { background-position: -32px 0; }
+.ui-icon-toggle32-random { background-position: -64px 0; }
 
 /* Expanded 16x16 icons */
 .ui-icon-toggle16 { display: inline-block; width: 16px; height: 16px; background-image: url(../Icon/ui-icon-toggle16.png); }
 .ui-icon-toggle16-funny { background-position: 0 0; }
 .ui-icon-toggle16-smart { background-position: 0 -16px; }
 .ui-icon-toggle16-random { background-position: 0 -32px; }
+
+/* Home 96x96 icons */
+.icon96 { display: inline-block; width: 96px; height: 96px; background: url(../Icon/sprite96-home-046a99.png); }
+.ui-state-hover .icon96 { background-image: url(../Icon/sprite96-home-ffffff.png); }
+
+.icon96-create { background-position: 0px 0px; }
+.icon96-read { background-position: -96px 0px; }
+.icon96-share { background-position: -192px 0px; }
