@@ -1,14 +1,20 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="System.Web.Mvc.ViewPage<Fredin.Comic.Web.Models.ViewDirectory>" %>
 <%@ Import Namespace="Fredin.Util" %>
 
-<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Comic Mashup</asp:Content>
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Welcome</asp:Content>
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
 	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
 
 	<div id="home" class="box content764">
-		<p>Create, read and share web comics with your online profile.  It's easy and fun.</p>
+		<p>Create, read and share web comics with your online profile.  It's fun and easy!</p>
+		<h2>How it Works</h2>
+		<p>
+			Comic Mashup uses your social profile to generate fun web comics. 
+			<a href="javascript:void(0);" class="button-fbLogin">Connect your facebook</a> account to get started. 
+			Then, share your comics with your family and friends on facebook.  
+			The more visitors your send to your comic, the more votes it will get.
+		</p>
 		<a href="<%= this.Url.Action("CreateWizard", "Comic") %>" class="actionButton ui-state-default" id="home-buttonCreate"><span class="icon96 icon96-create"></span><br />Create</a>
 		<a href="<%= this.Url.Action("BestOverall", "Directory") %>" class="actionButton ui-state-default" id="home-buttonDirectory"><span class="icon96 icon96-read"></span><br />Read</a>
 		<a class="actionButton ui-state-default addthis_button" id="home-buttonShare" href="http://www.addthis.com/bookmark.php"><span class="icon96 icon96-share"></span><br />Share</a>

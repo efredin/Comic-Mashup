@@ -26,7 +26,7 @@
 				$('#wizardLoad').load({ content: '#wizardContent', progressbar: true });
 				$('#publishComic').hide();
 
-				this.requestConnect(true, function ()
+				this.requestConnect(true, 'Comic Mashup needs to connect with your facebook account to retrieve your news feed and photos in order to create a comic.', function ()
 				{
 					var load = $('#wizardLoad').load('progress', 25);
 
@@ -57,7 +57,7 @@
 					template: $('#storyTemplate'),
 					dataKey: 'id',
 					dataValue: 'message',
-					emptyText: 'No messages found.',
+					emptyText: 'No usable messages found in your news feed. For more information please see the faq.',
 					selected: function (event, data)
 					{
 						self.options.selectedStory = data.item;
@@ -99,22 +99,6 @@
 				$('#storyFilterSuggest').attr('checked', true).change();
 
 				/* Comment */
-				var updateComments = function ()
-				{
-					// update template suggested filter
-					var count = self.options.selectedComments.length + 1;
-
-					$('#templateFilterSuggest').val('.template-size' + count);
-					if ($('.template-size' + count).size() === 0)
-					{
-						$('#templateFilterAll').attr('checked', true).change();
-					}
-					else
-					{
-						$('#templateFilterSuggest').attr('checked', true).change();
-					}
-				}
-
 				$('#commentLoad').load({ content: $('#commentContent') });
 				$('#commentSelector').select2(
 				{
@@ -122,11 +106,10 @@
 					template: $('#commentTemplate'),
 					dataKey: 'id',
 					dataValue: 'message',
-					emptyText: 'No comments found.',
+					emptyText: 'No comments found for this story.',
 					selected: function (event, data)
 					{
 						self.options.selectedComments.push(data.item);
-						updateComments();
 
 						// hop to next step when all comments are selected
 						if (self.options.selectedStory.comments && self.options.selectedComments.length >= self.options.selectedStory.comments.length)
@@ -137,7 +120,6 @@
 					unselected: function (event, data)
 					{
 						self.options.selectedComments.remove(data.item);
-						updateComments();
 					}
 				});
 
@@ -178,7 +160,7 @@
 					template: $('#templateEffect'),
 					emptyText: 'No effects found.'
 				});
-				$('#effectSelector').select2('select', 0);
+				$('#effectSelector').select2('select', 1);
 
 				/* Render */
 				$('#renderLoad').load({ content: '#renderContent', progressbar: true });
@@ -207,6 +189,21 @@
 					width: 764,
 					stepActive: function (event, data)
 					{
+						if (data && data.step == 2)
+						{
+							// update template suggested filter
+							var count = self.options.selectedComments.length + 1;
+
+							$('#templateFilterSuggest').val('.template-size' + count);
+							if ($('.template-size' + count).size() === 0)
+							{
+								$('#templateFilterAll').attr('checked', true).change();
+							}
+							else
+							{
+								$('#templateFilterSuggest').attr('checked', true).change();
+							}
+						}
 						if (data && data.step == 3)
 						{
 							// issues with photo source buttonset being disabled
@@ -250,7 +247,7 @@
 				var self = this;
 
 				// Get news feed data from facebook graph
-				FB.api('/me/feed', { limit: 50 }, function (response)
+				FB.api('/me/feed', { limit: 150 }, function (response)
 				{
 					if (!response || response.error)
 					{

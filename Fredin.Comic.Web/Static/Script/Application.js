@@ -205,10 +205,12 @@
     		}
     	},
 
-    	requestConnect: function (required, callback)
+    	requestConnect: function (required, message, callback)
     	{
     		var self = this;
     		this.options.requireConnect = required != null ? required : true;
+
+    		$('#dialog-requestConnect-message').html((message && message != '') ? message : 'Please login to continue.');
 
     		var initCallback = function ()
     		{

@@ -28,8 +28,6 @@ namespace Fredin.Comic.Data
 			return this.Comics
 				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff)
 				.FilterComicVisibility(reader, friends);
-				//.IncludeAuthor()
-				//.IncludeStats();
 		}
 
 		public IQueryable<Comic> ListPublishedComics(User author, User reader, bool isFriend, ComicStat.ComicStatPeriod period)
@@ -37,10 +35,8 @@ namespace Fredin.Comic.Data
 			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
 
 			return this.Comics
-				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff)
+				.Where(c => c.Uid == author.Uid && c.IsPublished && c.PublishTime.Value >= cutoff)
 				.FilterComicVisibility(reader, isFriend);
-				//.IncludeAuthor()
-				//.IncludeStats();
 		}
 
 		public IQueryable<Comic> SearchPublishedComics(string search, User reader, List<long> friends, ComicStat.ComicStatPeriod period)
@@ -57,8 +53,6 @@ namespace Fredin.Comic.Data
 			return this.Comics
 				.Where(c => c.FeatureTime.HasValue)
 				.FilterComicVisibility(reader);
-				//.IncludeAuthor()
-				//.IncludeStats();
 		}
 
 		public Comic TryGetUnpublishedComic(long comicId, User author)
@@ -69,15 +63,20 @@ namespace Fredin.Comic.Data
 
 		public Comic TryGetComic(long comicId, User reader)
 		{
-			return this.TryGetComic(comicId, reader, true);
+			return this.TryGetComic(comicId, reader, false);
 		}
 
 		public Comic TryGetComic(long comicId, User reader, bool isFriend)
 		{
 			return this.Comics
 				.FilterComicVisibility(reader, isFriend)
-				//.IncludeAuthor()
-				//.IncludeStats()
+				.FirstOrDefault(c => c.ComicId == comicId);
+		}
+
+		public Comic TryGetComic(long comicId, User reader, List<long> friends)
+		{
+			return this.Comics
+				.FilterComicVisibility(reader, friends)
 				.FirstOrDefault(c => c.ComicId == comicId);
 		}
 

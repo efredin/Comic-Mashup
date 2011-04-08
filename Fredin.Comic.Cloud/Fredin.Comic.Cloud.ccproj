@@ -36,7 +36,9 @@
   <ItemGroup>
     <ServiceDefinition Include="ServiceDefinition.csdef" />
     <ServiceConfiguration Include="ServiceConfiguration.cscfg" />
-  </ItemGroup>
+		<!--<None Include="ServiceDefinition.Release.csdef"/>
+		<None Include="ServiceConfiguration.Release.cscfg" />-->
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fredin.Comic.Web\Fredin.Comic.Web.csproj">
       <Name>Fredin.Comic.Web</Name>
@@ -57,9 +59,25 @@
   <PropertyGroup>
     <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\Cloud Service\1.0\Visual Studio 10.0\</CloudExtensionsDir>
   </PropertyGroup>
-  <Import Project="$(CloudExtensionsDir)Microsoft.CloudService.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
+	<!-- Config Transformation -->
+	<Import Project="$(CloudExtensionsDir)Microsoft.CloudService.targets" />
+	<!--<UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll" />
+	<PropertyGroup>
+		<ServiceConfigurationTransform>ServiceConfiguration.$(Configuration).cscfg</ServiceConfigurationTransform>
+		<ServiceDefinitionTransform>ServiceDefinition.$(Configuration).csdef</ServiceDefinitionTransform>
+	</PropertyGroup>
+	<Target Name="TransformServiceConfiguration" BeforeTargets="CopyServiceDefinitionAndConfiguration" Condition="exists('$(ServiceConfigurationTransform)')">
+		<TransformXml Source="@(ServiceConfiguration)" Destination="$(IntermediateOutputPath)%(Filename)%(Extension)" Transform="$(ServiceConfigurationTransform)" />
+		<ItemGroup>
+			<ServiceConfiguration Remove="ServiceConfiguration.cscfg" />
+			<ServiceConfiguration Include="$(IntermediateOutputPath)ServiceConfiguration.cscfg" />
+		</ItemGroup>
+	</Target>
+	<Target Name="TransformServiceDefinition" BeforeTargets="CopyServiceDefinitionAndConfiguration" Condition="exists('$(ServiceDefinitionTransform)')">
+		<TransformXml Source="@(ServiceDefinition)" Destination="$(IntermediateOutputPath)%(Filename)%(Extension)" Transform="$(ServiceDefinitionTransform)" />
+		<ItemGroup>
+			<ServiceDefinition Remove="ServiceDefinition.csdef" />
+			<ServiceDefinition Include="$(IntermediateOutputPath)ServiceDefinition.csdef" />
+		</ItemGroup>
+	</Target>-->
 </Project>

@@ -8,7 +8,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head runat="server" id="head">
-    <title><asp:ContentPlaceHolder ID="cphPageTitle" runat="server">Social Comics | Comic Mashup</asp:ContentPlaceHolder></title>
+    <title><asp:ContentPlaceHolder ID="cphPageTitle" runat="server">Comic Mashup - Create and Share Social Comics</asp:ContentPlaceHolder></title>
 	
 	<link rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Css/Comic.min.css") %>" />
 	<link id="cssTheme" rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Theme/{0}/jquery.ui.theme.min.css", this.Theme) %>" />
@@ -128,8 +128,9 @@
 		</div>
 	</div>
 
+	<%-- Login Dialog --%>
 	<div id="dialog-requestConnect" class="ui-helper-hidden" title="Not Logged In">
-		<p>Please login to continue.</p>
+		<p id="dialog-requestConnect-message">Please login to continue.</p>
 		<a href="javascript:void(0);" class="button-fbLogin fb_button fb_button_medium">
 			<span class="fb_button_text">Connect with Facebook</span>
 		</a>

@@ -52,7 +52,7 @@
 			rate: function (source, action)
 			{
 				var self = this;
-				this.requestConnect(false, function ()
+				this.requestConnect(false, null, function ()
 				{
 					var count = $('.readerCount', 'label[for=' + source.id + ']').text();
 					if (count == '-')

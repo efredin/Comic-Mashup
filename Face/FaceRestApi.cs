@@ -87,13 +87,14 @@ public class FaceRestAPI
 	// *************
 	// Face Methods
 	// *************
-	public FaceAPI faces_detect(List<string> urls, string filename, List<string> ownerIds, string callBackUrl)
+	public FaceAPI faces_detect(List<string> urls, string filename, string detector, List<string> attributes, string callBackUrl)
 	{
-		List<string> list = this.prep_lists(urls, ownerIds);
+		List<string> list = this.prep_lists(urls, attributes);
 		Dictionary<string, string> dict = new Dictionary<string, string>();
 
 		dict.Add("urls", list[0]);
-		dict.Add("owner_ids", list[1]);
+		dict.Add("detector", detector);
+		dict.Add("attributes", list[1]);
 		dict.Add("_file", "@" + filename);
 		dict.Add("callback_url", callBackUrl);
 

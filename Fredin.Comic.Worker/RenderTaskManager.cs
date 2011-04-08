@@ -225,7 +225,6 @@ namespace Fredin.Comic.Worker
 				Template template = this.EntityContext.ListTemplates().First(t => t.TemplateId == task.TemplateId);
 				List<TemplateItem> templateItems = template.TemplateItems.OrderBy(t => t.Ordinal).ToList();
 
-				// Get text bubble - only speech for now
 				TextBubble speechBubble = this.EntityContext.ListTextBubbles().First(b => b.Title == "speech");
 				TextBubble bubbleShout = this.EntityContext.ListTextBubbles().First(b => b.Title == "shout");
 				TextBubble squareBubble = this.EntityContext.ListTextBubbles().First(b => b.Title == "square");
@@ -261,6 +260,7 @@ namespace Fredin.Comic.Worker
 					Bitmap image = null;
 					string imageUrl = String.Empty;
 					Point tag = Point.Empty;
+					bool tagConfident = false;
 
 					// Tagged facebook photos
 					if (task.PhotoSource == "Tagged")
@@ -292,6 +292,7 @@ namespace Fredin.Comic.Worker
 									if (tagData != null)
 									{
 										tag = new Point((int)Math.Round((double)tagData.x), (int)Math.Round((double)tagData.y));
+										tagConfident = false;
 									}
 								}
 							}
@@ -316,6 +317,7 @@ namespace Fredin.Comic.Worker
 								FaceRestAPI.Photo p = anyResult.photos[0];
 								imageUrl = p.url;
 								tag = new Point((int)Math.Round(p.tags.First().mouth_center.x), (int)Math.Round(p.tags.First().mouth_center.y));
+								tagConfident = true;
 							}
 						}
 						catch (Exception x)
@@ -331,16 +333,28 @@ namespace Fredin.Comic.Worker
 					}
 					image = this.GetImage(imageUrl);
 
-					// Find faces - overrides facebook tag locations since people tag randomly at times
-					FaceRestAPI tagApi = this.CreateFaceApi(facebook);
-					List<string> tagIds = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
-					List<string> urls = new List<string>(new string[] { imageUrl });
-					FaceRestAPI.FaceAPI tagResult = tagApi.faces_recognize(urls, tagIds, null, null, null, null, null);
 
-					if (tagResult.status == "success" && tagResult.photos.Count > 0 && tagResult.photos[0].tags.Count > 0)
+					// Find faces when confidence in tag location is low
+					if (!tagConfident)
 					{
-						FaceRestAPI.Tag t = tagResult.photos[0].tags.First();
-						tag = new Point((int)Math.Round(t.mouth_center.x), (int)Math.Round(t.mouth_center.y));
+						try
+						{
+							FaceRestAPI tagApi = this.CreateFaceApi(facebook);
+							//List<string> tagIds = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
+							List<string> urls = new List<string>(new string[] { imageUrl });
+							FaceRestAPI.FaceAPI tagResult = tagApi.faces_detect(urls, null, "Normal", null, null);
+
+							if (tagResult.status == "success" && tagResult.photos.Count > 0 && tagResult.photos[0].tags.Count > 0)
+							{
+								FaceRestAPI.Tag t = tagResult.photos[0].tags.First();
+								tag = new Point((int)Math.Round(t.mouth_center.x), (int)Math.Round(t.mouth_center.y));
+								tagConfident = true;
+							}
+						}
+						catch (Exception x)
+						{
+							this.Log.Error("Unable to detected faces.", x);
+						}
 					}
 
 					// Text Bubbles
@@ -419,6 +433,7 @@ namespace Fredin.Comic.Worker
 				task.Status = TaskStatus.Complete;
 				task.ComicId = comic.ComicId;
 				this.UpdateTask(task);
+				this.Log.InfoFormat("Completed render task {0}", task.TaskId);
 			}
 			catch (Exception x)
 			{
@@ -576,11 +591,21 @@ namespace Fredin.Comic.Worker
 		/// </summary>
 		private ComicGenerator CreateComicGenerator(Fredin.Comic.Data.Comic comic, bool firstFrameOnly)
 		{
+			CloudBlobContainer blobContainer = this.BlobClient.GetContainerReference("static");
+
 			int firstFrameOrdinal = comic.ComicPhotos
 					.Min(p => p.TemplateItem.Ordinal);
 
 			ComicPhoto firstFrame = comic.ComicPhotos
 					.First(p => p.TemplateItem.Ordinal == firstFrameOrdinal);
+
+			// Watermark data
+			CloudBlob watermarkBlob = blobContainer.GetBlobReference("Image/watermark.png");
+			Bitmap watermarkImage = null;
+			using (MemoryStream watermarkStream = new MemoryStream(watermarkBlob.DownloadByteArray()))
+			{
+				watermarkImage = new Bitmap(watermarkStream);
+			}
 
 			// Create generator
 			ComicGenerator generator = null;
@@ -590,7 +615,8 @@ namespace Fredin.Comic.Worker
 			}
 			else
 			{
-				generator = new ComicGenerator(comic.Template.Width, comic.Template.Height);
+				generator = new ComicGenerator(comic.Template.Width, comic.Template.Height + watermarkImage.Height);
+				generator.AddScaleImage(watermarkImage, watermarkImage.Width, watermarkImage.Height, comic.Template.Width - watermarkImage.Width, comic.Template.Height);
 			}
 
 			// Add frame photos
@@ -614,7 +640,6 @@ namespace Fredin.Comic.Worker
 				}
 			}
 
-			CloudBlobContainer blobContainer = this.BlobClient.GetContainerReference("static");
 			foreach (ComicTextBubble comicBubble in comic.ComicTextBubbles)
 			{
 				if (!comicBubble.Position.IsEmpty)

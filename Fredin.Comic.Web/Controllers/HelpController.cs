@@ -41,7 +41,7 @@ namespace Fredin.Comic.Web.Controllers
 
 			MailMessage message = new MailMessage(new MailAddress(data.Email, data.Nickname), new MailAddress("efredin@gmail.com"));
 			message.Subject = "Comic Mashup Contact Submission";
-			message.Body = data.Message;
+			message.Body = String.Format("From: {0}\nMessage: {1}", data.Email, data.Message);
 
 			client.Send(message);
 

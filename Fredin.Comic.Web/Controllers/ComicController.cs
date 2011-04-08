@@ -41,7 +41,7 @@ namespace Fredin.Comic.Web.Controllers
 			{
 				this.EntityContext.TryAttach(this.ActiveUser);
 
-				Data.Comic comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser);
+				Data.Comic comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
 				if (comic == null || (comic.IsPrivate && !this.IsFriendOrSelf(comic.Author)))
 				{
 					throw new Exception("Unable to find the requested comic.");
@@ -131,9 +131,9 @@ namespace Fredin.Comic.Web.Controllers
 			try
 			{
 				this.EntityContext.TryAttach(this.ActiveUser);
-				Data.Comic comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser);
-				if (comic == null || !comic.IsPublished || !this.IsFriendOrSelf(comic.Author))
-				{
+				Data.Comic comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
+				if (comic == null || !comic.IsPublished)
+				{ 
 					throw new Exception("Unable to find the requested comic.");
 				}
 

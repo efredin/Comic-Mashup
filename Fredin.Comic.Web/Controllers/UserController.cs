@@ -54,11 +54,11 @@ namespace Fredin.Comic.Web.Controllers
 				if(!uid.HasValue && this.ActiveUser != null)
 				{
 					user = this.ActiveUser;
+					this.EntityContext.TryAttach(user);
 				}
 				else if (uid.HasValue)
 				{
 					user = this.EntityContext.TryGetUser(uid.Value);
-					this.EntityContext.TryAttach(user);
 				}
 
 				if (user != null)

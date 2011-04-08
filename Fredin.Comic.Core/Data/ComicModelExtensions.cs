@@ -57,7 +57,7 @@ namespace Fredin.Comic.Data
 
 			if (user != null)
 			{
-				filtered = comics.Where(c => c.Uid == user.Uid || friends.Contains(c.Uid));
+				filtered = comics.Where(c => c.Uid == user.Uid || !c.IsPrivate || friends.Contains(c.Uid));
 			}
 			else
 			{
