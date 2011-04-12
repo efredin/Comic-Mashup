@@ -21,9 +21,13 @@
 
 	<meta property="og:site_name" content="Comic Mashup" />
 	<%= String.Format("<meta property='fb:app_id' content='{0}' />", ComicConfigSectionGroup.Facebook.AppId) %>
-    <asp:ContentPlaceHolder id="cphHead" runat="server">
-		<meta property="og:type" content="article" />
+    <asp:ContentPlaceHolder id="cphMeta" runat="server">
+		<meta property="description" content="Create and share social comics" />
+		<meta property="keywords" content="comic, mashup, create, generator, social, strip" />
+		<meta property="og:title" content="Comic Mashup" />
+		<meta property="og:type" content="website" />
 		<meta property="og:image" content="<%: ComicUrlHelper.GetStaticUrl("Image/cm64.png") %>" />
+		<meta property="og:url" content="<%: ComicUrlHelper.GetWebUrl("") %>" />
 	</asp:ContentPlaceHolder>
 </head>
 <body>

@@ -114,6 +114,7 @@
     <Compile Include="Controllers\ComicController.cs" />
     <Compile Include="Controllers\ComicControllerBase.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\FacebookController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\JsonActionAttribute.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -130,9 +131,11 @@
     <Compile Include="Models\ClientEffect.cs" />
     <Compile Include="Models\ClientTemplate.cs" />
     <Compile Include="Models\ClientTemplateItem.cs" />
+    <Compile Include="Models\ClientProfileTask.cs" />
     <Compile Include="Models\ViewContact.cs" />
     <Compile Include="Models\ViewCreateWizard.cs" />
     <Compile Include="Models\ViewDirectory.cs" />
+    <Compile Include="Models\ViewFacebook.cs" />
     <Compile Include="Models\ViewProfile.cs" />
     <Compile Include="Models\ViewRead.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -155,6 +158,8 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Global.asax" />
+    <Content Include="robots.txt" />
+    <Content Include="Static\Css\facebook.css" />
     <Content Include="Static\Css\facebookbutton.css" />
     <Content Include="Static\Css\icon.css" />
     <Content Include="Static\Css\images\loading.gif" />
@@ -212,6 +217,7 @@
     <Content Include="Static\Image\Effect\comic.png" />
     <Content Include="Static\Image\Effect\pencil-sketch.png" />
     <Content Include="Static\Image\layout-head-bg.png" />
+    <Content Include="Static\Image\mashup-white.png" />
     <Content Include="Static\Image\menubar-bg.png" />
     <Content Include="Static\Image\search.png" />
     <Content Include="Static\Image\Template\large-aa.png" />
@@ -287,6 +293,7 @@
     <Content Include="Static\Image\TextBubble\thought-thumb.png" />
     <Content Include="Static\Image\TextBubble\thought-tl.png" />
     <Content Include="Static\Image\TextBubble\thought-tr.png" />
+    <Content Include="Static\Image\watermark.png" />
     <Content Include="Static\Script\Application.js" />
     <Content Include="Static\Script\Date.js" />
     <Content Include="Static\Script\jquery.ui\jquery.ui.optionset.js" />
@@ -326,7 +333,9 @@
     <Content Include="Static\Script\String.js" />
     <Content Include="Static\Script\Views\Comic.CreateWizard.js" />
     <Content Include="Static\Script\Views\Comic.Read.js" />
+    <Content Include="Static\Script\Views\Facebook.Render.js" />
     <Content Include="Static\Script\Views\Directory.Directory.js" />
+    <Content Include="Static\Script\Views\Facebook.Index.js" />
     <Content Include="Static\Script\Views\Help.Contact.js" />
     <Content Include="Static\Theme\blitzer\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png" />
     <Content Include="Static\Theme\blitzer\images\ui-bg_dots-small_65_a6a6a6_2x2.png" />
@@ -501,6 +510,9 @@
     <Content Include="Views\Directory\Home.aspx" />
     <Content Include="Views\Directory\Directory.aspx" />
     <Content Include="Views\Comic\Read.aspx" />
+    <Content Include="Views\Facebook\Index.aspx" />
+    <Content Include="Views\Facebook\Login.aspx" />
+    <Content Include="Views\Facebook\Render.aspx" />
     <Content Include="Views\Help\Contact.aspx" />
     <Content Include="Views\Help\ContactConfirm.aspx" />
     <Content Include="Views\Help\Faq.aspx" />
@@ -525,10 +537,10 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\Facebook\Facebook.Master" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FacebookSDK\Source\Facebook.Web.Mvc\Facebook.Web.Mvc.csproj">

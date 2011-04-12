@@ -12,6 +12,7 @@
           <EntitySet Name="ComicStat" EntityType="Fredin.Comic.Data.Store.ComicStat" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ComicTextBubble" EntityType="Fredin.Comic.Data.Store.ComicTextBubble" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Photo" EntityType="Fredin.Comic.Data.Store.Photo" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ProfileRender" EntityType="Fredin.Comic.Data.Store.ProfileRender" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Template" EntityType="Fredin.Comic.Data.Store.Template" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="TemplateItem" EntityType="Fredin.Comic.Data.Store.TemplateItem" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="TextBubble" EntityType="Fredin.Comic.Data.Store.TextBubble" store:Type="Tables" Schema="dbo" />
@@ -60,6 +61,10 @@
           <AssociationSet Name="FK_Photo_User" Association="Fredin.Comic.Data.Store.FK_Photo_User">
             <End Role="User" EntitySet="User" />
             <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProfileRender_User" Association="Fredin.Comic.Data.Store.FK_ProfileRender_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="ProfileRender" EntitySet="ProfileRender" />
           </AssociationSet>
           <AssociationSet Name="FK_TemplateItem_Template" Association="Fredin.Comic.Data.Store.FK_TemplateItem_Template">
             <End Role="Template" EntitySet="Template" />
@@ -141,6 +146,15 @@
           <Property Name="PhotoId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Uid" Type="bigint" Nullable="false" />
           <Property Name="CreateTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProfileRender">
+          <Key>
+            <PropertyRef Name="ProfileRenderId" />
+          </Key>
+          <Property Name="ProfileRenderId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="StorageKey" Type="varchar" Nullable="false" MaxLength="36" />
+          <Property Name="CreateTime" Type="datetime" Nullable="false" />
+          <Property Name="Uid" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="Template">
           <Key>
@@ -330,6 +344,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProfileRender_User">
+          <End Role="User" Type="Fredin.Comic.Data.Store.User" Multiplicity="1" />
+          <End Role="ProfileRender" Type="Fredin.Comic.Data.Store.ProfileRender" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Uid" />
+            </Principal>
+            <Dependent Role="ProfileRender">
+              <PropertyRef Name="Uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TemplateItem_Template">
           <End Role="Template" Type="Fredin.Comic.Data.Store.Template" Multiplicity="1" />
           <End Role="TemplateItem" Type="Fredin.Comic.Data.Store.TemplateItem" Multiplicity="*" />
@@ -430,6 +456,11 @@
             <Parameter Name="Period" Mode="In" Type="Int32" />
             <Parameter Name="Cutoff" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <EntitySet Name="ProfileRender" EntityType="Fredin.Comic.Data.ProfileRender" />
+          <AssociationSet Name="FK_ProfileRender_User" Association="Fredin.Comic.Data.FK_ProfileRender_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ProfileRender" EntitySet="ProfileRender" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Comic">
           <Key>
@@ -556,6 +587,7 @@
           <NavigationProperty Name="Photos" Relationship="Fredin.Comic.Data.FK_Photo_User" FromRole="User" ToRole="Photo" />
           <Property Type="String" Name="FbLink" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ComicRead" Relationship="Fredin.Comic.Data.FK_ComicRead_User" FromRole="User" ToRole="ComicRead" />
+          <NavigationProperty Name="ProfileRender" Relationship="Fredin.Comic.Data.FK_ProfileRender_User" FromRole="User" ToRole="ProfileRender" />
         </EntityType>
         <Association Name="FK_Comic_Template">
           <End Type="Fredin.Comic.Data.Template" Role="Template" Multiplicity="1" />
@@ -741,6 +773,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ProfileRender">
+          <Key>
+            <PropertyRef Name="ProfileRenderId" />
+          </Key>
+          <Property Type="Int64" Name="ProfileRenderId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="StorageKey" Nullable="false" MaxLength="36" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreateTime" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Fredin.Comic.Data.FK_ProfileRender_User" FromRole="ProfileRender" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_ProfileRender_User">
+          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.ProfileRender" Role="ProfileRender" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -885,6 +930,23 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="UpdateComicStat" FunctionName="Fredin.Comic.Data.Store.UpdateComicStat" />
+          <EntitySetMapping Name="ProfileRender">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.ProfileRender">
+              <MappingFragment StoreEntitySet="ProfileRender">
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="StorageKey" ColumnName="StorageKey" />
+                <ScalarProperty Name="ProfileRenderId" ColumnName="ProfileRenderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_ProfileRender_User" TypeName="Fredin.Comic.Data.FK_ProfileRender_User" StoreEntitySet="ProfileRender">
+            <EndProperty Name="ProfileRender">
+              <ScalarProperty Name="ProfileRenderId" ColumnName="ProfileRenderId" />
+            </EndProperty>
+            <EndProperty Name="User">
+              <ScalarProperty Name="Uid" ColumnName="Uid" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -904,69 +966,74 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="ComicModel" ZoomLevel="112">
-        <EntityTypeShape EntityType="Fredin.Comic.Data.Comic" Width="2" PointX="3" PointY="5.25" Height="4.2879036458333317" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="3.125" PointY="11" Height="2.3648893229166674" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTextBubble" Width="2.375" PointX="2.75" PointY="1.75" Height="2.5571907552083388" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.Photo" Width="1.5" PointX="0.75" PointY="10.625" Height="1.9802864583333335" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.Template" Width="1.5" PointX="6.25" PointY="7.75" Height="2.7494921874999987" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.TemplateItem" Width="1.5" PointX="6.125" PointY="11" Height="2.749492187499996" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubble" Width="1.875" PointX="8.875" PointY="2.25" Height="2.5571907552083317" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubbleDirection" Width="1.75" PointX="6.375" PointY="2.375" Height="2.1725878906249996" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.User" Width="1.5" PointX="0.75" PointY="6.25" Height="2.5571907552083335" />
+      <Diagram Name="ComicModel" ZoomLevel="108">
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Comic" Width="2" PointX="7.5" PointY="5.375" Height="4.8648079427083335" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="7.625" PointY="11.125" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTextBubble" Width="2.375" PointX="7.25" PointY="1.875" Height="2.5571907552083388" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Photo" Width="1.5" PointX="5.25" PointY="10.75" Height="1.9802864583333335" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.Template" Width="1.5" PointX="10.75" PointY="7.875" Height="2.7494921874999987" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TemplateItem" Width="1.5" PointX="10.625" PointY="11.125" Height="2.749492187499996" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubble" Width="1.875" PointX="13.375" PointY="2.375" Height="2.5571907552083317" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubbleDirection" Width="1.75" PointX="10.875" PointY="2.5" Height="2.1725878906249996" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.User" Width="1.5" PointX="5.25" PointY="6.375" Height="2.9417936197916656" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_Template" >
-          <ConnectorPoint PointX="6.25" PointY="8.8362532552083337" />
-          <ConnectorPoint PointX="5" PointY="8.8362532552083337" />
+          <ConnectorPoint PointX="10.75" PointY="9.0574039713541659" />
+          <ConnectorPoint PointX="9.5" PointY="9.0574039713541659" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_User" >
-          <ConnectorPoint PointX="2.25" PointY="7.62474609375" />
-          <ConnectorPoint PointX="3" PointY="7.62474609375" />
+          <ConnectorPoint PointX="6.75" PointY="7.8458968098958328" />
+          <ConnectorPoint PointX="7.5" PointY="7.8458968098958328" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Comic" >
-          <ConnectorPoint PointX="3.875" PointY="9.9225065104166656" />
-          <ConnectorPoint PointX="3.875" PointY="11" />
+          <ConnectorPoint PointX="8.375" PointY="10.239807942708334" />
+          <ConnectorPoint PointX="8.375" PointY="11.125" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_Comic" >
-          <ConnectorPoint PointX="4" PointY="5.25" />
-          <ConnectorPoint PointX="4" PointY="4.3071907552083388" />
+          <ConnectorPoint PointX="8.5" PointY="5.375" />
+          <ConnectorPoint PointX="8.5" PointY="4.4321907552083388" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Photo" >
-          <ConnectorPoint PointX="2.25" PointY="11.802643229166666" />
-          <ConnectorPoint PointX="3.125" PointY="11.802643229166666" />
+          <ConnectorPoint PointX="6.75" PointY="11.927643229166666" />
+          <ConnectorPoint PointX="7.625" PointY="11.927643229166666" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem" >
-          <ConnectorPoint PointX="6.125" PointY="12.182444661458334" />
-          <ConnectorPoint PointX="4.625" PointY="12.182444661458334" />
+          <ConnectorPoint PointX="10.625" PointY="12.307444661458334" />
+          <ConnectorPoint PointX="9.125" PointY="12.307444661458334" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection" >
-          <ConnectorPoint PointX="6.375" PointY="3.3410953776041694" />
-          <ConnectorPoint PointX="5.125" PointY="3.3410953776041694" />
+          <ConnectorPoint PointX="10.875" PointY="3.4660953776041694" />
+          <ConnectorPoint PointX="9.625" PointY="3.4660953776041694" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_Photo_User" >
-          <ConnectorPoint PointX="1.5" PointY="8.9994921875" />
-          <ConnectorPoint PointX="1.5" PointY="10.625" />
+          <ConnectorPoint PointX="6" PointY="9.3167936197916656" />
+          <ConnectorPoint PointX="6" PointY="10.75" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_TemplateItem_Template" >
-          <ConnectorPoint PointX="6.9375" PointY="10.4994921875" />
-          <ConnectorPoint PointX="6.9375" PointY="11" />
+          <ConnectorPoint PointX="11.4375" PointY="10.6244921875" />
+          <ConnectorPoint PointX="11.4375" PointY="11.125" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_TextBubbleDirection_TextBubble" >
-          <ConnectorPoint PointX="8.875" PointY="3.4612939453125" />
-          <ConnectorPoint PointX="8.125" PointY="3.4612939453125" />
+          <ConnectorPoint PointX="13.375" PointY="3.5862939453125" />
+          <ConnectorPoint PointX="12.625" PointY="3.5862939453125" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicRead" Width="1.5" PointX="0.75" PointY="3.125" Height="2.5571907552083353" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicRead" Width="1.5" PointX="5.25" PointY="3.25" Height="2.5571907552083353" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_Comic" >
-          <ConnectorPoint PointX="3" PointY="5.4660953776041676" />
-          <ConnectorPoint PointX="2.25" PointY="5.4660953776041676" />
+          <ConnectorPoint PointX="7.5" PointY="5.5910953776041676" />
+          <ConnectorPoint PointX="6.75" PointY="5.5910953776041676" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_User" >
-          <ConnectorPoint PointX="1.5" PointY="6.25" />
-          <ConnectorPoint PointX="1.5" PointY="5.6821907552083353" />
+          <ConnectorPoint PointX="6" PointY="6.375" />
+          <ConnectorPoint PointX="6" PointY="5.8071907552083353" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicStat" Width="1.5" PointX="6.25" PointY="5" Height="2.1725878906250031" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicStat" Width="1.5" PointX="10.75" PointY="5.125" Height="2.5571907552083317" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicStat_Comic" >
-          <ConnectorPoint PointX="5" PointY="6.2112939453125016" />
-          <ConnectorPoint PointX="6.25" PointY="6.2112939453125016" />
+          <ConnectorPoint PointX="9.5" PointY="6.5285953776041659" />
+          <ConnectorPoint PointX="10.75" PointY="6.5285953776041659" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ProfileRender" Width="1.5" PointX="2" PointY="7.125" Height="1.7879850260416745" />
+        <AssociationConnector Association="Fredin.Comic.Data.FK_ProfileRender_User" >
+          <ConnectorPoint PointX="5.25" PointY="8.0189925130208373" />
+          <ConnectorPoint PointX="3.5" PointY="8.0189925130208373" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

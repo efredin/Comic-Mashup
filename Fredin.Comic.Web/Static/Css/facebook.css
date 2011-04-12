@@ -1,0 +1,75 @@
+﻿/*********************
+ Profile Layout Items *
+*********************/
+body#fb
+{
+	background: #FFFFFF;
+	color: #202020;
+}
+#fb-logobar
+{
+	color: #F1F1F1; 
+	margin: 2px auto;
+	width: 760px;
+}
+#fb-logo
+{
+	border: 0;
+	margin: 4px 0;
+}
+#fb-titlebar
+{
+	margin: 2px auto;
+	width: 760px;
+}
+#fb-titlebar h1
+{
+	margin: 4px 0;
+	color: #91BED5;
+	font-family: Arial;
+}
+#fb-content
+{
+	margin: 0 auto;
+	padding: 10px 0;
+	width: 760px;
+	clear: both;
+}
+#fb-footer
+{
+	margin: 8px auto;
+	width: 760px;
+}
+#fb-footer2
+{
+	margin: 8px auto 2px auto;
+	width: 760px;
+}
+.content734
+{
+	width: 734px;
+	display: block;
+}
+.content434
+{
+	width: 434px;
+	display: inline-block;
+}
+
+#optionsetEffect .ui-select .effect { height: 80px; font-size: 0.9em; }
+#optionsetEffect .ui-select ul li { display: inline-block; text-align: center; vertical-align: middle; zoom: 1; *display: inline; }
+
+#renderAction { margin: 4px 0 0 0; text-align: right; }
+
+.fbrectangle
+{
+	margin: 0;
+	padding: 0;
+	width: 300px;
+	float: right;
+}
+.fbrectangle .ad-debug
+{
+	background: #E9E9E9;
+	height: 250px;
+}

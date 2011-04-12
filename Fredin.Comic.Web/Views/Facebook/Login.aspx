@@ -1,0 +1,36 @@
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Facebook/Web.Master" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
+<%@Import Namespace="Fredin.Comic.Web" %>
+
+<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Login | Comic Mashup for Profiles</asp:Content>
+<asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Login</asp:Content>
+<asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
+
+	<div class="box content734">
+		<p>Please login to continue.</p>
+		<a href="javascript:void(0);" class="button-fbLogin fb_button fb_button_medium">
+			<span class="fb_button_text">Connect with Facebook</span>
+		</a>
+	</div>
+
+</asp:Content>
+
+<asp:Content ID="cScript" ContentPlaceHolderID="cphScript" runat="server">
+	<script type="text/javascript">
+	Application.create(
+	{
+		onConnect: function(uid)
+		{
+			// redirect to original request url
+			if(document.referrer != '' && document.referrer != '<%= this.Url.Action("Login", "Facebook") %>')
+			{
+				document.location = document.referrer;
+			}
+			else
+			{
+				document.location = '<%= this.Url.Content("~/Facebook/") %>';
+			}
+		}
+	}, appOptions);
+
+	</script>
+</asp:Content>

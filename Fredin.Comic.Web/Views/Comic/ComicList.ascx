@@ -16,7 +16,7 @@
 					on <%: comic.PublishTime.Value.ToString("dddd MMMMM d, yyyy") %>
 				</span>
 			</div>
-			<a href="<%: comic.ReadUrl %>"><img src="<%: comic.ThumbUrl %>" alt="<%: HttpUtility.HtmlEncode(comic.Description) %>" /></a>
+			<a href="<%: comic.ReadUrl %>"><img src="<%: comic.ThumbUrl %>" alt="<%: HttpUtility.HtmlEncode(comic.Description) %>" width="364" height="113" /></a>
 		</li>
 	<% } %>
 	</ul>

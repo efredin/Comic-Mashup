@@ -63,6 +63,17 @@ namespace Fredin.Comic.Web
 			return GetStaticUrl(String.Format(url, formatArgs));
 		}
 
+		public static string GetFacebookUrl(string url)
+		{
+			Uri fbUrl = new Uri(new Uri(ComicConfigSectionGroup.Web.FacebookBaseUrl), url);
+			return fbUrl.AbsoluteUri;
+		}
+
+		public static string GetFacebookUrl(string url, params object[] formatArgs)
+		{
+			return GetFacebookUrl(String.Format(url, formatArgs));
+		}
+
 		public static string GetImageUrl(string url)
 		{
 			return GetStaticUrl(String.Format("Image/{0}", url));
@@ -99,6 +110,14 @@ namespace Fredin.Comic.Web
 			}
 
 			string url = String.Format("{0}{1}", directory, comic.StorageKey);
+			Uri renderUri = new Uri(new Uri(ComicConfigSectionGroup.Web.RenderBaseUrl), url);
+			return renderUri.AbsoluteUri;
+		}
+
+		public static string GetProfileRenderUrl(string storageKey)
+		{
+			BlobConfigSection storage = ComicConfigSectionGroup.Blob;
+			string url = String.Format("{0}{1}", storage.ProfileDirectory, storageKey);
 			Uri renderUri = new Uri(new Uri(ComicConfigSectionGroup.Web.RenderBaseUrl), url);
 			return renderUri.AbsoluteUri;
 		}

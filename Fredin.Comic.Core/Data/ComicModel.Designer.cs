@@ -31,6 +31,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ComicRead_Comic", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.Comic), "ComicRead", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicRead), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ComicRead_User", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ComicRead", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicRead), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ComicStat_Comic", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.Comic), "ComicStat", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicStat), true)]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ProfileRender_User", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ProfileRender", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ProfileRender))]
 
 #endregion
 
@@ -257,6 +258,22 @@ namespace Fredin.Comic.Data
             }
         }
         private ObjectSet<ComicStat> _ComicStat;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<ProfileRender> ProfileRender
+        {
+            get
+            {
+                if ((_ProfileRender == null))
+                {
+                    _ProfileRender = base.CreateObjectSet<ProfileRender>("ProfileRender");
+                }
+                return _ProfileRender;
+            }
+        }
+        private ObjectSet<ProfileRender> _ProfileRender;
 
         #endregion
         #region AddTo Methods
@@ -347,6 +364,14 @@ namespace Fredin.Comic.Data
         public void AddToComicStat(ComicStat comicStat)
         {
             base.AddObject("ComicStat", comicStat);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ProfileRender EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToProfileRender(ProfileRender profileRender)
+        {
+            base.AddObject("ProfileRender", profileRender);
         }
 
         #endregion
@@ -2153,6 +2178,154 @@ namespace Fredin.Comic.Data
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="ProfileRender")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ProfileRender : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ProfileRender object.
+        /// </summary>
+        /// <param name="profileRenderId">Initial value of the ProfileRenderId property.</param>
+        /// <param name="storageKey">Initial value of the StorageKey property.</param>
+        /// <param name="createTime">Initial value of the CreateTime property.</param>
+        public static ProfileRender CreateProfileRender(global::System.Int64 profileRenderId, global::System.String storageKey, global::System.DateTime createTime)
+        {
+            ProfileRender profileRender = new ProfileRender();
+            profileRender.ProfileRenderId = profileRenderId;
+            profileRender.StorageKey = storageKey;
+            profileRender.CreateTime = createTime;
+            return profileRender;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int64 ProfileRenderId
+        {
+            get
+            {
+                return _ProfileRenderId;
+            }
+            set
+            {
+                if (_ProfileRenderId != value)
+                {
+                    OnProfileRenderIdChanging(value);
+                    ReportPropertyChanging("ProfileRenderId");
+                    _ProfileRenderId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ProfileRenderId");
+                    OnProfileRenderIdChanged();
+                }
+            }
+        }
+        private global::System.Int64 _ProfileRenderId;
+        partial void OnProfileRenderIdChanging(global::System.Int64 value);
+        partial void OnProfileRenderIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String StorageKey
+        {
+            get
+            {
+                return _StorageKey;
+            }
+            set
+            {
+                OnStorageKeyChanging(value);
+                ReportPropertyChanging("StorageKey");
+                _StorageKey = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("StorageKey");
+                OnStorageKeyChanged();
+            }
+        }
+        private global::System.String _StorageKey;
+        partial void OnStorageKeyChanging(global::System.String value);
+        partial void OnStorageKeyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime CreateTime
+        {
+            get
+            {
+                return _CreateTime;
+            }
+            set
+            {
+                OnCreateTimeChanging(value);
+                ReportPropertyChanging("CreateTime");
+                _CreateTime = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CreateTime");
+                OnCreateTimeChanged();
+            }
+        }
+        private global::System.DateTime _CreateTime;
+        partial void OnCreateTimeChanging(global::System.DateTime value);
+        partial void OnCreateTimeChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK_ProfileRender_User", "User")]
+        public User User
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK_ProfileRender_User", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK_ProfileRender_User", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> UserReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK_ProfileRender_User", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("Fredin.Comic.Data.FK_ProfileRender_User", "User", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="Template")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
@@ -3353,6 +3526,28 @@ namespace Fredin.Comic.Data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ComicRead>("Fredin.Comic.Data.FK_ComicRead_User", "ComicRead", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK_ProfileRender_User", "ProfileRender")]
+        public EntityCollection<ProfileRender> ProfileRender
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ProfileRender>("Fredin.Comic.Data.FK_ProfileRender_User", "ProfileRender");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ProfileRender>("Fredin.Comic.Data.FK_ProfileRender_User", "ProfileRender", value);
                 }
             }
         }

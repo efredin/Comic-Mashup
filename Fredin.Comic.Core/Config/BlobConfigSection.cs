@@ -28,6 +28,13 @@ namespace Fredin.Comic.Config
 			set { this["renderTaskDirectory"] = value; }
 		}
 
+		[ConfigurationProperty("profileTaskDirectory", IsRequired = false, DefaultValue = "profile/")]
+		public string ProfileTaskDirectory
+		{
+			get { return (string)this["profileTaskDirectory"]; }
+			set { this["profileTaskDirectory"] = value; }
+		}
+
 		[ConfigurationProperty("comicDirectory", IsRequired = true)]
 		public string ComicDirectory
 		{
@@ -61,6 +68,13 @@ namespace Fredin.Comic.Config
 		{
 			get { return (string)this["photoDirectory"]; }
 			set { this["photoDirectory"] = value; }
+		}
+
+		[ConfigurationProperty("profileDirectory", IsRequired = true)]
+		public string ProfileDirectory
+		{
+			get { return (string)this["profileDirectory"]; }
+			set { this["profileDirectory"] = value; }
 		}
 	}
 }

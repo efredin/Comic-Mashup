@@ -42,7 +42,6 @@ namespace Fredin.Comic.Worker
 			this.ExecuteMutex = new Mutex();
 
 			this.Log = LogManager.GetLogger(typeof(RenderTaskManager));
-			this.InitEntityContext();
 			this.InitAzure();
 		}
 
@@ -63,20 +62,6 @@ namespace Fredin.Comic.Worker
 
 			this.QueueClient = this.StorageAccount.CreateCloudQueueClient();
 			this.QueueClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
-		}
-
-		#endregion
-
-		#region [Entity]
-
-		private string ConnectionString { get; set; }
-
-		private ComicModelContext EntityContext { get; set; }
-
-		private void InitEntityContext()
-		{
-			this.ConnectionString = ConfigurationManager.ConnectionStrings["ComicModelContext"].ConnectionString;
-			this.EntityContext = new ComicModelContext(this.ConnectionString);
 		}
 
 		#endregion
@@ -199,6 +184,9 @@ namespace Fredin.Comic.Worker
 			Data.Comic comic = null;
 			RenderTask task = null;
 
+			string connectionString = ConfigurationManager.ConnectionStrings["ComicModelContext"].ConnectionString;
+			ComicModelContext entityContext = new ComicModelContext(connectionString);
+
 			try
 			{
 				// Read task details from storage
@@ -217,20 +205,20 @@ namespace Fredin.Comic.Worker
 					this.UpdateTask(task);
 				}
 
-				User user = this.EntityContext.TryGetUser(task.OwnerUid);
+				User user = entityContext.TryGetUser(task.OwnerUid);
 
 				FacebookApp facebook = new FacebookApp(task.FacebookToken);
 
 				// Get template
-				Template template = this.EntityContext.ListTemplates().First(t => t.TemplateId == task.TemplateId);
+				Template template = entityContext.ListTemplates().First(t => t.TemplateId == task.TemplateId);
 				List<TemplateItem> templateItems = template.TemplateItems.OrderBy(t => t.Ordinal).ToList();
 
-				TextBubble speechBubble = this.EntityContext.ListTextBubbles().First(b => b.Title == "speech");
-				TextBubble bubbleShout = this.EntityContext.ListTextBubbles().First(b => b.Title == "shout");
-				TextBubble squareBubble = this.EntityContext.ListTextBubbles().First(b => b.Title == "square");
+				TextBubble speechBubble = entityContext.ListTextBubbles().First(b => b.Title == "speech");
+				TextBubble bubbleShout = entityContext.ListTextBubbles().First(b => b.Title == "shout");
+				TextBubble squareBubble = entityContext.ListTextBubbles().First(b => b.Title == "square");
 
 				comic = new Data.Comic();
-				this.EntityContext.AddToComics(comic);
+				entityContext.AddToComics(comic);
 
 				comic.Author = user;
 				comic.Template = template;
@@ -251,8 +239,20 @@ namespace Fredin.Comic.Worker
 
 				// Render effect parameters
 				Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-				parameterValues.Add("edging", 2);
-				parameterValues.Add("coloring", 35);
+
+				switch (task.Effect)
+				{
+					case ComicEffectType.ColorSketch:
+					case ComicEffectType.PencilSketch:
+						parameterValues.Add("edging", 2);
+						parameterValues.Add("coloring", 35);
+						break;
+
+					case ComicEffectType.Comic:
+					default:
+						parameterValues.Add("coloring", 6);
+						break;
+				}
 
 				// Get photos for each frame
 				for (int f = 0; f < task.Frames.Count; f++)
@@ -359,7 +359,7 @@ namespace Fredin.Comic.Worker
 
 					// Text Bubbles
 					ComicTextBubble comicBubble = new ComicTextBubble();
-					this.EntityContext.AddToComicTextBubbles(comicBubble);
+					entityContext.AddToComicTextBubbles(comicBubble);
 					comicBubble.Comic = comic;
 					comicBubble.Text = task.Frames[f].Message;
 
@@ -414,7 +414,7 @@ namespace Fredin.Comic.Worker
 					photo.User = user;
 					photo.CreateTime = DateTime.Now;
 					photo.ImageData = imageStream.ToArray();
-					this.EntityContext.AddToPhotos(photo);
+					entityContext.AddToPhotos(photo);
 
 					ComicPhoto comicPhoto = new ComicPhoto();
 					comicPhoto.Comic = comic;
@@ -428,7 +428,7 @@ namespace Fredin.Comic.Worker
 					this.UpdateTask(task);
 				}
 
-				this.SaveComic(comic);
+				this.SaveComic(comic, entityContext);
 
 				task.Status = TaskStatus.Complete;
 				task.ComicId = comic.ComicId;
@@ -443,6 +443,13 @@ namespace Fredin.Comic.Worker
 				{
 					task.Status = TaskStatus.Failed;
 					this.UpdateTask(task);
+				}
+
+				if (comic != null)
+				{
+					this.Log.DebugFormat("Text bubble info [{0}] [{1}]", 
+						String.Join(",", comic.ComicTextBubbles.Select(b => b.ComicTextBubbleId.ToString()).ToArray()),
+						String.Join(",", comic.ComicTextBubbles.Select(b => b.TextBubbleDirectionId.ToString()).ToArray()));
 				}
 			}
 		}
@@ -670,12 +677,12 @@ namespace Fredin.Comic.Worker
 			return generator;
 		}
 
-		private void SaveComic(Fredin.Comic.Data.Comic comic)
+		private void SaveComic(Fredin.Comic.Data.Comic comic, ComicModelContext entityContext)
 		{
 			// Generate comic
 			ComicGenerator generator = this.CreateComicGenerator(comic, false);
 			ComicGenerator frameGenerator = this.CreateComicGenerator(comic, true);
-			this.EntityContext.SaveChanges();
+			entityContext.SaveChanges();
 
 			// Storage container for all renders
 			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.RenderContainer);

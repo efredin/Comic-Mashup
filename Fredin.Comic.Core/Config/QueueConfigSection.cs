@@ -14,5 +14,12 @@ namespace Fredin.Comic.Config
 			get { return (string)this["renderTaskQueue"]; }
 			set { this["renderTaskQueue"] = value; }
 		}
+
+		[ConfigurationProperty("profileTaskQueue", IsRequired = true)]
+		public string ProfileTaskQueue
+		{
+			get { return (string)this["profileTaskQueue"]; }
+			set { this["profileTaskQueue"] = value; }
+		}
 	}
 }

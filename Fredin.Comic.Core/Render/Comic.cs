@@ -16,17 +16,13 @@ namespace Fredin.Comic.Render
 	{
 		#region [Property]
 
-		public int Edging { get; set; }
 		public int Coloring { get; set; }
-		public int Shading { get; set; }
 
 		#endregion
 
 		public Comic()
 		{
-			this.Edging = 3;
-			this.Coloring = 5;
-			this.Shading = 65;
+			this.Coloring = 6;
 		}
 
 		#region [Method]
@@ -35,8 +31,8 @@ namespace Fredin.Comic.Render
 		{
 			List<RenderParameter> renderParams = new List<RenderParameter>();
 
-			renderParams.Add(new RenderParameter("edging", "Edging", 3, 1, 5));
-			renderParams.Add(new RenderParameter("coloring", "Coloring", 8, 16, 24));
+			//renderParams.Add(new RenderParameter("edging", "Edging", 3, 1, 5));
+			renderParams.Add(new RenderParameter("coloring", "Coloring", 12, 6, 18));
 
 			return renderParams;
 		}
@@ -45,10 +41,6 @@ namespace Fredin.Comic.Render
 		{
 			if (values != null)
 			{
-				if (values.ContainsKey("edging"))
-				{
-					this.Edging = Convert.ToInt32(values["edging"]);
-				}
 				if (values.ContainsKey("coloring"))
 				{
 					this.Coloring = Convert.ToInt32(values["coloring"]);
@@ -62,9 +54,7 @@ namespace Fredin.Comic.Render
 		public override Bitmap Render(Bitmap sourceImage)
 		{
 			Bitmap smoothLayer;
-			Bitmap edgeLayer;
 			Bitmap posterLayer;
-			Bitmap noiseLayer;
 			Bitmap grayscale;
 
 			GrayscaleToRGB convertColor = new GrayscaleToRGB();
@@ -75,42 +65,38 @@ namespace Fredin.Comic.Render
 				sourceImage = convertColor.Apply(sourceImage);
 			}
 
-			//HistogramEqualization autoLevels = new HistogramEqualization();
-			//smoothLayer = autoLevels.Apply(sourceImage);
+			HistogramEqualization autoLevels = new HistogramEqualization();
+			smoothLayer = autoLevels.Apply(sourceImage);
 
-			AdaptiveSmoothing smooth = new AdaptiveSmoothing(10);
+			AdaptiveSmoothing smooth = new AdaptiveSmoothing(12);
 			smoothLayer = smooth.Apply(sourceImage);
-
-			
 
 			grayscale = Grayscale.CommonAlgorithms.Y.Apply(smoothLayer);
 
+			// Haven't been able to come up with a good edge detection for posterized comics.. Oh well
 			// Edges
-			SobelEdgeDetector sobelEdge = new SobelEdgeDetector();
-			sobelEdge.ScaleIntensity = true;
-			edgeLayer = sobelEdge.Apply(grayscale);
-			Invert invertEdge = new Invert();
-			invertEdge.ApplyInPlace(edgeLayer);
-			Threshold thresholdEdge = new Threshold(128);
-			thresholdEdge.ApplyInPlace(edgeLayer);
-			edgeLayer = convertColor.Apply(edgeLayer);
-			smooth.ApplyInPlace(edgeLayer);
+			//SobelEdgeDetector sobelEdge = new SobelEdgeDetector();
+			//sobelEdge.ScaleIntensity = false;
+			//edgeLayer = sobelEdge.Apply(grayscale);
+			//Invert invertEdge = new Invert();
+			//invertEdge.ApplyInPlace(edgeLayer);
+			//Threshold thresholdEdge = new Threshold(128);
+			//thresholdEdge.ApplyInPlace(edgeLayer);
+			//edgeLayer = convertColor.Apply(edgeLayer);
+			//smooth.ApplyInPlace(edgeLayer);
 
-			// Noise
-			//FloydSteinbergDithering noiseDither = new FloydSteinbergDithering();
-			//noiseLayer = noiseDither.Apply(grayscale);
-			//noiseLayer = convertColor.Apply(noiseLayer);
-			//Darken darkenNoise = new Darken(noiseLayer);
-			//darkenNoise.ApplyInPlace(noiseLayer);
+			// Merge edges with working layer
+			//Multiply multEdge = new Multiply(edgeLayer);
+			//multEdge.ApplyInPlace(smoothLayer);
 
 			// Posterize
-			Posterize posterColor = new Posterize(16);
+			Posterize posterColor = new Posterize(this.Coloring);
 			posterLayer = posterColor.Apply(smoothLayer);
 			Darken darkenPoster = new Darken(posterLayer);
 			darkenPoster.ApplyInPlace(smoothLayer);
 
-			Multiply multEdge = new Multiply(edgeLayer);
-			multEdge.ApplyInPlace(smoothLayer);
+			// Smooth again - posterization leaves rough edges
+			smooth.ApplyInPlace(smoothLayer);
 
 			return smoothLayer;
 		}

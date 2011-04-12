@@ -247,7 +247,7 @@
 				var self = this;
 
 				// Get news feed data from facebook graph
-				FB.api('/me/feed', { limit: 150 }, function (response)
+				FB.api('/me/home', { limit: 150, type: 'post' }, function (response)
 				{
 					if (!response || response.error)
 					{
@@ -263,7 +263,7 @@
 							var item = response.data[i];
 
 							// Only include items from user or friends which have an actual message
-							if (item.from && item.from.id == self.options.user.Uid && item.message && item.message.trim() != '')
+							if (item.application == null && item.from && !item.from.category && item.message != null && item.message.trim() != '')
 							{
 								self.options.feed.push(item);
 							}

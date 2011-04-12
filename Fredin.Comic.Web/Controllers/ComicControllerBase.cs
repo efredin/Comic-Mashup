@@ -72,13 +72,13 @@ namespace Fredin.Comic.Web.Controllers
 
 		#region [Facebook]
 
-		protected FacebookApp Facebook { get; set; }
+		protected FacebookWebClient Facebook { get; set; }
 
 		//protected long Uid { get; set; }
 
 		protected virtual void InitFacebook()
 		{
-			this.Facebook = new FacebookApp();
+			this.Facebook = new FacebookWebClient();
 		}
 
 		#endregion
@@ -91,11 +91,7 @@ namespace Fredin.Comic.Web.Controllers
 
 		protected virtual void InitAzure()
 		{
-#if DEBUG
-			this.StorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
-#else
 			this.StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["ComicStorage"].ConnectionString);
-#endif
 
 			this.BlobClient = this.StorageAccount.CreateCloudBlobClient();
 			this.BlobClient.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.Zero);
@@ -129,6 +125,7 @@ namespace Fredin.Comic.Web.Controllers
 		public const string KEY_THEME = "theme";
 		public const string KEY_ACTIVE_USER = "user";
 		public const string KEY_FRIENDS = "friends";
+		public const string KEY_GUEST_USER = "guest";
 
 		/// <summary>
 		/// Active session user. Guest users will return null
@@ -145,6 +142,12 @@ namespace Fredin.Comic.Web.Controllers
 			set { this.Session[KEY_FRIENDS] = value; }
 		}
 
+		protected virtual User GuestUser
+		{
+			get { return this.Session[KEY_GUEST_USER] as User; }
+			set { this.Session[KEY_GUEST_USER] = value; }
+		}
+
 		protected virtual string Theme
 		{
 			get { return this.Session[KEY_THEME] as string; }
@@ -157,15 +160,15 @@ namespace Fredin.Comic.Web.Controllers
 			{
 				if(FacebookWebContext.Current.IsAuthenticated())
 				{
-					if (this.ActiveUser == null || (this.ActiveUser != null && this.Facebook.Session.UserId != this.ActiveUser.Uid))
+					if (this.ActiveUser == null || (this.ActiveUser != null && FacebookWebContext.Current.UserId != this.ActiveUser.Uid))
 					{
 						// Load user details into session
-						this.ActiveUser = this.EntityContext.TryGetUser(this.Facebook.Session.UserId);
+						this.ActiveUser = this.EntityContext.TryGetUser(FacebookWebContext.Current.UserId);
 						if (this.ActiveUser == null)
 						{
 							// User not yet created - Create the user
 							this.ActiveUser = new User();
-							this.ActiveUser.Uid = this.Facebook.Session.UserId;
+							this.ActiveUser.Uid = FacebookWebContext.Current.UserId;
 
 							this.EntityContext.AddToUsers(this.ActiveUser);
 						}
@@ -202,12 +205,21 @@ namespace Fredin.Comic.Web.Controllers
 						this.Log.InfoFormat("Session created for user {0}", this.ActiveUser.Uid);
 					}
 				}
+				else
+				{
+					this.ActiveUser = null;
+				}
 			}
 			catch (FacebookOAuthException authX)
 			{
 				this.Log.InfoFormat("Auth token invalid", authX);
 				this.LogoutActiveUser();
 			}
+		}
+
+		protected virtual void LoginGuestUser(User hostUser)
+		{
+			this.GuestUser = hostUser;
 		}
 
 		protected virtual void LogoutActiveUser()
@@ -223,6 +235,10 @@ namespace Fredin.Comic.Web.Controllers
 			if (this.Friends != null)
 			{
 				isFriend = this.Friends.Contains(user.Uid);
+			}
+			else if (this.GuestUser != null)
+			{
+				isFriend = this.GuestUser.Uid == user.Uid;
 			}
 			return isFriend;
 		}

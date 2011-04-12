@@ -21,6 +21,13 @@ namespace Fredin.Comic.Config
 			set { this["renderBaseUrl"] = value; }
 		}
 
+		[ConfigurationProperty("facebookBaseUrl", IsRequired = true)]
+		public string FacebookBaseUrl
+		{
+			get { return (string)this["facebookBaseUrl"]; }
+			set { this["facebookBaseUrl"] = value; }
+		}
+
 		[ConfigurationProperty("trackerId", IsRequired = true)]
 		public string TrackerId
 		{

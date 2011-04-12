@@ -39,10 +39,30 @@ namespace Fredin.Comic.Web.Controllers
 
 			try
 			{
-				this.EntityContext.TryAttach(this.ActiveUser);
+				Data.Comic comic = null;
 
-				Data.Comic comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
-				if (comic == null || (comic.IsPrivate && !this.IsFriendOrSelf(comic.Author)))
+				// Facebook shared comics
+				if (this.ActiveUser == null && this.HttpContext.Request.UrlReferrer != null && this.HttpContext.Request.UrlReferrer.Host.Contains("facebook.com"))
+				{
+					comic = this.EntityContext.TryGetComic(comicId, null, true);
+					if (comic != null)
+					{
+						this.LoginGuestUser(comic.Author);
+					}
+				}
+				// Guest user logged in
+				else if (this.GuestUser != null)
+				{
+					comic = this.EntityContext.TryGetComic(comicId, this.GuestUser);
+				}
+				else
+				{
+					// All other entry points
+					this.EntityContext.TryAttach(this.ActiveUser);
+					comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
+				}
+
+				if (comic == null)
 				{
 					throw new Exception("Unable to find the requested comic.");
 				}
@@ -294,9 +314,9 @@ namespace Fredin.Comic.Web.Controllers
 		{
 			List<ClientEffect> effects = new List<ClientEffect>();
 			effects.Add(new ClientEffect("None", ComicUrlHelper.GetImageUrl("Effect/none.png"), ComicEffectType.None));
-			//effects.Add(new ClientEffect("Comic", ComicUrlHelper.GetImageUrl("Effect/comic.png"), ComicEffectType.Comic));
+			effects.Add(new ClientEffect("Comic", ComicUrlHelper.GetImageUrl("Effect/comic.png"), ComicEffectType.Comic));
 			effects.Add(new ClientEffect("Color Sketch", ComicUrlHelper.GetImageUrl("Effect/color-sketch.png"), ComicEffectType.ColorSketch));
-			effects.Add(new ClientEffect("Pencil Sketch", ComicUrlHelper.GetImageUrl("Effect/pencil-sketch.png"), ComicEffectType.PencilSketch));
+			//effects.Add(new ClientEffect("Pencil Sketch", ComicUrlHelper.GetImageUrl("Effect/pencil-sketch.png"), ComicEffectType.PencilSketch));
 			return effects;
 		}
 

@@ -35,6 +35,7 @@
         	user: null,
         	menuSelected: -1,
         	baseHref: '/',
+			facebookBaseHref: '/',
         	requireConnect: false,
         	themeBase: ''
         },

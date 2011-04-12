@@ -407,7 +407,6 @@ input, textarea
 	border: 1px solid #BBBBBB;
 	background: #F4F4F4;
 	padding: 12px;
-	display: inline-block;
 }
 .watermark
 {

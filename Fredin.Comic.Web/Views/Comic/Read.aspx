@@ -5,12 +5,14 @@
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server"><%: Model.Comic.Title %> | Comic Mashup</asp:Content>
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server"><%: Model.Comic.Title %></asp:Content>
 
-<asp:Content ID="cHead" ContentPlaceHolderID="cphHead" runat="server">
+<asp:Content ID="cMeta" ContentPlaceHolderID="cphMeta" runat="server">
 	<meta property="og:title" content="<%: Model.Comic.Title %>" />
 	<meta property="og:description" content="<%: Model.Comic.Description %>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:image" content="<%: Model.Comic.FrameThumbUrl %>" />
 	<meta property="og:url" content="<%: Model.Comic.ReadUrl %>" />
+	<meta property="description" content="<%: Model.Comic.Description %>" />
+	<meta property="author" content="<%: Model.Comic.Author.Nickname %>" />
 </asp:Content>
 
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">

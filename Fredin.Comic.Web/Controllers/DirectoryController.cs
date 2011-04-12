@@ -13,20 +13,20 @@ namespace Fredin.Comic.Web.Controllers
     {
 		protected const int PageSize = 12;
 
+		public ActionResult Index()
+		{
+			return this.RedirectToAction("Home");
+		}
+
 		public ActionResult Home()
 		{
 			var comics = this.EntityContext.ListPublishedComics(this.ActiveUser, this.Friends, ComicStat.ComicStatPeriod.AllTime)
 				.OrderByDescending(c => c.PublishTime.Value)
-				.Take(6)
+				.Take(8)
 				.ToList();
 
 			ViewDirectory view = new ViewDirectory(comics, ViewDirectory.DirectoryMode.Newest, ComicStat.ComicStatPeriod.AllTime, 1, 1);
 			return View("Home", view);
-		}
-
-		public ActionResult Index()
-		{
-			return this.View();
 		}
 
 		protected ViewDirectory LoadDirectory(ComicStat.ComicStatPeriod? period, int? page, Expression<Func<Data.Comic,long>> sortExpression, ViewDirectory.DirectoryMode mode)

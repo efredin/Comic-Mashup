@@ -46,9 +46,9 @@ namespace Fredin.Comic.Web
 
 			routes.MapRoute
 			(
-				"Default",
+				"Index",
 				"{controller}/{action}",
-				new { controller = "Directory", action = "Home" }
+				new { controller = "Directory", action = "Index" }
 			);
 		}
 

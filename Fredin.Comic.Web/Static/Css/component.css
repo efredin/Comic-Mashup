@@ -50,7 +50,7 @@
 #comicRead #reader { margin: 10px 0; }
 #comicRead #reader #readerRate { vertical-align: middle; }
 #comicRead #reader #readerRate #readerVote { display: inline-block; padding: 16px 0 0; }
-#comicRead #reader #readerAction { float: right; }
+#comicRead #reader #readerAction { float: right; width: 188px; }
 #comicRead #reader label, #comicRead #reader a { font-size: 0.7em; }
 #comicRead #comments { float: left; display: inline-block; width: 522px; margin: 10px 10px 0 0; }
 #comicRead #navigate { float: left; display: inline-block; margin: 10px 0 0 0; width: 206px; }
@@ -84,6 +84,7 @@
 
 .content800 { width: 800px; }
 .content764 { width: 764px; }
+.contentIb { display: inline-block; }
 
 #profile { }
 #directory { }

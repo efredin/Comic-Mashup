@@ -50,6 +50,7 @@ namespace Fredin.Comic.Worker
 
 
 			RenderTaskManager.Instance.Start();
+			ProfileTaskManager.Instance.Start();
 			StatUpdate.Instance.Start();
 
 			return base.OnStart();
@@ -58,6 +59,7 @@ namespace Fredin.Comic.Worker
 		public override void OnStop()
 		{
 			StatUpdate.Instance.Stop();
+			ProfileTaskManager.Instance.Stop();
 			RenderTaskManager.Instance.Stop();
 			base.OnStop();
 		}

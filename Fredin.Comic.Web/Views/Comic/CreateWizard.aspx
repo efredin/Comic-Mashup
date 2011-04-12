@@ -65,7 +65,7 @@
 				<div class="ui-wizard-navPad">
 					<div id="optionsetPhoto" class="ui-optionset">
 						<div class="ui-optionset-title">Photo Source</div>
-						<span class="ui-optionset-caption">When tagged is selected and no tags are found, another photo will be<br /> used instead.</span>
+						<span class="ui-optionset-caption">When tagged is selected and no tags are found, another photo will be used instead.</span>
 						<div id="buttonsetPhotoSource" class="ui-optionset-content">
 							<input type="radio" value="Tagged" name="optionPhoto" id="optionPhotoTagged" /><label for="optionPhotoTagged">Tagged</label>
 							<%--<input type="radio" value="Profile" name="optionPhoto" id="optionPhotoProfile" /><label for="optionPhotoProfile">Profile</label>--%>

@@ -4,7 +4,6 @@
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Error</asp:Content>
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
-    <h1>Error</h1>
 	<%: Model.Exception.Message %>
 	<% #if DEBUG %>
 	<p class="debug-trace"><%: MvcHtmlString.Create(Model.Exception.ToString().Replace("\n", "<br/>")) %></p>

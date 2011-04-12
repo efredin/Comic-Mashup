@@ -1,0 +1,108 @@
+﻿<%@ Master Language="C#" Inherits="Fredin.Comic.Web.ComicMasterPage" %>
+<%@ Import Namespace="Fredin.Comic.Web" %>
+<%@ Import Namespace="Fredin.Comic.Config" %>
+<%@ Import Namespace="Fredin.Comic.Web.Models" %>
+<%@ Import Namespace="Facebook" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
+<head runat="server" id="head">
+    <title><asp:ContentPlaceHolder ID="cphPageTitle" runat="server">Comic Mashup for Profiles</asp:ContentPlaceHolder></title>
+	
+	<link rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Css/Comic.min.css") %>" />
+	<link id="cssTheme" rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Theme/{0}/jquery.ui.theme.min.css", this.Theme) %>" />
+
+	<% #if DEBUG %>
+	<script type="text/javascript" src="<%= ComicUrlHelper.GetStaticUrl("Script/Comic.debug.js") %>"></script>
+	<% #else %>
+	<script type="text/javascript" src="<%= ComicUrlHelper.GetStaticUrl("Script/Comic.min.js") %>"></script>
+	<% #endif %>
+
+	<meta property="og:site_name" content="Comic Mashup for Profiles" />
+	<%= String.Format("<meta property='fb:app_id' content='{0}' />", ComicConfigSectionGroup.Facebook.AppId) %>
+    <asp:ContentPlaceHolder id="cphMeta" runat="server">
+		<meta property="og:title" content="Comic Mashup for Profiles" />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content="<%: ComicUrlHelper.GetStaticUrl("Image/cm64.png") %>" />
+		<meta property="og:url" content="<%: ComicUrlHelper.GetFacebookUrl("") %>" />
+		<meta property="og:site_name" content="Comic Mashup for Profiles" />
+	</asp:ContentPlaceHolder>
+</head>
+<body id="fb">
+
+    <div id="fb-logobar">
+
+		<%--Logo--%>
+		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-white.png") %>" alt="Comic Mashup for Profiles" /></a>
+
+	</div>
+    <div id="fb-titlebar">
+        <h1><asp:ContentPlaceHolder ID="cphTitle" runat="server"></asp:ContentPlaceHolder></h1>
+    </div>
+
+	<%-- Application Options --%>
+	<script type="text/javascript">
+	appOptions =
+	{
+		appId: '<%= ComicConfigSectionGroup.Facebook.AppId %>',
+		permissions: '<%= ComicConfigSectionGroup.Facebook.Permissions %>',
+		cookieSupport: <%= ComicConfigSectionGroup.Facebook.CookieSupport ? "true" : "false" %>,
+		useXfbml: <%= ComicConfigSectionGroup.Facebook.UseXfbml ? "true" : "false" %>,
+		user: <%= this.ActiveUser == null ? "null" : this.Json(new ClientUser(this.ActiveUser)) %>,
+		baseHref: '<%= ComicUrlHelper.GetWebUrl("") %>',
+		facebookBaseHref: '<%= ComicUrlHelper.GetFacebookUrl("") %>',
+		themeBase: '<%= ComicUrlHelper.GetStaticUrl("Theme") %>'
+	};
+	</script>
+
+	<%-- Content --%>
+	<div id="fb-content">
+		<asp:ContentPlaceHolder id="cphCanvas" runat="server"></asp:ContentPlaceHolder>
+		<div id="content-clear"></div>
+	</div>
+
+	<%-- Footer --%>
+<%--	<div id="fb-footer">
+		<div id="footer-like"><fb:like href="" layout="box_count" show_faces="false" width="450" font=""></fb:like></div>
+	</div>--%>
+<%--	<div id="fb-footer2">
+		<div id="copyright">© 2011. All right reserved.</div>
+	</div>--%>
+
+	<%-- Login Dialog --%>
+	<div id="dialog-requestConnect" class="ui-helper-hidden" title="Not Logged In">
+		<p id="dialog-requestConnect-message">Please login to continue.</p>
+		<a href="javascript:void(0);" class="button-fbLogin fb_button fb_button_medium">
+			<span class="fb_button_text">Connect with Facebook</span>
+		</a>
+	</div>
+
+	<div id="dialog-error" class="ui-helper-hidden" title="Error">
+		<div id="dialog-error-message"></div>
+	</div>
+
+	<%-- Facebook Connect --%>
+	<div id="fb-root"></div>
+	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+
+	<asp:ContentPlaceHolder id="cphScript" runat="server">
+		<script type="text/javascript">
+			Application.create({}, appOptions);
+		</script>
+	</asp:ContentPlaceHolder>
+
+	<%-- Google Analytics --%>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '<%= ComicConfigSectionGroup.Web.TrackerId %>']);
+		_gaq.push(['_trackPageview']);
+		(function ()
+		{
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

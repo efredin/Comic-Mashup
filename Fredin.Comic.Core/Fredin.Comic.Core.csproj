@@ -90,6 +90,7 @@
     <Compile Include="Render\Comic.cs" />
     <Compile Include="Render\ComicEffectType.cs" />
     <Compile Include="Render\ComicRenderBase.cs" />
+    <Compile Include="Render\ProfileTask.cs" />
     <Compile Include="Render\RenderFrame.cs" />
     <Compile Include="Render\RenderMode.cs" />
     <Compile Include="Render\RenderTask.cs" />
