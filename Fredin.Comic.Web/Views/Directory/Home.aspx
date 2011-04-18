@@ -1,19 +1,30 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="System.Web.Mvc.ViewPage<Fredin.Comic.Web.Models.ViewDirectory>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewDirectory>" %>
 <%@ Import Namespace="Fredin.Util" %>
+<%@ Import Namespace="Fredin.Comic.Config" %>
+<%@ Import Namespace="Fredin.Comic.Web" %>
 
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Welcome</asp:Content>
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
-	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
+	<div class="wideskyscraper">
+		<% #if !DEBUG %>
+		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19165?ad_size=160x600&adkey=754'></iframe>
+		<% #else %>
+		<div class="ad-debug"></div>
+		<% #endif %>
+	</div>
 
 	<div id="home" class="box content764">
+
+		<div id="home-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" layout="box_count" show_faces="false" width="55" font=""></div>
+
 		<p>Create, read and share web comics with your online profile.  It's fun and easy!</p>
 		<h2>How it Works</h2>
 		<p>
 			Comic Mashup uses your social profile to generate fun web comics. 
 			<a href="javascript:void(0);" class="button-fbLogin">Connect your facebook</a> account to get started. 
-			Then, share your comics with your family and friends on facebook.  
-			The more visitors your send to your comic, the more votes it will get.
+			Then, share your comics with your family and friends on facebook.
+			The more visitors you send to your comic, the more votes it will get.
 		</p>
 		<a href="<%= this.Url.Action("CreateWizard", "Comic") %>" class="actionButton ui-state-default" id="home-buttonCreate"><span class="icon96 icon96-create"></span><br />Create</a>
 		<a href="<%= this.Url.Action("BestOverall", "Directory") %>" class="actionButton ui-state-default" id="home-buttonDirectory"><span class="icon96 icon96-read"></span><br />Read</a>

@@ -16,6 +16,8 @@ namespace Fredin.Comic.Web.Controllers
 {
     public class FacebookController : ComicControllerBase
     {
+		private const string SESSION_AUTO_SHARE = "fbas";
+
 		[AcceptVerbs("POST", "GET")]
         public ActionResult Index()
         {
@@ -50,7 +52,16 @@ namespace Fredin.Comic.Web.Controllers
 			CloudQueueMessage message = new CloudQueueMessage(task.TaskId.ToString());
 			queue.AddMessage(message, TimeSpan.FromMinutes(5));
 
-			return this.View("Render", new ClientProfileTask(task));
+			//Session autoshare
+			bool autoShareFeed = false;
+			if (this.Session[SESSION_AUTO_SHARE] == null)
+			{
+				autoShareFeed = true;
+				this.Session[SESSION_AUTO_SHARE] = true;
+			}
+
+
+			return this.View("Render", new ViewFacebookRender(new ClientProfileTask(task), autoShareFeed));
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/Facebook/Login")]

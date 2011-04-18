@@ -8,7 +8,8 @@
 		{
 			options:
 			{
-				task: null
+				task: null,
+				autoShareFeed: false
 			},
 
 			init: function ()
@@ -17,11 +18,14 @@
 				Application.prototype.init.apply(this);
 
 				$('#renderLoad').load({ content: '#renderContent' });
-				$('#renderShare')
+				$('#renderShareRequest')
+					.button({ icons: { primary: 'ui-icon-comment'} })
+					.click(function () { self.shareRequest(); });
+				$('#renderShareFeed')
 					.button({ icons: { primary: 'ui-icon-star'} })
-					.click(function () { self.shareFb(); });
+					.click(function () { self.shareFeed(); });
 
-				$('#renderBack').button({ icons: { primary: 'ui-icon-triangle-1-w' } });
+				$('#renderBack').button({ icons: { primary: 'ui-icon-triangle-1-w'} });
 
 				var timeout = 1000 * 30; // 30 second timeout!
 				var progressFrequency = 1000 * 5; // check every 5 seconds
@@ -54,6 +58,11 @@
 									window.clearInterval(progressInterval);
 									$('#renderPhoto').html('<img src="' + self.options.task.RenderUrl + '" alt="" />');
 									$('#renderLoad').load("complete");
+									if (self.options.autoShareFeed === true)
+									{
+										self.options.autoShareFeed = false;
+										self.shareFeed();
+									}
 								}
 								else if (self.options.task.Status == 3)
 								{
@@ -72,7 +81,21 @@
 				progressInterval = window.setInterval(progressCallback, progressFrequency);
 			},
 
-			shareFb: function ()
+			shareFeed: function ()
+			{
+				FB.ui
+				({
+					method: 'feed',
+					from: this.options.user.uid,
+					description: 'I just used Comic Mashup for Profiles to transform my profile picture into something cool!',
+					name: 'Comic Mashup Profile Photo',
+					caption: 'http://apps.facebook.com/comicmashup/',
+					picture: this.options.task.RenderUrl,
+					link: this.options.facebookBaseHref
+				});
+			},
+
+			shareRequest: function ()
 			{
 				FB.ui
 				({

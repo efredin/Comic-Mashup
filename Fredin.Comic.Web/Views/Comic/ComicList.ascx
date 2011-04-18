@@ -1,4 +1,5 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<IEnumerable<Fredin.Comic.Web.Models.ClientComic>>" %>
+<%@ Import Namespace="Fredin.Util" %>
 
 <% if (Model.Count() > 0) { %>
 	<ul class="comicList">
@@ -12,11 +13,11 @@
 				</span>
 				<a class="comicList-title" href="<%: comic.ReadUrl %>"><%: comic.Title %></a><br />
 				<span class="comicList-about">
-					<a href="<%: comic.Author.ProfileUrl %>">by <%: comic.Author.Nickname %></a>
-					on <%: comic.PublishTime.Value.ToString("dddd MMMMM d, yyyy") %>
+					<a href="<%: comic.Author.AuthorUrl %>">by <%: comic.Author.Nickname %></a>
+					on <%: comic.PublishTime.Value.UtcToEdmonton().ToString("dddd MMMMM d, yyyy") %>
 				</span>
 			</div>
-			<a href="<%: comic.ReadUrl %>"><img src="<%: comic.ThumbUrl %>" alt="<%: HttpUtility.HtmlEncode(comic.Description) %>" width="364" height="113" /></a>
+			<a href="<%: comic.ReadUrl %>"><img src="<%: comic.ThumbUrl %>" alt="<%: comic.Description.StripHtml() %>" width="364" height="113" /></a>
 		</li>
 	<% } %>
 	</ul>

@@ -1,8 +1,8 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Facebook/Facebook.Master" Inherits="System.Web.Mvc.ViewPage<Fredin.Comic.Web.Models.ViewFacebook>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Facebook/Facebook.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewFacebook>" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 
-<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Comic Mashup for Profiles</asp:Content>
-<asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">For Profiles</asp:Content>
+<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Profile Photo | Comic Mashup for Profiles</asp:Content>
+<asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Profile Photo</asp:Content>
 
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 

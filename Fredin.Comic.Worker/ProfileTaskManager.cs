@@ -205,7 +205,7 @@ namespace Fredin.Comic.Worker
 				}
 
 				User user = entityContext.TryGetUser(task.OwnerUid);
-				FacebookApp facebook = new FacebookApp(task.FacebookToken);
+				FacebookClient facebook = new FacebookClient(task.FacebookToken);
 
 				// Get profile image from facebook
 				string imageUrl = String.Format("https://graph.facebook.com/{0}/picture?access_token={1}&type=large", user.Uid, facebook.AccessToken);
@@ -257,7 +257,7 @@ namespace Fredin.Comic.Worker
 				// Mark task as completed
 				task.Status = TaskStatus.Complete;
 				this.UpdateTask(task);
-				this.Log.InfoFormat("Completed facebook task {0}", task.TaskId);
+				this.Log.DebugFormat("Completed facebook task {0}", task.TaskId);
 			}
 			catch (Exception x)
 			{

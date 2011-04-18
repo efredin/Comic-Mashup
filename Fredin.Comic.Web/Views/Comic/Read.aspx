@@ -1,4 +1,5 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="System.Web.Mvc.ViewPage<Fredin.Comic.Web.Models.ViewRead>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewRead>" %>
+<%@ Import Namespace="Fredin.Util" %>
 <%@ Import Namespace="Fredin.Comic.Web" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 
@@ -16,8 +17,14 @@
 </asp:Content>
 
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
-
-	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
+	
+	<div class="wideskyscraper">
+		<% #if !DEBUG %>
+		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19168?ad_size=160x600&adkey=02c'></iframe>
+		<% #else %>
+		<div class="ad-debug"></div>
+		<% #endif %>
+	</div>
 
 	<div id="comicRead">
 		<div class="box content764">
@@ -28,7 +35,7 @@
 			</span>
 
 			<%= Html.Partial("~/Views/Comic/Author.ascx", Model.Comic) %>
-			<div id="comicDescription"><%: HttpUtility.HtmlEncode(Model.Comic.Description) %></div>
+			<div id="comicDescription"><%: Model.Comic.Description.StripHtml() %></div>
 			<img id="comic" src="<%: Model.Comic.ComicUrl %>" alt="" />
 
 			<div id="reader">
@@ -65,13 +72,25 @@
 		<div id="navigate" class="box">
 			<h2>See Also</h2>
 			<ul>
-				<li><a href="<%: Model.Comic.Author.ProfileUrl %>">More Comics by <%: Model.Comic.Author.Nickname %></a></li>
+				<li><a href="<%: Model.Comic.Author.AuthorUrl %>">More Comics by <%: Model.Comic.Author.Nickname %></a></li>
 				<li><a href="<%: this.Url.Action("Random", "Comic") %>">Random Comic</a></li>
 			</ul>
 		</div>
 
 		<%-- Author Edit Control --%>
 		<% if(this.Model.Comic.Uid == this.Model.Reader.Uid) { %>
+
+		<div id="edit" class="box">
+			<ul>
+				<li>
+					<a id="authorDelete" href="javascript:void(0);">Delete Comic</a>
+					<div id="dialog-authorDelete" class="ui-helper-hidden" title="Please Confirm">
+						<div id="dialog-authorDeleteMessage">Are you sure you want to delete this comic?</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+
 		<% } %>
 
 	</div>

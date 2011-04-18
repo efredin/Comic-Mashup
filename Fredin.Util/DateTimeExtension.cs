@@ -7,7 +7,33 @@ namespace Fredin.Util
 {
 	public static class DateTimeExtension
 	{
+		private static TimeZoneInfo Edmonton { get; set; }
+
 		private static readonly DateTime EPOC = new DateTime(1970, 1, 1);
+
+		static DateTimeExtension()
+		{
+			// Define transition times to/from DST
+			TimeZoneInfo.TransitionTime startTransition, endTransition;
+			startTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 4, 0, 0), 10, 2, DayOfWeek.Sunday);
+			endTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 3, 0, 0), 3, 2, DayOfWeek.Sunday);
+
+			// Define adjustment rule
+			TimeSpan delta = new TimeSpan(1, 0, 0);
+			TimeZoneInfo.AdjustmentRule adjustment;
+			adjustment = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule(new DateTime(1999, 10, 1), DateTime.MaxValue.Date, delta, startTransition, endTransition);
+
+			// Create array for adjustment rules
+			TimeZoneInfo.AdjustmentRule[] adjustments = { adjustment };
+
+			// Define other custom time zone arguments
+			string displayName = "(GMT-07:00) Mountain/Edmonton Time";
+			string standardName = "MST";
+			string daylightName = "MDT";
+			TimeSpan offset = new TimeSpan(-7, 0, 0);
+
+			Edmonton = TimeZoneInfo.CreateCustomTimeZone(standardName, offset, displayName, standardName, daylightName, adjustments);
+		}
 
 		public static string ToContextualTimeSpanString(this DateTime targetTime)
 		{
@@ -76,6 +102,11 @@ namespace Fredin.Util
 		public static long ToUnixTimestamp(this DateTime targetTime)
 		{
 			return (long)((TimeSpan)(targetTime - EPOC)).TotalSeconds;
+		}
+
+		public static DateTime UtcToEdmonton(this DateTime targetTime)
+		{
+			return TimeZoneInfo.ConvertTimeFromUtc(targetTime, Edmonton);
 		}
 	}
 }

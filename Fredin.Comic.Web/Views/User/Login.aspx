@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<dynamic>" %>
 <%@Import Namespace="Fredin.Comic.Web" %>
 
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Login | Comic Mashup</asp:Content>

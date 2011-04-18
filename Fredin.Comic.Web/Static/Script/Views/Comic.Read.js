@@ -35,6 +35,22 @@
 					}
 				});
 
+				// Author delete
+				$('#authorDelete').click(function () { $('#dialog-authorDelete').dialog('open'); });
+				$('#dialog-authorDelete').dialog
+				({
+					autoOpen: false,
+					buttons:
+					{
+						Cancel: function () { $(this).dialog("close"); },
+						Delete: function () { $(this).dialog("close"); self.deleteComic(); }
+					},
+					closeOnEscape: true,
+					draggable: true,
+					modal: true,
+					resizable: false
+				});
+
 				// Get comment count
 				FB.api('/?&ids=' + this.options.comic.ReadUrl, function (response)
 				{
@@ -76,14 +92,19 @@
 					$('.readerCount', 'label[for=' + source.id + ']').text(count <= 0 ? '-' : count);
 
 					var args = { comicId: self.options.comic.ComicId };
-					$.ajax(
-					{
+					$.ajax
+					({
 						dataType: 'json',
 						type: 'POST',
 						url: self.options.baseHref + 'Comic/' + action,
 						data: $.postify(args)
 					});
 				});
+			},
+
+			deleteComic: function ()
+			{
+				window.location = this.options.baseHref + 'Comic/Delete/' + this.options.comic.ComicId;
 			},
 
 			shareFb: function ()

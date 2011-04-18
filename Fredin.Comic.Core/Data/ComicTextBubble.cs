@@ -9,5 +9,6 @@ namespace Fredin.Comic.Data
 	public partial class ComicTextBubble
 	{
 		public Rectangle Position { get; set; }
+		public Font Font { get; set; }
 	}
 }

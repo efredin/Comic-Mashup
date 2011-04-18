@@ -135,6 +135,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
+    <EmbeddedResource Include="weblettererprobb_b.ttf" />
+    <EmbeddedResource Include="weblettererprobb_i.ttf" />
+    <EmbeddedResource Include="weblettererprobb_r.ttf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

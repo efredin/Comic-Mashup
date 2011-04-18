@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryExtension.cs" />
+    <Compile Include="CultureInfoExtension.cs" />
     <Compile Include="DateTimeExtension.cs" />
     <Compile Include="EntityExtension.cs" />
     <Compile Include="EnumExtension.cs" />

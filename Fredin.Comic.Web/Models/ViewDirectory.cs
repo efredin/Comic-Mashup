@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel;
 using Fredin.Comic.Data;
+using System.Globalization;
 
 namespace Fredin.Comic.Web.Models
 {
@@ -12,6 +13,24 @@ namespace Fredin.Comic.Web.Models
 		public List<ClientComic> Comics { get; set; }
 		public DirectoryMode Mode { get; set; }
 		public ComicStat.ComicStatPeriod Period { get; set; }
+		public string Locale { get; set; }
+
+		public CultureInfo Culture
+		{
+			get
+			{
+				CultureInfo culture;
+				try
+				{
+					culture = CultureInfo.CreateSpecificCulture(this.Locale);
+				}
+				catch
+				{
+					culture = CultureInfo.CurrentUICulture;
+				}
+				return culture;
+			}
+		}
 		
 		/// <summary>
 		/// 1-based page index

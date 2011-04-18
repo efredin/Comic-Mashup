@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="System.Web.Mvc.ViewPage<Fredin.Comic.Web.Models.ViewCreateWizard>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewCreateWizard>" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 <%@ Import Namespace="Fredin.Comic.Web" %>
 <%@ Import Namespace="Fredin.Comic.Config" %>
@@ -10,7 +10,13 @@
 
     <% using (Html.BeginForm()) { %>
 
-	<%= Html.Partial("~/Views/Shared/AdSkyscraper.ascx") %>
+	<div class="wideskyscraper">
+		<% #if !DEBUG %>
+		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19166?ad_size=160x600&adkey=be1'></iframe>
+		<% #else %>
+		<div class="ad-debug"></div>
+		<% #endif %>
+	</div>
 
 	<div id="wizardCreate" class="box content764">
 		<div id="wizardLoad"></div>
@@ -67,9 +73,9 @@
 						<div class="ui-optionset-title">Photo Source</div>
 						<span class="ui-optionset-caption">When tagged is selected and no tags are found, another photo will be used instead.</span>
 						<div id="buttonsetPhotoSource" class="ui-optionset-content">
-							<input type="radio" value="Tagged" name="optionPhoto" id="optionPhotoTagged" /><label for="optionPhotoTagged">Tagged</label>
-							<%--<input type="radio" value="Profile" name="optionPhoto" id="optionPhotoProfile" /><label for="optionPhotoProfile">Profile</label>--%>
-							<input type="radio" value="Any" name="optionPhoto" id="optionPhotoAny" checked="checked" /><label for="optionPhotoAny">Any</label>
+							<input type="radio" value="Profile" name="optionPhoto" id="optionPhotoProfile" /><label for="optionPhotoProfile">Profile</label>
+							<input type="radio" value="Tagged" name="optionPhoto" id="optionPhotoTagged" checked="checked" /><label for="optionPhotoTagged">Tagged</label>
+							<input type="radio" value="Any" name="optionPhoto" id="optionPhotoAny" /><label for="optionPhotoAny">Any</label>
 						</div>
 					</div>
 					<div id="optionsetEffect" class="ui-optionset">

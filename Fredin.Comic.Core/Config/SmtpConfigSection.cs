@@ -34,5 +34,12 @@ namespace Fredin.Comic.Config
 			get { return (string)this["password"]; }
 			set { this["password"] = value; }
 		}
+
+		[ConfigurationProperty("from", IsRequired = true)]
+		public string From
+		{
+			get { return (string)this["from"]; }
+			set { this["from"] = value; }
+		}
 	}
 }

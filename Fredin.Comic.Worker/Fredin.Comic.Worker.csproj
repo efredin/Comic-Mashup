@@ -49,14 +49,8 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Facebook">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Web">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Web.Mvc">
-      <HintPath>..\..\FacebookSDK\Bin\Net40\Facebook.Web.Mvc.dll</HintPath>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
@@ -82,6 +76,27 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Administration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -105,6 +120,18 @@
     <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook.Web.Mvc\Facebook.Web.Mvc.csproj">
+      <Project>{7DC5C10F-E871-4202-9014-0F958358389E}</Project>
+      <Name>Facebook.Web.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook.Web\Facebook.Web.csproj">
+      <Project>{73333465-710D-4143-BA9B-201D90EE2BAF}</Project>
+      <Name>Facebook.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FacebookSDK\Source\Facebook\Facebook.csproj">
+      <Project>{857E540C-0092-4590-A279-F98A6B77AC0A}</Project>
+      <Name>Facebook</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\log4net-1.2.10\src\log4net.csproj">
       <Project>{F6A02431-167E-4347-BC43-65532C31CDB7}</Project>
       <Name>log4net</Name>

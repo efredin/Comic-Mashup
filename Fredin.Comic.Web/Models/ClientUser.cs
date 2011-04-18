@@ -14,7 +14,7 @@ namespace Fredin.Comic.Web.Models
 		public string Nickname { get; set; }
 		public string FbLink { get; set; }
 
-		public string ProfileUrl { get; set; }
+		public string AuthorUrl { get; set; }
 		public string ThumbUrl { get; set; }
 
 		public ClientUser(User source)
@@ -24,7 +24,7 @@ namespace Fredin.Comic.Web.Models
 			this.Nickname = source.Nickname;
 			this.FbLink = source.FbLink;
 
-			this.ProfileUrl = ComicUrlHelper.GetProfileUrl(source);
+			this.AuthorUrl = ComicUrlHelper.GetAuthorUrl(source);
 			this.ThumbUrl = String.Format("http://graph.facebook.com/{0}/picture", source.Uid);
 		}
 	}

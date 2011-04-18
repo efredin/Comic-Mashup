@@ -32,16 +32,23 @@ namespace Fredin.Comic.Web
 
 			routes.MapRoute
 			(
-				"Profile",
-				"User/Profile/{uid}/{*nickname}",
-				new { controller = "User", action = "Profile", uid = UrlParameter.Optional, nickname = UrlParameter.Optional }
+				"Directory",
+				"Directory/{action}/{period}/{language}/{page}",
+				new { controller = "Directory", action = "BestOverall", period = UrlParameter.Optional, language = UrlParameter.Optional, page = UrlParameter.Optional },
+				new { action = new NotRouteConstraint("Author") }
 			);
 
 			routes.MapRoute
 			(
-				"Directory",
-				"Directory/{action}/{period}/{page}",
-				new { controller = "Directory", action = "BestOverall", period = UrlParameter.Optional, page = UrlParameter.Optional }
+				"ActionByIdTitle",
+				"{controller}/{action}/{id}/{*title}",
+				new { controller = "Directory", action = "Author", title = UrlParameter.Optional }
+			);
+
+			routes.MapRoute
+			(
+				"ActionById",
+				"{controller}/{action}/{id}"
 			);
 
 			routes.MapRoute
@@ -100,6 +107,8 @@ namespace Fredin.Comic.Web
 
 		protected void Application_Error(object sender, EventArgs e)
 		{
+			ILog log = LogManager.GetLogger(typeof(Global));
+			log.Error("Unhandled Exception", Server.GetLastError());
 		}
 
 		protected void Session_End(object sender, EventArgs e)

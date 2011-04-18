@@ -23,15 +23,20 @@ namespace Fredin.Comic.Render
 		public int Height { get; private set; }
 		public Bitmap ComicImage { get; private set; }
 
-		public static Font ComicFont { get; set; }
+		//public static Font ComicFont { get; set; }
 		private static PrivateFontCollection CustomFont { get; set; }
+
+		public static FontFamily ComicFont
+		{
+			get { return CustomFont.Families[0]; }
+		}
 
 		static ComicGenerator()
 		{
 			CustomFont = new PrivateFontCollection();
 			unsafe
 			{
-				Stream fontStream = typeof(ComicGenerator).Assembly.GetManifestResourceStream("Fredin.Comic.smackattackbb_reg.ttf");
+				Stream fontStream = typeof(ComicGenerator).Assembly.GetManifestResourceStream("Fredin.Comic.weblettererprobb_r.ttf");
 				byte[] fontBuffer = new byte[fontStream.Length];
 				fontStream.Read(fontBuffer, 0, fontBuffer.Length);
 				fontStream.Close();
@@ -40,11 +45,11 @@ namespace Fredin.Comic.Render
 				Marshal.Copy(fontBuffer, 0, fontPtr, fontBuffer.Length);
 
 				CustomFont.AddMemoryFont(fontPtr, fontBuffer.Length);
-
+				
 				Marshal.FreeHGlobal(fontPtr);
 			}
 
-			ComicFont = new Font(CustomFont.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point);
+			//ComicFont = new Font(CustomFont.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point);
 		}
 
 		public ComicGenerator(int width, int height)
@@ -99,7 +104,7 @@ namespace Fredin.Comic.Render
 			}
 		}
 
-		public void AddText(string text, RectangleF layoutRectangle)
+		public void AddText(string text, RectangleF layoutRectangle, Font font)
 		{
 			using (Graphics thumbGraphics = Graphics.FromImage(this.ComicImage))
 			{
@@ -112,16 +117,16 @@ namespace Fredin.Comic.Render
 
 				//layoutRectangle.Width += 5; // Tollerance for measure error
 
-				thumbGraphics.DrawString(text, ComicFont, Brushes.Black, layoutRectangle, textFormat);
+				thumbGraphics.DrawString(text, font, Brushes.Black, layoutRectangle, textFormat);
 			}
 		}
 
-		public SizeF MeasureText(string text)
+		public SizeF MeasureText(string text, Font font)
 		{
-			return this.MeasureText(text, 2000);
+			return this.MeasureText(text, 4000, font);
 		}
 
-		public SizeF MeasureText(string text, int maxWidth)
+		public SizeF MeasureText(string text, int maxWidth, Font font)
 		{
 			SizeF result = default(SizeF);
 		
@@ -134,7 +139,7 @@ namespace Fredin.Comic.Render
 				thumbGraphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 				thumbGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-				result = thumbGraphics.MeasureString(text, ComicFont, maxWidth, textFormat);
+				result = thumbGraphics.MeasureString(text, font, maxWidth, textFormat);
 			}
 
 			return result;

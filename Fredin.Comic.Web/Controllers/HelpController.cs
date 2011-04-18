@@ -9,6 +9,7 @@ using Fredin.Comic.Web.Models;
 using System.Net.Mail;
 using Fredin.Comic.Config;
 using System.Net;
+using System.Configuration;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -35,14 +36,15 @@ namespace Fredin.Comic.Web.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Contact(ViewContact data)
 		{
-			SmtpClient client = new SmtpClient(ComicConfigSectionGroup.Smtp.Server, ComicConfigSectionGroup.Smtp.Port);
-			client.Credentials = new NetworkCredential(ComicConfigSectionGroup.Smtp.Username, ComicConfigSectionGroup.Smtp.Password);
-			client.EnableSsl = true;
-
-			MailMessage message = new MailMessage(new MailAddress(data.Email, data.Nickname), new MailAddress("efredin@gmail.com"));
+			MailMessage message = new MailMessage(new MailAddress(ComicConfigSectionGroup.Smtp.From), new MailAddress(ComicConfigSectionGroup.Smtp.From));
 			message.Subject = "Comic Mashup Contact Submission";
 			message.Body = String.Format("From: {0}\nMessage: {1}", data.Email, data.Message);
 
+			SmtpClient client = new SmtpClient(ComicConfigSectionGroup.Smtp.Server, ComicConfigSectionGroup.Smtp.Port);
+			client.EnableSsl = true;
+			client.UseDefaultCredentials = false;
+			client.Credentials = new NetworkCredential(ComicConfigSectionGroup.Smtp.Username, ComicConfigSectionGroup.Smtp.Password);
+			
 			client.Send(message);
 
 			return this.RedirectToAction("ContactConfirm");

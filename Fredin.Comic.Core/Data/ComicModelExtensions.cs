@@ -74,6 +74,16 @@ namespace Fredin.Comic.Data
 			return filtered.Where(c => c.IsPublished && !c.IsDeleted);
 		}
 
+		public static IQueryable<Comic> FilterComicLanguage(this IQueryable<Comic> comics, string languageCode)
+		{
+			IQueryable<Comic> filtered = comics;
+			if (languageCode != null)
+			{
+				filtered = filtered.Where(c => c.Locale.Substring(0, 2).ToLower() == languageCode.ToLower());
+			}
+			return filtered;
+		}
+
 		//public static IQueryable<Comic> IncludeStats(this IQueryable<Comic> comics)
 		//{
 		//    foreach (Comic c in comics)

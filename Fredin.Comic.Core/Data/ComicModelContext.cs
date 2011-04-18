@@ -14,38 +14,61 @@ namespace Fredin.Comic.Data
 
 		public User TryGetUser(long uid)
 		{
-			return this.Users.FirstOrDefault(u => u.Uid == uid);
+			return this.Users.FirstOrDefault(u => u.Uid == uid && !u.IsDeleted);
+		}
+
+		public User TryGetUser(long uid, bool allowDeleted)
+		{
+			User user = this.Users.FirstOrDefault(u => u.Uid == uid);
+			if (user != null && !allowDeleted && user.IsDeleted)
+			{
+				user = null;
+			}
+			return user;
+		}
+
+		public User TryGetDeletedUser(long uid)
+		{
+			return this.Users.FirstOrDefault(u => u.Uid == uid && u.IsDeleted);
+		}
+
+		public IQueryable<User> ListUnsubscribedUsers()
+		{
+			return this.Users.Where(u => !u.IsDeleted && !u.IsSubscribed);
 		}
 
 		#endregion
 
 		#region [Comic]
 
-		public IQueryable<Comic> ListPublishedComics(User reader, List<long> friends, ComicStat.ComicStatPeriod period)
+		public IQueryable<Comic> ListPublishedComics(User reader, List<long> friends, ComicStat.ComicStatPeriod period, string language)
 		{
 			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
 
 			return this.Comics
 				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff)
-				.FilterComicVisibility(reader, friends);
+				.FilterComicVisibility(reader, friends)
+				.FilterComicLanguage(language);
 		}
 
-		public IQueryable<Comic> ListPublishedComics(User author, User reader, bool isFriend, ComicStat.ComicStatPeriod period)
+		public IQueryable<Comic> ListPublishedComics(User author, User reader, bool isFriend, ComicStat.ComicStatPeriod period, string language)
 		{
 			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
 
 			return this.Comics
 				.Where(c => c.Uid == author.Uid && c.IsPublished && c.PublishTime.Value >= cutoff)
-				.FilterComicVisibility(reader, isFriend);
+				.FilterComicVisibility(reader, isFriend)
+				.FilterComicLanguage(language);
 		}
 
-		public IQueryable<Comic> SearchPublishedComics(string search, User reader, List<long> friends, ComicStat.ComicStatPeriod period)
+		public IQueryable<Comic> SearchPublishedComics(string search, User reader, List<long> friends, ComicStat.ComicStatPeriod period, string language)
 		{
 			DateTime cutoff = Data.ComicStat.PeriodToCutoff(period);
 
 			return this.Comics
 				.Where(c => c.IsPublished && c.PublishTime.Value >= cutoff && (c.Title.Contains(search) || c.Description.Contains(search)))
-				.FilterComicVisibility(reader, friends);
+				.FilterComicVisibility(reader, friends)
+				.FilterComicLanguage(language);
 		}
 
 		public IQueryable<Comic> ListFeaturedComics(User reader)
@@ -78,6 +101,13 @@ namespace Fredin.Comic.Data
 			return this.Comics
 				.FilterComicVisibility(reader, friends)
 				.FirstOrDefault(c => c.ComicId == comicId);
+		}
+
+		public Comic TryGetAuthoredComic(long comicId, User author)
+		{
+			return this.Comics
+				.FilterComicVisibility(author, true)
+				.FirstOrDefault(c => c.ComicId == comicId && c.Uid == author.Uid);
 		}
 
 		public Comic TryGetRandomComic(User reader, List<long> friends)
@@ -129,6 +159,15 @@ namespace Fredin.Comic.Data
 			return this.TextBubbles
 				.Include(b => b.TextBubbleDirections)
 				.Where(b => !b.IsDeleted);
+		}
+
+		#endregion
+
+		#region [Engage]
+
+		public UserEngage TryGetUserEngage(User user)
+		{
+			return this.UserEngage.FirstOrDefault(e => e.Uid == user.Uid);
 		}
 
 		#endregion

@@ -6,9 +6,20 @@ body#fb
 	background: #FFFFFF;
 	color: #202020;
 }
+#fb h1
+{
+	font-size: 1.4em;
+}
+#fb-like
+{
+	float: right;
+	width: 300px;
+	height: 80px;
+	padding-top: 5px;
+}
 #fb-logobar
 {
-	color: #F1F1F1; 
+	color: #FFFFFF; 
 	margin: 2px auto;
 	width: 760px;
 }
@@ -17,21 +28,59 @@ body#fb
 	border: 0;
 	margin: 4px 0;
 }
-#fb-titlebar
+#fb-menubar
 {
-	margin: 2px auto;
 	width: 760px;
+	margin: 0 auto 12px;
+	background: #EDEDED;
 }
-#fb-titlebar h1
+#fb-menubar ul
 {
-	margin: 4px 0;
-	color: #91BED5;
-	font-family: Arial;
+	font-size: 1.1em;
+}
+#fb-menubar li
+{
+	padding: 8px 12px;
+	background: #EDEDED;
+}
+#fb-menubar li.active
+{
+	background: #0582C2;
+	border: 1px solid #06416B;
+}
+#fb-menubar a
+{
+	color: #57678B;
+}
+#fb-menubar li.active a, #fb-menubar li.active a:hover
+{
+	color: #FFFFFF;
+}
+#fb-menubar ul li div
+{
+	font-size: 0.9em;
+}
+#fb-menubar ul li.active div
+{
+	color: #404040;
+}
+#fb-menubar ul li.active div a
+{
+	color: #57678B;
+}
+#fb-menubar ul li.active div a:hover
+{
+	color: #0582C2;
+	text-decoration: none;
+}
+#fb-menubar ul li.active div ul
+{
+	font-size: 1.0em;
 }
 #fb-content
 {
 	margin: 0 auto;
-	padding: 10px 0;
+	padding: 0;
 	width: 760px;
 	clear: both;
 }

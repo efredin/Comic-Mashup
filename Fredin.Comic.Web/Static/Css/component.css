@@ -4,6 +4,7 @@
 #home #home-buttonCreate { }
 #home #home-buttonDirectory { }
 #home #home-buttonShare { }
+#home #home-like { float: right; }
 #home-directory { margin: 20px 0 0 0; }
 
 #wizardCreate { display: block; }
@@ -86,7 +87,7 @@
 .content764 { width: 764px; }
 .contentIb { display: inline-block; }
 
-#profile { }
+#directory-author { }
 #directory { }
 
 #faq { }

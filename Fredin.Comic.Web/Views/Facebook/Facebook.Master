@@ -31,15 +31,27 @@
 </head>
 <body id="fb">
 
+	<%-- Facebook Connect --%>
+	<div id="fb-root"></div>
+	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
+
     <div id="fb-logobar">
 
-		<%--Logo--%>
-		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-white.png") %>" alt="Comic Mashup for Profiles" /></a>
+		<%-- Like --%>
+		<div id="fb-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" show_faces="true" width="300" font=""></fb:like></div>
 
+		<%--Logo--%>
+		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-profiles.png") %>" alt="Comic Mashup for Profiles" /></a>
 	</div>
-    <div id="fb-titlebar">
-        <h1><asp:ContentPlaceHolder ID="cphTitle" runat="server"></asp:ContentPlaceHolder></h1>
+
+    <div id="fb-menubar" class="ui-corner-all menu">
+		<ul>
+			<li><a href="<%= this.Url.Action("Index", "Facebook") %>">Profile Photo</a></li>
+			<li><a href="http://www.comicmashup.com/Comic/CreateWizard" target="_blank">Create Comics</a></li>
+		</ul>
     </div>
+
+    <h1><asp:ContentPlaceHolder ID="cphTitle" runat="server"></asp:ContentPlaceHolder></h1>
 
 	<%-- Application Options --%>
 	<script type="text/javascript">
@@ -81,10 +93,6 @@
 	<div id="dialog-error" class="ui-helper-hidden" title="Error">
 		<div id="dialog-error-message"></div>
 	</div>
-
-	<%-- Facebook Connect --%>
-	<div id="fb-root"></div>
-	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
 
 	<asp:ContentPlaceHolder id="cphScript" runat="server">
 		<script type="text/javascript">

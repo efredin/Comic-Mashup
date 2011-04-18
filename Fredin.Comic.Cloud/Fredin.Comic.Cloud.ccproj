@@ -36,9 +36,9 @@
   <ItemGroup>
     <ServiceDefinition Include="ServiceDefinition.csdef" />
     <ServiceConfiguration Include="ServiceConfiguration.cscfg" />
-		<!--<None Include="ServiceDefinition.Release.csdef"/>
+    <!--<None Include="ServiceDefinition.Release.csdef"/>
 		<None Include="ServiceConfiguration.Release.cscfg" />-->
-	</ItemGroup>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fredin.Comic.Web\Fredin.Comic.Web.csproj">
       <Name>Fredin.Comic.Web</Name>
@@ -59,9 +59,9 @@
   <PropertyGroup>
     <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\Cloud Service\1.0\Visual Studio 10.0\</CloudExtensionsDir>
   </PropertyGroup>
-	<!-- Config Transformation -->
-	<Import Project="$(CloudExtensionsDir)Microsoft.CloudService.targets" />
-	<!--<UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <!-- Config Transformation -->
+  <Import Project="$(CloudExtensionsDir)Microsoft.CloudService.targets" />
+  <!--<UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll" />
 	<PropertyGroup>
 		<ServiceConfigurationTransform>ServiceConfiguration.$(Configuration).cscfg</ServiceConfigurationTransform>
 		<ServiceDefinitionTransform>ServiceDefinition.$(Configuration).csdef</ServiceDefinitionTransform>

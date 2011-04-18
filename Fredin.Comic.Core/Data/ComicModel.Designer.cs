@@ -32,6 +32,8 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ComicRead_User", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ComicRead", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicRead), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ComicStat_Comic", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.Comic), "ComicStat", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicStat), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ProfileRender_User", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ProfileRender", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ProfileRender))]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__UserEngage__Uid__0F735CAF", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "UserEngage", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Fredin.Comic.Data.UserEngage), true)]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__UserEngageH__Uid__1808A2B0", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "UserEngageHistory", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.UserEngageHistory))]
 
 #endregion
 
@@ -274,6 +276,38 @@ namespace Fredin.Comic.Data
             }
         }
         private ObjectSet<ProfileRender> _ProfileRender;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserEngage> UserEngage
+        {
+            get
+            {
+                if ((_UserEngage == null))
+                {
+                    _UserEngage = base.CreateObjectSet<UserEngage>("UserEngage");
+                }
+                return _UserEngage;
+            }
+        }
+        private ObjectSet<UserEngage> _UserEngage;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserEngageHistory> UserEngageHistory
+        {
+            get
+            {
+                if ((_UserEngageHistory == null))
+                {
+                    _UserEngageHistory = base.CreateObjectSet<UserEngageHistory>("UserEngageHistory");
+                }
+                return _UserEngageHistory;
+            }
+        }
+        private ObjectSet<UserEngageHistory> _UserEngageHistory;
 
         #endregion
         #region AddTo Methods
@@ -373,6 +407,22 @@ namespace Fredin.Comic.Data
         {
             base.AddObject("ProfileRender", profileRender);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserEngage EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserEngage(UserEngage userEngage)
+        {
+            base.AddObject("UserEngage", userEngage);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserEngageHistory EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserEngageHistory(UserEngageHistory userEngageHistory)
+        {
+            base.AddObject("UserEngageHistory", userEngageHistory);
+        }
 
         #endregion
         #region Function Imports
@@ -439,7 +489,8 @@ namespace Fredin.Comic.Data
         /// <param name="isPrivate">Initial value of the IsPrivate property.</param>
         /// <param name="isDeleted">Initial value of the IsDeleted property.</param>
         /// <param name="storageKey">Initial value of the StorageKey property.</param>
-        public static Comic CreateComic(global::System.Int64 comicId, global::System.Int64 uid, global::System.Int64 templateId, global::System.DateTime createTime, global::System.DateTime updateTime, global::System.Boolean isPublished, global::System.String title, global::System.String description, global::System.Boolean isPrivate, global::System.Boolean isDeleted, global::System.String storageKey)
+        /// <param name="locale">Initial value of the Locale property.</param>
+        public static Comic CreateComic(global::System.Int64 comicId, global::System.Int64 uid, global::System.Int64 templateId, global::System.DateTime createTime, global::System.DateTime updateTime, global::System.Boolean isPublished, global::System.String title, global::System.String description, global::System.Boolean isPrivate, global::System.Boolean isDeleted, global::System.String storageKey, global::System.String locale)
         {
             Comic comic = new Comic();
             comic.ComicId = comicId;
@@ -453,6 +504,7 @@ namespace Fredin.Comic.Data
             comic.IsPrivate = isPrivate;
             comic.IsDeleted = isDeleted;
             comic.StorageKey = storageKey;
+            comic.Locale = locale;
             return comic;
         }
 
@@ -797,6 +849,30 @@ namespace Fredin.Comic.Data
         private global::System.String _StorageKey;
         partial void OnStorageKeyChanging(global::System.String value);
         partial void OnStorageKeyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Locale
+        {
+            get
+            {
+                return _Locale;
+            }
+            set
+            {
+                OnLocaleChanging(value);
+                ReportPropertyChanging("Locale");
+                _Locale = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Locale");
+                OnLocaleChanged();
+            }
+        }
+        private global::System.String _Locale;
+        partial void OnLocaleChanging(global::System.String value);
+        partial void OnLocaleChanged();
 
         #endregion
     
@@ -2107,6 +2183,30 @@ namespace Fredin.Comic.Data
         private global::System.DateTime _CreateTime;
         partial void OnCreateTimeChanging(global::System.DateTime value);
         partial void OnCreateTimeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String StorageKey
+        {
+            get
+            {
+                return _StorageKey;
+            }
+            set
+            {
+                OnStorageKeyChanging(value);
+                ReportPropertyChanging("StorageKey");
+                _StorageKey = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("StorageKey");
+                OnStorageKeyChanged();
+            }
+        }
+        private global::System.String _StorageKey;
+        partial void OnStorageKeyChanging(global::System.String value);
+        partial void OnStorageKeyChanged();
 
         #endregion
     
@@ -3302,11 +3402,15 @@ namespace Fredin.Comic.Data
         /// </summary>
         /// <param name="uid">Initial value of the Uid property.</param>
         /// <param name="isDeleted">Initial value of the IsDeleted property.</param>
-        public static User CreateUser(global::System.Int64 uid, global::System.Boolean isDeleted)
+        /// <param name="locale">Initial value of the Locale property.</param>
+        /// <param name="isSubscribed">Initial value of the IsSubscribed property.</param>
+        public static User CreateUser(global::System.Int64 uid, global::System.Boolean isDeleted, global::System.String locale, global::System.Boolean isSubscribed)
         {
             User user = new User();
             user.Uid = uid;
             user.IsDeleted = isDeleted;
+            user.Locale = locale;
+            user.IsSubscribed = isSubscribed;
             return user;
         }
 
@@ -3459,6 +3563,54 @@ namespace Fredin.Comic.Data
         private global::System.String _FbLink;
         partial void OnFbLinkChanging(global::System.String value);
         partial void OnFbLinkChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Locale
+        {
+            get
+            {
+                return _Locale;
+            }
+            set
+            {
+                OnLocaleChanging(value);
+                ReportPropertyChanging("Locale");
+                _Locale = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Locale");
+                OnLocaleChanged();
+            }
+        }
+        private global::System.String _Locale;
+        partial void OnLocaleChanging(global::System.String value);
+        partial void OnLocaleChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsSubscribed
+        {
+            get
+            {
+                return _IsSubscribed;
+            }
+            set
+            {
+                OnIsSubscribedChanging(value);
+                ReportPropertyChanging("IsSubscribed");
+                _IsSubscribed = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsSubscribed");
+                OnIsSubscribedChanged();
+            }
+        }
+        private global::System.Boolean _IsSubscribed;
+        partial void OnIsSubscribedChanging(global::System.Boolean value);
+        partial void OnIsSubscribedChanged();
 
         #endregion
     
@@ -3548,6 +3700,412 @@ namespace Fredin.Comic.Data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ProfileRender>("Fredin.Comic.Data.FK_ProfileRender_User", "ProfileRender", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__UserEngage__Uid__0F735CAF", "UserEngage")]
+        public UserEngage UserEngage
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<UserEngage>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "UserEngage").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<UserEngage>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "UserEngage").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<UserEngage> UserEngageReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<UserEngage>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "UserEngage");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<UserEngage>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "UserEngage", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__UserEngageH__Uid__1808A2B0", "UserEngageHistory")]
+        public EntityCollection<UserEngageHistory> UserEngageHistory
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<UserEngageHistory>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "UserEngageHistory");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<UserEngageHistory>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "UserEngageHistory", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="UserEngage")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserEngage : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserEngage object.
+        /// </summary>
+        /// <param name="uid">Initial value of the Uid property.</param>
+        /// <param name="comment">Initial value of the Comment property.</param>
+        /// <param name="vote">Initial value of the Vote property.</param>
+        /// <param name="tag">Initial value of the Tag property.</param>
+        public static UserEngage CreateUserEngage(global::System.Int64 uid, global::System.Boolean comment, global::System.Boolean vote, global::System.Boolean tag)
+        {
+            UserEngage userEngage = new UserEngage();
+            userEngage.Uid = uid;
+            userEngage.Comment = comment;
+            userEngage.Vote = vote;
+            userEngage.Tag = tag;
+            return userEngage;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int64 Uid
+        {
+            get
+            {
+                return _Uid;
+            }
+            set
+            {
+                if (_Uid != value)
+                {
+                    OnUidChanging(value);
+                    ReportPropertyChanging("Uid");
+                    _Uid = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Uid");
+                    OnUidChanged();
+                }
+            }
+        }
+        private global::System.Int64 _Uid;
+        partial void OnUidChanging(global::System.Int64 value);
+        partial void OnUidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+            set
+            {
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
+            }
+        }
+        private global::System.Boolean _Comment;
+        partial void OnCommentChanging(global::System.Boolean value);
+        partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Vote
+        {
+            get
+            {
+                return _Vote;
+            }
+            set
+            {
+                OnVoteChanging(value);
+                ReportPropertyChanging("Vote");
+                _Vote = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Vote");
+                OnVoteChanged();
+            }
+        }
+        private global::System.Boolean _Vote;
+        partial void OnVoteChanging(global::System.Boolean value);
+        partial void OnVoteChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Tag
+        {
+            get
+            {
+                return _Tag;
+            }
+            set
+            {
+                OnTagChanging(value);
+                ReportPropertyChanging("Tag");
+                _Tag = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Tag");
+                OnTagChanged();
+            }
+        }
+        private global::System.Boolean _Tag;
+        partial void OnTagChanging(global::System.Boolean value);
+        partial void OnTagChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__UserEngage__Uid__0F735CAF", "User")]
+        public User User
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> UserReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF", "User", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="UserEngageHistory")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserEngageHistory : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserEngageHistory object.
+        /// </summary>
+        /// <param name="engageHash">Initial value of the EngageHash property.</param>
+        /// <param name="engagement">Initial value of the Engagement property.</param>
+        /// <param name="engageTime">Initial value of the EngageTime property.</param>
+        public static UserEngageHistory CreateUserEngageHistory(global::System.String engageHash, global::System.String engagement, global::System.DateTime engageTime)
+        {
+            UserEngageHistory userEngageHistory = new UserEngageHistory();
+            userEngageHistory.EngageHash = engageHash;
+            userEngageHistory.Engagement = engagement;
+            userEngageHistory.EngageTime = engageTime;
+            return userEngageHistory;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String EngageHash
+        {
+            get
+            {
+                return _EngageHash;
+            }
+            set
+            {
+                if (_EngageHash != value)
+                {
+                    OnEngageHashChanging(value);
+                    ReportPropertyChanging("EngageHash");
+                    _EngageHash = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("EngageHash");
+                    OnEngageHashChanged();
+                }
+            }
+        }
+        private global::System.String _EngageHash;
+        partial void OnEngageHashChanging(global::System.String value);
+        partial void OnEngageHashChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Engagement
+        {
+            get
+            {
+                return _Engagement;
+            }
+            set
+            {
+                OnEngagementChanging(value);
+                ReportPropertyChanging("Engagement");
+                _Engagement = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Engagement");
+                OnEngagementChanged();
+            }
+        }
+        private global::System.String _Engagement;
+        partial void OnEngagementChanging(global::System.String value);
+        partial void OnEngagementChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime EngageTime
+        {
+            get
+            {
+                return _EngageTime;
+            }
+            set
+            {
+                OnEngageTimeChanging(value);
+                ReportPropertyChanging("EngageTime");
+                _EngageTime = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EngageTime");
+                OnEngageTimeChanged();
+            }
+        }
+        private global::System.DateTime _EngageTime;
+        partial void OnEngageTimeChanging(global::System.DateTime value);
+        partial void OnEngageTimeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> RespondTime
+        {
+            get
+            {
+                return _RespondTime;
+            }
+            set
+            {
+                OnRespondTimeChanging(value);
+                ReportPropertyChanging("RespondTime");
+                _RespondTime = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("RespondTime");
+                OnRespondTimeChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _RespondTime;
+        partial void OnRespondTimeChanging(Nullable<global::System.DateTime> value);
+        partial void OnRespondTimeChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__UserEngageH__Uid__1808A2B0", "User")]
+        public User User
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> UserReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "User", value);
                 }
             }
         }

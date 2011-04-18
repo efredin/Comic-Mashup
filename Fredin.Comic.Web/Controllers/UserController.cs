@@ -12,6 +12,9 @@ using Fredin.Comic.Web.Models;
 using Fredin.Comic.Data;
 using Fredin.Util;
 using Facebook.Web.Mvc;
+using System.Web.Script.Serialization;
+using Facebook;
+using Facebook.Web;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -41,62 +44,139 @@ namespace Fredin.Comic.Web.Controllers
 			return this.Json(user, JsonRequestBehavior.AllowGet);
 		}
 
-		public ActionResult Profile(long? uid, string nickname)
+		public ActionResult Profile(long? id, string title)
+		{
+			return this.RedirectToAction("Author", "Directory", new { uid = id, nickname = title } );
+		}
+
+		[HttpGet]
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		public ActionResult Settings()
 		{
 			ActionResult result;
-
-			User user = null;
 
 			try
 			{
 				this.EntityContext.TryAttach(this.ActiveUser);
 
-				if(!uid.HasValue && this.ActiveUser != null)
+				// Load engagement settings
+				UserEngage engage = this.EntityContext.TryGetUserEngage(this.ActiveUser);
+				if (engage == null)
 				{
-					user = this.ActiveUser;
-					this.EntityContext.TryAttach(user);
-				}
-				else if (uid.HasValue)
-				{
-					user = this.EntityContext.TryGetUser(uid.Value);
+					engage = new UserEngage();
+					engage.User = this.ActiveUser;
+					engage.Comment = true;
+					engage.Tag = true;
+					engage.Vote = true;
+					this.EntityContext.AddToUserEngage(engage);
+					this.EntityContext.SaveChanges();
 				}
 
-				if (user != null)
-				{
-					// Load published comics
-					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriend(user), ComicStat.ComicStatPeriod.AllTime)
-						.OrderByDescending(c => c.PublishTime)
-						.ToList();
-
-					// Get stats for each comic
-					if(this.Request[KEY_FORMAT] == VAL_JSON)
-					{
-						result = this.Json(new ViewProfile(user, comics), JsonRequestBehavior.AllowGet);
-					}
-					else
-					{
-						result = this.View(new ViewProfile(user, comics));
-					}
-				}
-				else
-				{
-					if (uid.HasValue)
-					{
-						throw new Exception("Unknown user.");
-					}
-					else
-					{
-						result = this.RedirectToAction("Login");
-					}
-				}
+				result = this.View(new ViewSettings(new ClientUserEngage(engage), this.ActiveUser.Email));
 			}
 			finally
 			{
 				this.EntityContext.TryDetach(this.ActiveUser);
-				this.EntityContext.TryDetach(user);
 			}
 
 			return result;
+		}
+
+		[HttpPost]
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		public ActionResult Settings(ViewSettings settings)
+		{
+			return new EmptyResult();
+		}
+
+		/// <summary>
+		/// Facebook uninstall callback
+		/// </summary>
+		[HttpPost]
+		public EmptyResult Uninstall()
+		{
+			FacebookSignedRequest request = FacebookWebContext.Current.SignedRequest;
+			if(request == null)
+			{
+				throw new Exception("Invalid request.");
+			}
+
+			User user = this.EntityContext.TryGetUser(request.UserId, true);
+			if(user != null)
+			{
+				user.IsDeleted = true;
+				user.IsSubscribed = false;
+				this.EntityContext.SaveChanges();
+			}
+	
+			return new EmptyResult();
+		}
+
+		/// <summary>
+		/// Facebook subscription verificication handler
+		/// </summary>
+		[HttpGet]
+		[FacebookSubscriptionVerify(VERIFY_TOKEN)]
+		public FacebookSubscriptionVerifiedResult Subscription()
+		{
+			return new FacebookSubscriptionVerifiedResult();
+		}
+
+		/// <summary>
+		/// Facebook subscription callback handler
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[FacebookSubscriptionReceived(ParameterName = "data")]
+		public EmptyResult Subscription(string data)
+		{
+            Dictionary<string, object> parameters = JsonSerializer.Current.DeserializeObject<Dictionary<string, object>>(data);
+			
+			if(parameters["object"] == "user")
+			{
+				foreach (Dictionary<string, object> u in ((Dictionary<string, object>)parameters["entry"]).Values)
+				{
+					try
+					{
+						long uid = long.Parse(u["uid"].ToString());
+						User user = this.EntityContext.TryGetUser(uid);
+						if (user != null)
+						{
+							if (u.ContainsKey("name"))
+							{
+								user.Name = u["name"].ToString();
+								user.Nickname = user.Name;
+							}
+							if (u.ContainsKey("locale"))
+							{
+								user.Locale = u["locale"].ToString();
+							}
+							if (u.ContainsKey("link"))
+							{
+								user.FbLink = u["link"].ToString();
+							}
+							if (u.ContainsKey("email"))
+							{
+								user.Email = u["email"].ToString();
+							}
+							user.IsSubscribed = true; // Just in case
+							this.EntityContext.SaveChanges();
+						}
+					}
+					catch(Exception x)
+					{
+						this.Log.Error("Unable to handle subscription callback.", x);
+					}
+				}
+			}
+			else if (parameters["object"] == "permissions")
+			{
+				// Not implemented
+				throw new NotImplementedException("Cannot handle permissions subscription callbacks.");
+			}
+
+			return new EmptyResult();
 		}
 
 		public JsonResult ChangeTheme(string theme)
@@ -104,36 +184,5 @@ namespace Fredin.Comic.Web.Controllers
 			this.Theme = theme;
 			return this.Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);
 		}
-
-		//public bool Login(string email, string password)
-		//{
-		//    bool loginSuccess = false;
-		//    string hash = password.ComputeMd5();
-
-		//    return this.EntityContext.User.OfType<EmailUser>()
-		//        .FirstOrDefault(e => e.Email == email && e.PasswordHash == hash);
-
-
-		//    using (UserController controller = new UserController(this.EntityContext))
-		//    {
-		//        EmailUser user = controller.TryLoginEmailUser(email, password);
-
-		//        if (user != null)
-		//        {
-		//            this.ActiveUser = new ClientEmailUser(user);
-		//            if (!user.IsValidated)
-		//            {
-		//                // May cause Server.Transfer
-		//                this.RedirectValidate();
-		//            }
-		//            else
-		//            {
-		//                loginSuccess = true;
-		//            }
-		//        }
-		//    }
-
-		//    return loginSuccess;
-		//}
 	}
 }

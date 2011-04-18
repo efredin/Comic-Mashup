@@ -129,9 +129,9 @@ namespace Fredin.Comic.Web
 			return GetWebUrl("/Comic/{0}/{1}", comic.ComicId, Urlify(comic.Title));
 		}
 
-		public static string GetProfileUrl(Fredin.Comic.Data.User user)
+		public static string GetAuthorUrl(Fredin.Comic.Data.User user)
 		{
-			return GetWebUrl("/User/Profile/{0}/{1}", user.Uid, Urlify(user.Nickname));
+			return GetWebUrl("/Directory/Author/{0}/{1}", user.Uid, Urlify(user.Nickname));
 		}
 	}
 }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Fredin.Comic.Web
 {
-	public class JsonFilter
+	public class CultureHelper
 	{
 	}
 }

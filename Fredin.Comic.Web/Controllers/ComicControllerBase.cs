@@ -20,6 +20,7 @@ namespace Fredin.Comic.Web.Controllers
 {
 	public abstract class ComicControllerBase : System.Web.Mvc.Controller
 	{
+		protected const string VERIFY_TOKEN = "erock";
 		public const string KEY_FORMAT = "f";
 		public const string VAL_JSON = "json";
 
@@ -33,7 +34,7 @@ namespace Fredin.Comic.Web.Controllers
 		protected string ConnectionString { get; set; }
 
 		private ComicModelContext _entityContext;
-		public ComicModelContext EntityContext 
+		public ComicModelContext EntityContext
 		{
 			get { return this._entityContext; }
 			set
@@ -102,6 +103,17 @@ namespace Fredin.Comic.Web.Controllers
 
 		#endregion
 
+		#region [Session]
+
+		protected SessionHelper SessionManager { get; set; }
+
+		protected virtual void InitSessionManager()
+		{
+			this.SessionManager = new SessionHelper(this.HttpContext);
+		}
+
+		#endregion
+
 		//#region [S3]
 
 		///// <summary>
@@ -122,69 +134,73 @@ namespace Fredin.Comic.Web.Controllers
 
 		#region [User]
 
-		public const string KEY_THEME = "theme";
-		public const string KEY_ACTIVE_USER = "user";
-		public const string KEY_FRIENDS = "friends";
-		public const string KEY_GUEST_USER = "guest";
-
 		/// <summary>
 		/// Active session user. Guest users will return null
 		/// </summary>
 		protected virtual User ActiveUser
 		{
-			get { return this.Session[KEY_ACTIVE_USER] as User; }
-			set { this.Session[KEY_ACTIVE_USER] = value; }
+			get { return this.SessionManager.ActiveUser; }
+			set { this.SessionManager.ActiveUser = value; }
 		}
 
 		protected virtual List<long> Friends
 		{
-			get { return this.Session[KEY_FRIENDS] as List<long>; }
-			set { this.Session[KEY_FRIENDS] = value; }
+			get { return this.SessionManager.Friends; }
+			set { this.SessionManager.Friends = value; }
 		}
 
 		protected virtual User GuestUser
 		{
-			get { return this.Session[KEY_GUEST_USER] as User; }
-			set { this.Session[KEY_GUEST_USER] = value; }
+			get { return this.SessionManager.GuestUser; }
+			set { this.SessionManager.GuestUser = value; }
 		}
 
 		protected virtual string Theme
 		{
-			get { return this.Session[KEY_THEME] as string; }
-			set { this.Session[KEY_THEME] = value; }
+			get { return this.SessionManager.Theme; }
+			set { this.SessionManager.Theme = value; }
 		}
 
 		protected virtual void InitActiveUser()
 		{
 			try
 			{
-				if(FacebookWebContext.Current.IsAuthenticated())
+				if (FacebookWebContext.Current.IsAuthenticated())
 				{
 					if (this.ActiveUser == null || (this.ActiveUser != null && FacebookWebContext.Current.UserId != this.ActiveUser.Uid))
 					{
 						// Load user details into session
-						this.ActiveUser = this.EntityContext.TryGetUser(FacebookWebContext.Current.UserId);
+						this.ActiveUser = this.EntityContext.TryGetUser(FacebookWebContext.Current.UserId, true);
+
+						// User not yet created - Create the user
 						if (this.ActiveUser == null)
 						{
-							// User not yet created - Create the user
 							this.ActiveUser = new User();
 							this.ActiveUser.Uid = FacebookWebContext.Current.UserId;
 
 							this.EntityContext.AddToUsers(this.ActiveUser);
 						}
-						
+
 						// Update from facebook - this will be modified once subscription updates are functional
 						var facebookUser = (IDictionary<string, object>)this.Facebook.Get("/me");
 
+						this.ActiveUser.IsDeleted = false; // Restored user if previously deleted (uninstall)
 						this.ActiveUser.Name = facebookUser["name"].ToString();
 						this.ActiveUser.FbLink = facebookUser["link"].ToString();
-						if(String.IsNullOrWhiteSpace(this.ActiveUser.Nickname))
-						{
-							this.ActiveUser.Nickname = facebookUser["name"].ToString();
-						}
+						this.ActiveUser.Nickname = facebookUser["name"].ToString();
 						if (facebookUser.ContainsKey("email"))
 						{
 							this.ActiveUser.Email = facebookUser["email"].ToString();
+						}
+						if (facebookUser.ContainsKey("locale"))
+						{
+							this.ActiveUser.Locale = facebookUser["locale"].ToString().Replace('_', '-');
+						}
+
+						if (!this.ActiveUser.IsSubscribed)
+						{
+							this.SubscribeActiveUser();
+							this.ActiveUser.IsSubscribed = true;
 						}
 
 						// Get list of friends from facebook and persist in session
@@ -201,8 +217,8 @@ namespace Fredin.Comic.Web.Controllers
 						// Forms authentication
 						FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, this.ActiveUser.Uid.ToString(), DateTime.Now, DateTime.Now.AddMinutes(30), false, this.ActiveUser.Nickname);
 						this.Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket)));
-						
-						this.Log.InfoFormat("Session created for user {0}", this.ActiveUser.Uid);
+
+						this.Log.DebugFormat("Session created for user {0}", this.ActiveUser.Uid);
 					}
 				}
 				else
@@ -214,6 +230,28 @@ namespace Fredin.Comic.Web.Controllers
 			{
 				this.Log.InfoFormat("Auth token invalid", authX);
 				this.LogoutActiveUser();
+			}
+		}
+
+		protected virtual void SubscribeActiveUser()
+		{
+			try
+			{
+				FacebookOAuthClient authClient = new FacebookOAuthClient(FacebookApplication.Current);
+				dynamic auth = authClient.GetApplicationAccessToken();
+
+				Dictionary<string, object> parameters = new Dictionary<string, object>();
+				parameters.Add("object", "user");
+				parameters.Add("fields", "name,link,email,locale");
+				parameters.Add("callback_url", ComicUrlHelper.GetWebUrl("/User/Subscription"));
+				parameters.Add("verify_token", VERIFY_TOKEN);
+
+				FacebookClient subscriptionClient = new FacebookClient(auth.access_token);
+				subscriptionClient.Post(String.Format("/{0}/subscriptions", ComicConfigSectionGroup.Facebook.AppId), parameters);
+			}
+			catch (Exception x)
+			{
+				this.Log.Error("Unable to subscribe.", x);
 			}
 		}
 
@@ -276,10 +314,28 @@ namespace Fredin.Comic.Web.Controllers
 			// Initialize logger
 			this.Log = LogManager.GetLogger(this.GetType());
 
+			this.InitSessionManager();
 			this.InitEntityContext();
 			this.InitAzure();
 			this.InitFacebook();
 			this.InitActiveUser();
+
+			this.Localize();
+		}
+
+		private void Localize()
+		{
+			if (this.SessionManager.Locale == null)
+			{
+				if (this.ActiveUser != null && !String.IsNullOrWhiteSpace(this.ActiveUser.Locale))
+				{
+					this.SessionManager.Locale = this.ActiveUser.Locale;
+				}
+				else if (this.GuestUser != null && !String.IsNullOrWhiteSpace(this.GuestUser.Locale))
+				{
+					this.SessionManager.Locale = this.GuestUser.Locale;
+				}
+			}
 		}
 	}
 }

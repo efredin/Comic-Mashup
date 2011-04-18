@@ -12,22 +12,22 @@ namespace Fredin.Comic.Web
 {
 	public class ComicMasterPage : System.Web.Mvc.ViewMasterPage
 	{
+		protected SessionHelper SessionManager { get; set; }
+
+		protected override void OnInit(EventArgs e)
+		{
+			this.SessionManager = new SessionHelper(this.ViewContext.HttpContext);
+			base.OnInit(e);
+		}
+
 		public virtual User ActiveUser
 		{
-			get { return this.Session[ComicControllerBase.KEY_ACTIVE_USER] as User; }
+			get { return this.SessionManager.ActiveUser; }
 		}
 
 		protected virtual string Theme
 		{
-			get
-			{
-				string theme = this.Session[ComicControllerBase.KEY_THEME] as String;
-				if (String.IsNullOrWhiteSpace(theme))
-				{
-					theme = "mashup";
-				}
-				return theme;
-			}
+			get { return this.SessionManager.Theme; }
 		}
 
 		public string Json(object data)

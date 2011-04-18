@@ -23,7 +23,7 @@
 	<%= String.Format("<meta property='fb:app_id' content='{0}' />", ComicConfigSectionGroup.Facebook.AppId) %>
     <asp:ContentPlaceHolder id="cphMeta" runat="server">
 		<meta property="description" content="Create and share social comics" />
-		<meta property="keywords" content="comic, mashup, create, generator, social, strip" />
+		<meta property="keywords" content="comic, mashup, create publish, webcomic, cartoon, generate, social, strip, app" />
 		<meta property="og:title" content="Comic Mashup" />
 		<meta property="og:type" content="website" />
 		<meta property="og:image" content="<%: ComicUrlHelper.GetStaticUrl("Image/cm64.png") %>" />
@@ -46,7 +46,7 @@
 			</div>
 
 			<%--Logo--%>
-			<a href="<%= this.Url.Action("Home", "Directory") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup.png") %>" alt="Comic Mashup" /></a>
+			<a href="<%= this.Url.Action("Index", "Directory") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup.png") %>" alt="Comic Mashup" /></a>
 
 		</div>
     </div>
@@ -68,11 +68,14 @@
 						</div>
 					</li>
 					<li>
-						<a href="<%= this.Url.Action("CreateWizard", "Comic") %>">Create</a>
+						<a href="<%= this.Url.Content("~/Directory/Author") %>">My Comics</a>
 					</li>
 					<li>
-						<a href="<%= this.Url.Content("~/User/Profile") %>">Profile</a>
+						<a href="<%= this.Url.Action("CreateWizard", "Comic") %>">Create</a>
 					</li>
+<%--					<li>
+						<a href="<%= this.Url.Action("Settings", "User") %>">Settings</a>
+					</li>--%>
 					<li>
 						<a href="<%= this.Url.Action("Faq", "Help") %>">Help</a>
 						<div class="ui-helper-hidden menu-help">
@@ -119,7 +122,7 @@
 	<%-- Footer --%>
 	<%--<div id="footer-wrapper">
 		<div id="footer">
-			<div id="footer-like"><fb:like href="" layout="box_count" show_faces="false" width="450" font=""></fb:like></div>
+			<div id="footer-like"></fb:like></div>
 		</div>
 	</div>--%>
 	<div id="footer2-wrapper">

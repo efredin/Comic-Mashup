@@ -64,26 +64,35 @@ namespace Fredin.Comic.Web.Controllers
 
 				if (comic == null)
 				{
-					throw new Exception("Unable to find the requested comic.");
+					result = this.View("ReadNotFound");
 				}
-
-				// Track read
-				ComicRead read = this.EntityContext.TryGetComicRead(comic, this.ActiveUser);
-				if (read == null)
+				else
 				{
-					read = new ComicRead();
-					read.Comic = comic;
-					read.Reader = this.ActiveUser;
-					read.ReadTime = DateTime.Now;
-
-					if (this.ActiveUser != null)
+					// Track read
+					ComicRead read = this.EntityContext.TryGetComicRead(comic, this.ActiveUser);
+					try // Having an entity issue.. trying to track it down with this.
 					{
-						this.EntityContext.AddToComicRead(read);
-						this.EntityContext.SaveChanges();
-					}
-				}
+						if (read == null)
+						{
+							read = new ComicRead();
+							read.Comic = comic;
+							read.Reader = this.ActiveUser;
+							read.ReadTime = DateTime.Now;
 
-				result = (ActionResult)this.View(new ViewRead(comic, read));
+							if (this.ActiveUser != null)
+							{
+								this.EntityContext.AddToComicRead(read);
+								this.EntityContext.SaveChanges();
+							}
+						}
+					}
+					catch (Exception x)
+					{
+						this.Log.Error("Reader error", x);
+					}
+
+					result = (ActionResult)this.View(new ViewRead(comic, read));
+				}
 			}
 			finally
 			{
@@ -177,6 +186,38 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		#endregion
+
+		[HttpGet]
+		public ActionResult Delete(long? id)
+		{
+			try
+			{
+				this.EntityContext.TryAttach(this.ActiveUser);
+
+				Data.Comic comic = this.EntityContext.TryGetAuthoredComic(id.Value, this.ActiveUser);
+				if (comic == null)
+				{
+					throw new Exception("Unable to find the requested comic.");
+				}
+
+				comic.IsDeleted = true;
+				this.EntityContext.SaveChanges();
+			}
+			finally
+			{
+				this.EntityContext.TryDetach(this.ActiveUser);
+			}
+
+			return this.View();
+		}
+
+		//[HttpGet]
+		//[FacebookJsonAuthorize]
+		//[HandleError(View = "~/Shared/JsonError.aspx")]
+		//public JsonResult Privacy(long comicId, bool isPrivate)
+		//{
+		//    bool isPrivate;
+		//}
 
 		#region [Wizard]
 

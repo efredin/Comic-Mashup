@@ -207,7 +207,7 @@ namespace Fredin.Comic.Worker
 
 				User user = entityContext.TryGetUser(task.OwnerUid);
 
-				FacebookApp facebook = new FacebookApp(task.FacebookToken);
+				FacebookClient facebook = new FacebookClient(task.FacebookToken);
 
 				// Get template
 				Template template = entityContext.ListTemplates().First(t => t.TemplateId == task.TemplateId);
@@ -226,12 +226,13 @@ namespace Fredin.Comic.Worker
 				comic.UpdateTime = DateTime.Now;
 				comic.PublishTime = null;
 				comic.FeatureTime = null;
-				comic.Title = "Test";
-				comic.Description = "Descriptionating";
-				comic.ShareText = "Sharable";
+				comic.Title = "";
+				comic.Description = "";
+				comic.ShareText = "";
 				comic.IsPublished = false;
 				comic.IsPrivate = false;
 				comic.IsDeleted = false;
+				comic.Locale = user.Locale ?? "en-US";
 				comic.StorageKey = Guid.NewGuid().ToString();
 
 				// Comic generator only used to size text
@@ -275,10 +276,10 @@ namespace Fredin.Comic.Worker
 
 							if (photoResult.data.Count > 0)
 							{
-								// Pick a random photo with only 1 tagged person
+								// Pick a random photo with 2 or fewer tags
 								dynamic photoData = ((IList<dynamic>)photoResult.data)
 									.OrderBy(p => Guid.NewGuid())
-									.FirstOrDefault(p => p.tags.data.Count <= 3);
+									.FirstOrDefault(p => p.tags.data.Count <= 2);
 
 								if (photoData != null)
 								{
@@ -304,11 +305,11 @@ namespace Fredin.Comic.Worker
 					}
 
 					// Look for any photo of the user
-					else// if(photoSource == "Any")
+					else if (task.PhotoSource == "Any")
 					{
 						try
 						{
-							FaceRestAPI faceApi = this.CreateFaceApi(facebook);
+							FaceRestAPI faceApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
 							List<string> ids = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
 							FaceRestAPI.FaceAPI anyResult = faceApi.facebook_get(ids, null, "1", null, "random");
 
@@ -339,7 +340,7 @@ namespace Fredin.Comic.Worker
 					{
 						try
 						{
-							FaceRestAPI tagApi = this.CreateFaceApi(facebook);
+							FaceRestAPI tagApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
 							//List<string> tagIds = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
 							List<string> urls = new List<string>(new string[] { imageUrl });
 							FaceRestAPI.FaceAPI tagResult = tagApi.faces_detect(urls, null, "Normal", null, null);
@@ -366,17 +367,25 @@ namespace Fredin.Comic.Worker
 					// Remove newlines
 					comicBubble.Text = comicBubble.Text.Replace('\n', ' ');
 
-					// Max text length
-					if (comicBubble.Text.Length > 120)
+					// Font size
+					int fontSize = 7;
+					if (comicBubble.Text.Length > 160)
 					{
-						string[] words = comicBubble.Text.Split(new char[] { ' ' });
-						comicBubble.Text = String.Empty;
-						for (int w = 0; w < words.Length && comicBubble.Text.Length < 120; w++)
-						{
-							comicBubble.Text += words[w] + " ";
-						}
-						comicBubble.Text += "...";
+						fontSize = 6;
 					}
+					if (comicBubble.Text.Length > 200)
+					{
+						fontSize = 5;
+					}
+					comicBubble.Font = new Font(ComicGenerator.ComicFont, fontSize, FontStyle.Regular, GraphicsUnit.Point);
+
+					//string[] words = comicBubble.Text.Split(new char[] { ' ' });
+						//comicBubble.Text = String.Empty;
+						//for (int w = 0; w < words.Length && comicBubble.Text.Length < 200; w++)
+						//{
+						//    comicBubble.Text += words[w] + " ";
+						//}
+						//comicBubble.Text += "...";
 
 					// Shouting / excited?
 					TextBubble bubble = speechBubble;
@@ -433,7 +442,7 @@ namespace Fredin.Comic.Worker
 				task.Status = TaskStatus.Complete;
 				task.ComicId = comic.ComicId;
 				this.UpdateTask(task);
-				this.Log.InfoFormat("Completed render task {0}", task.TaskId);
+				this.Log.DebugFormat("Completed render task {0}", task.TaskId);
 			}
 			catch (Exception x)
 			{
@@ -459,7 +468,7 @@ namespace Fredin.Comic.Worker
 			Rectangle textArea = new Rectangle();
 
 			// Measure text
-			Size rawTextSize = generator.MeasureText(comicBubble.Text).ToSize();
+			Size rawTextSize = generator.MeasureText(comicBubble.Text, comicBubble.Font).ToSize();
 			int charWidth = rawTextSize.Width / comicBubble.Text.Length;
 
 			// Calc text bubble dimensions based on bubble x:y ratio
@@ -467,12 +476,14 @@ namespace Fredin.Comic.Worker
 			textSize.Width = Math.Min(textSize.Width, templateItem.Width); // Don't exceede template item area
 
 			// Final measure
-			textSize = generator.MeasureText(comicBubble.Text, textSize.Width).ToSize();
+			textSize = generator.MeasureText(comicBubble.Text, textSize.Width, comicBubble.Font).ToSize();
 			textSize.Width += 6; // Measure error ?
 
 			// Photos are anchored at the top. Sides and bottom are cropped to fit
 			Size templateSize = new Size(templateItem.Width, templateItem.Height);
 			Rectangle templateArea = new Rectangle(templateItem.X, templateItem.Y, templateItem.Width, templateItem.Height);
+
+			int centerOffset = (templateItem.Width - textSize.Width) / 2;
 
 			if (tag != Point.Empty)
 			{
@@ -498,29 +509,29 @@ namespace Fredin.Comic.Worker
 				if (bubbleArea.X + bubbleArea.Width > templateItem.Template.Width) bubbleArea.Width -= bubbleArea.X + bubbleArea.Width - templateItem.Template.Width;
 				if (bubbleArea.Y + bubbleArea.Height > templateItem.Template.Height) bubbleArea.Height -= bubbleArea.Y + bubbleArea.Height - templateItem.Template.Height;
 
+				if (bubbleArea.Contains(br) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(br)))
+				{
+					textArea = br;
+					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "tl");
+					comicBubble.Position = br;
+				}
 				if (bubbleArea.Contains(tr) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(tr)))
 				{
 					textArea = tr;
 					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "bl");
 					comicBubble.Position = tr;
 				}
-				else if (bubbleArea.Contains(br) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(br)))
+				else if (bubbleArea.Contains(bl) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(bl)))
 				{
-					textArea = br;
-					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "tl");
-					comicBubble.Position = br;
+					textArea = bl;
+					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "tr");
+					comicBubble.Position = bl;
 				}
 				else if (bubbleArea.Contains(tl) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(tl)))
 				{
 					textArea = tl;
 					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "br");
 					comicBubble.Position = tl;
-				}
-				else if (bubbleArea.Contains(bl) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(bl)))
-				{
-					textArea = bl;
-					comicBubble.TextBubbleDirection = bubble.TextBubbleDirections.First(d => d.Direction == "tr");
-					comicBubble.Position = bl;
 				}
 				else if (bubbleArea.Contains(b) && !comicBubble.Comic.ComicTextBubbles.Any(c => c.Position.IntersectsWith(b)))
 				{
@@ -539,28 +550,29 @@ namespace Fredin.Comic.Worker
 					{
 						// Position at bottom - face is at top
 						comicBubble.TextBubbleDirection = squareBubble.TextBubbleDirections.First(d => d.Direction == "n");
-						comicBubble.Position = new Rectangle(templateItem.X, templateItem.Y + templateItem.Height - textSize.Height, textSize.Width, textSize.Height);
+						comicBubble.Position = new Rectangle(templateItem.X + centerOffset, templateItem.Y + templateItem.Height - textSize.Height, textSize.Width, textSize.Height);
 					}
 					else
 					{
 						// Position at top - face is at the bottom
 						comicBubble.TextBubbleDirection = squareBubble.TextBubbleDirections.First(d => d.Direction == "n");
-						comicBubble.Position = new Rectangle(templateItem.X, templateItem.Y, textSize.Width, textSize.Height);
+						comicBubble.Position = new Rectangle(templateItem.X + centerOffset, templateItem.Y, textSize.Width, textSize.Height);
 					}
 				}
 			}
 			else
 			{
 				comicBubble.TextBubbleDirection = squareBubble.TextBubbleDirections.First(d => d.Direction == "n");
-				comicBubble.Position = new Rectangle(templateItem.X, templateItem.Y + templateItem.Height - textSize.Height, textSize.Width, textSize.Height);
+				comicBubble.Position = new Rectangle(templateItem.X + centerOffset, templateItem.Y + templateItem.Height - textSize.Height, textSize.Width, textSize.Height);
 			}
 		}
 
 		private Size CalculateTextSize(string text, Size rawTextSize, TextBubble bubble)
 		{
 			Size textSize = rawTextSize;
-			if (rawTextSize.Width >= bubble.TextScaleX)
+			if (rawTextSize.Width >= (bubble.TextScaleX / 2))
 			{
+				// Wrap text nicely
 				double area = Convert.ToDouble(rawTextSize.Width) * Convert.ToDouble(rawTextSize.Height);
 				double factor = Math.Sqrt(area / (Convert.ToDouble(bubble.TextScaleX) * Convert.ToDouble(bubble.TextScaleY)));
 
@@ -668,7 +680,7 @@ namespace Fredin.Comic.Worker
 							int y = comicBubble.Position.Y - ((height - Convert.ToInt32(comicBubble.Position.Height)) / 2);
 
 							generator.AddScaleImage(bubbleImage, width, height, x, y);
-							generator.AddText(comicBubble.Text, new RectangleF(comicBubble.Position.X, comicBubble.Position.Y, comicBubble.Position.Width, comicBubble.Position.Height));
+							generator.AddText(comicBubble.Text, new RectangleF(comicBubble.Position.X, comicBubble.Position.Y, comicBubble.Position.Width, comicBubble.Position.Height), comicBubble.Font);
 						}
 					}
 				}
@@ -737,9 +749,9 @@ namespace Fredin.Comic.Worker
 			}
 		}
 
-		private FaceRestAPI CreateFaceApi(FacebookApp facebook)
+		private FaceRestAPI CreateFaceApi(string accessToken, long uid)
 		{
-			return new FaceRestAPI(ComicConfigSectionGroup.Face.ApiKey, ComicConfigSectionGroup.Face.ApiSecret, null, false, "json", facebook.UserId.ToString(), facebook.AccessToken, 1000 * 20);
+			return new FaceRestAPI(ComicConfigSectionGroup.Face.ApiKey, ComicConfigSectionGroup.Face.ApiSecret, null, false, "json", uid.ToString(), accessToken, 1000 * 20);
 		}
 	}
 }

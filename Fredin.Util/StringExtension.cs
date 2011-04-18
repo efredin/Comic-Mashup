@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Fredin.Util
 {
 	public static class StringExtension
 	{
+		public static string StripHtml(this string source)
+		{
+			return Regex.Replace(source, "<.*?>", string.Empty);
+		}
+
 		public static string FirstToLower(this string value)
 		{
 			string first = String.Empty;

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="Fredin.Comic.Cloud" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*">
-  <Role name="Fredin.Comic.Web">
+  <Role name="Fredin.Comic.Worker">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=comicmashup;AccountKey=7GMxjhT63QE8JQLZoOIs5Ivj1Y5MNodIlScU3NFuvQodMiL6Wyggnyr27kkIm7OTiIWXg8RcdPwiFR5lq6zcJA==" />
     </ConfigurationSettings>
   </Role>
-  <Role name="Fredin.Comic.Worker">
+  <Role name="Fredin.Comic.Web">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=comicmashup;AccountKey=7GMxjhT63QE8JQLZoOIs5Ivj1Y5MNodIlScU3NFuvQodMiL6Wyggnyr27kkIm7OTiIWXg8RcdPwiFR5lq6zcJA==" />
