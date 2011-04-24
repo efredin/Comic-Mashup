@@ -22,6 +22,14 @@ namespace Fredin.Comic.Web
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+			// Azure cdn path for static content
+			routes.MapRoute
+			(
+				"Cdn",
+				"cdn/{*path}",
+				new { controller = "Static", action = "File" }
+			);
+
 			routes.MapRoute
 			(
 				"Read",

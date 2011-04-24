@@ -49,6 +49,7 @@ namespace Fredin.Comic.Worker
 			roleInstanceDiagnosticManager.SetCurrentConfiguration(config);
 
 
+			PhotoTaskManager.Instance.Start();
 			RenderTaskManager.Instance.Start();
 			ProfileTaskManager.Instance.Start();
 			StatUpdate.Instance.Start();
@@ -61,6 +62,7 @@ namespace Fredin.Comic.Worker
 			StatUpdate.Instance.Stop();
 			ProfileTaskManager.Instance.Stop();
 			RenderTaskManager.Instance.Stop();
+			PhotoTaskManager.Instance.Stop();
 			base.OnStop();
 		}
 	}

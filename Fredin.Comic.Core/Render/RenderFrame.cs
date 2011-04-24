@@ -9,5 +9,6 @@ namespace Fredin.Comic.Render
 	{
 		public long Id { get; set; }
 		public string Message { get; set; }
+		public string PhotoUrl { get; set; }
 	}
 }

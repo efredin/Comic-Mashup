@@ -141,6 +141,9 @@
     			$('li:odd', this).addClass('odd');
     		});
 
+    		// Tooltips
+			$('[title]').not('.ui-button,div').tipsy();
+
     		// Make links ui state awesome
     		$('a.ui-state-default').hover(function () { $(this).addClass('ui-state-hover'); }, function () { $(this).removeClass('ui-state-hover'); });
 

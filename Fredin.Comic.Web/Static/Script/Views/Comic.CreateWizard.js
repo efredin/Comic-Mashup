@@ -412,7 +412,6 @@
 					});
 				}
 
-				console.log(data);
 				$.ajax(
 				{
 					dataType: 'json',

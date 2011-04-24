@@ -10,11 +10,13 @@ namespace Fredin.Comic.Web.Models
 	{
 		public ClientComic Comic { get; set; }
 		public ClientComicRead Reader { get; set; }
+		public List<ClientComicTag> Tags { get; set; }
 
-		public ViewRead(Data.Comic comic, ComicRead reader)
+		public ViewRead(ClientComic comic, ClientComicRead reader, List<ClientComicTag> tags)
 		{
-			this.Comic = new ClientComic(comic);
-			this.Reader = new ClientComicRead(reader);
+			this.Comic = comic;
+			this.Reader = reader;
+			this.Tags = tags;
 		}
 	}
 }

@@ -114,6 +114,14 @@ namespace Fredin.Comic.Web
 			return renderUri.AbsoluteUri;
 		}
 
+		public static string GetPhotoUrl(Fredin.Comic.Data.Photo photo)
+		{
+			BlobConfigSection storage = ComicConfigSectionGroup.Blob;
+			string url = String.Format("{0}{1}", storage.PhotoDirectory, photo.StorageKey);
+			Uri renderUri = new Uri(new Uri(ComicConfigSectionGroup.Web.RenderBaseUrl), url);
+			return renderUri.AbsoluteUri;
+		}
+
 		public static string GetProfileRenderUrl(string storageKey)
 		{
 			BlobConfigSection storage = ComicConfigSectionGroup.Blob;

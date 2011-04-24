@@ -7,7 +7,8 @@
 			step: 0, // active step index
 			width: 400,
 			validator: null,
-			stepActive: null // event fired when a new step becomes active
+			stepActive: null, // event fired when a new step becomes active
+			stateField: 'step'
 		},
 
 		_create: function ()
@@ -27,6 +28,7 @@
 			{
 				steps.wrapAll("<div class='ui-wizard-scroll' />");
 			}
+			$('.ui-wizard-steps', this.element).width(width);
 
 			steps.width(width);
 			$('.ui-wizard-scroll', this.element).width(width * steps.length);
@@ -38,6 +40,8 @@
 
 			$('.ui-wizard-next', this.element).button({ icons: { primary: 'ui-icon-triangle-1-e'} })
 				.click(function (event) { self.next(event); })
+
+			$(this.element).append("<div class='ui-wizard-clear'></div>");
 
 			this.loadState();
 			$(window).bind('hashchange', function () { self.loadState(); });
@@ -137,7 +141,9 @@
 			}
 
 			this.options.step = newIndex;
-			$.bbq.pushState({ step: newIndex });
+			var state = {};
+			state[this.options.stateField] = newIndex;
+			$.bbq.pushState(state);
 
 			this._trigger('stepActive', event, { step: this.options.step });
 
@@ -146,7 +152,7 @@
 
 		loadState: function ()
 		{
-			var step = $.bbq.getState('step', true) || 0;
+			var step = $.bbq.getState(this.options.stateField, true) || 0;
 
 			// If validation fails on init, start at 0
 			if (!this.stepInit && step > 0 && !this.validate())

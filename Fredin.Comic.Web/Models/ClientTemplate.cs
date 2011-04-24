@@ -32,11 +32,11 @@ namespace Fredin.Comic.Web.Models
 			this.ThumbUrl = ComicUrlHelper.GetImageUrl(source.Thumb);
 			this.FrameCount = source.TemplateItems.Count;
 
-			this.TemplateItems = new List<ClientTemplateItem>(source.TemplateItems.Count);
-			foreach(TemplateItem i in source.TemplateItems)
-			{
-				this.TemplateItems.Add(new ClientTemplateItem(i));
-			}
+			this.TemplateItems = source.TemplateItems
+				.ToList()
+				.Select(i => new ClientTemplateItem(i))
+				.OrderBy(i => i.Ordinal)
+				.ToList();
 		}
 	}
 }

@@ -34,6 +34,8 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK_ProfileRender_User", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ProfileRender", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ProfileRender))]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__UserEngage__Uid__0F735CAF", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "UserEngage", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Fredin.Comic.Data.UserEngage), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__UserEngageH__Uid__1808A2B0", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "UserEngageHistory", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.UserEngageHistory))]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__ComicTag__ComicI__6083639C", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.Comic), "ComicTag", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicTag), true)]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__ComicTag__Uid__617787D5", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ComicTag", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicTag), true)]
 
 #endregion
 
@@ -308,6 +310,22 @@ namespace Fredin.Comic.Data
             }
         }
         private ObjectSet<UserEngageHistory> _UserEngageHistory;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<ComicTag> ComicTag
+        {
+            get
+            {
+                if ((_ComicTag == null))
+                {
+                    _ComicTag = base.CreateObjectSet<ComicTag>("ComicTag");
+                }
+                return _ComicTag;
+            }
+        }
+        private ObjectSet<ComicTag> _ComicTag;
 
         #endregion
         #region AddTo Methods
@@ -422,6 +440,14 @@ namespace Fredin.Comic.Data
         public void AddToUserEngageHistory(UserEngageHistory userEngageHistory)
         {
             base.AddObject("UserEngageHistory", userEngageHistory);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ComicTag EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToComicTag(ComicTag comicTag)
+        {
+            base.AddObject("ComicTag", comicTag);
         }
 
         #endregion
@@ -1038,6 +1064,28 @@ namespace Fredin.Comic.Data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ComicStat>("Fredin.Comic.Data.FK_ComicStat_Comic", "ComicStat", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__ComicTag__ComicI__6083639C", "ComicTag")]
+        public EntityCollection<ComicTag> ComicTags
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ComicTag>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "ComicTag");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ComicTag>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "ComicTag", value);
                 }
             }
         }
@@ -1820,6 +1868,217 @@ namespace Fredin.Comic.Data
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="ComicTag")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ComicTag : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ComicTag object.
+        /// </summary>
+        /// <param name="comicId">Initial value of the ComicId property.</param>
+        /// <param name="uid">Initial value of the Uid property.</param>
+        public static ComicTag CreateComicTag(global::System.Int64 comicId, global::System.Int64 uid)
+        {
+            ComicTag comicTag = new ComicTag();
+            comicTag.ComicId = comicId;
+            comicTag.Uid = uid;
+            return comicTag;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int64 ComicId
+        {
+            get
+            {
+                return _ComicId;
+            }
+            set
+            {
+                if (_ComicId != value)
+                {
+                    OnComicIdChanging(value);
+                    ReportPropertyChanging("ComicId");
+                    _ComicId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ComicId");
+                    OnComicIdChanged();
+                }
+            }
+        }
+        private global::System.Int64 _ComicId;
+        partial void OnComicIdChanging(global::System.Int64 value);
+        partial void OnComicIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int64 Uid
+        {
+            get
+            {
+                return _Uid;
+            }
+            set
+            {
+                if (_Uid != value)
+                {
+                    OnUidChanging(value);
+                    ReportPropertyChanging("Uid");
+                    _Uid = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Uid");
+                    OnUidChanged();
+                }
+            }
+        }
+        private global::System.Int64 _Uid;
+        partial void OnUidChanging(global::System.Int64 value);
+        partial void OnUidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> X
+        {
+            get
+            {
+                return _X;
+            }
+            set
+            {
+                OnXChanging(value);
+                ReportPropertyChanging("X");
+                _X = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("X");
+                OnXChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _X;
+        partial void OnXChanging(Nullable<global::System.Int32> value);
+        partial void OnXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> Y
+        {
+            get
+            {
+                return _Y;
+            }
+            set
+            {
+                OnYChanging(value);
+                ReportPropertyChanging("Y");
+                _Y = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Y");
+                OnYChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _Y;
+        partial void OnYChanging(Nullable<global::System.Int32> value);
+        partial void OnYChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__ComicTag__ComicI__6083639C", "Comic")]
+        public Comic Comic
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "Comic").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "Comic").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Comic> ComicReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "Comic");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Comic>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "Comic", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__ComicTag__Uid__617787D5", "User")]
+        public User User
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> UserReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "User", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="Fredin.Comic.Data", Name="ComicTextBubble")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
@@ -2097,12 +2356,16 @@ namespace Fredin.Comic.Data
         /// <param name="photoId">Initial value of the PhotoId property.</param>
         /// <param name="uid">Initial value of the Uid property.</param>
         /// <param name="createTime">Initial value of the CreateTime property.</param>
-        public static Photo CreatePhoto(global::System.Int64 photoId, global::System.Int64 uid, global::System.DateTime createTime)
+        /// <param name="width">Initial value of the Width property.</param>
+        /// <param name="height">Initial value of the Height property.</param>
+        public static Photo CreatePhoto(global::System.Int64 photoId, global::System.Int64 uid, global::System.DateTime createTime, global::System.Int32 width, global::System.Int32 height)
         {
             Photo photo = new Photo();
             photo.PhotoId = photoId;
             photo.Uid = uid;
             photo.CreateTime = createTime;
+            photo.Width = width;
+            photo.Height = height;
             return photo;
         }
 
@@ -2207,6 +2470,54 @@ namespace Fredin.Comic.Data
         private global::System.String _StorageKey;
         partial void OnStorageKeyChanging(global::System.String value);
         partial void OnStorageKeyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Width
+        {
+            get
+            {
+                return _Width;
+            }
+            set
+            {
+                OnWidthChanging(value);
+                ReportPropertyChanging("Width");
+                _Width = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Width");
+                OnWidthChanged();
+            }
+        }
+        private global::System.Int32 _Width;
+        partial void OnWidthChanging(global::System.Int32 value);
+        partial void OnWidthChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Height
+        {
+            get
+            {
+                return _Height;
+            }
+            set
+            {
+                OnHeightChanging(value);
+                ReportPropertyChanging("Height");
+                _Height = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Height");
+                OnHeightChanged();
+            }
+        }
+        private global::System.Int32 _Height;
+        partial void OnHeightChanging(global::System.Int32 value);
+        partial void OnHeightChanged();
 
         #endregion
     
@@ -3760,6 +4071,28 @@ namespace Fredin.Comic.Data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<UserEngageHistory>("Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0", "UserEngageHistory", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__ComicTag__Uid__617787D5", "ComicTag")]
+        public EntityCollection<ComicTag> ComicTags
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ComicTag>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "ComicTag");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ComicTag>("Fredin.Comic.Data.FK__ComicTag__Uid__617787D5", "ComicTag", value);
                 }
             }
         }

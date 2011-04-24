@@ -52,7 +52,11 @@ namespace Fredin.Comic.Data
 
 			if(!isFriend)
 			{
-				filtered = filtered.Where(c => !c.IsPrivate || c.Uid == user.Uid);
+				filtered = filtered.Where(c => !c.IsPrivate);
+				if (user != null)
+				{
+					filtered = filtered.Where(c => c.Uid == user.Uid);
+				}
 			}
 
 			return filtered.Where(c => c.IsPublished && !c.IsDeleted);

@@ -358,6 +358,30 @@ namespace Fredin.Comic.Worker
 						}
 					}
 
+					ComicGenerator.ImageAlign imageAlignment = ComicGenerator.ImageAlign.Center;
+					if (tag != Point.Empty && tag.Y <= image.Height / 3)
+					{
+						imageAlignment = ComicGenerator.ImageAlign.Top;
+					}
+
+
+					// Resize to fit frame
+					image = ComicGenerator.FitImage(new Size(templateItems[f].Width, templateItems[f].Height), image);
+
+					// Apply render effect
+					if (task.Effect != ComicEffectType.None)
+					{
+						RenderHelper effectHelper = new RenderHelper(image.Size);
+						ImageRenderData renderResult = effectHelper.RenderEffect(image, task.Effect, parameterValues);
+						image = new Bitmap(renderResult.RenderStream);
+					}
+
+					// Read raw photo into memory
+					MemoryStream imageStream = new MemoryStream();
+					image.Save(imageStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+					imageStream.Seek(0, SeekOrigin.Begin);
+
+
 					// Text Bubbles
 					ComicTextBubble comicBubble = new ComicTextBubble();
 					entityContext.AddToComicTextBubbles(comicBubble);
@@ -379,14 +403,6 @@ namespace Fredin.Comic.Worker
 					}
 					comicBubble.Font = new Font(ComicGenerator.ComicFont, fontSize, FontStyle.Regular, GraphicsUnit.Point);
 
-					//string[] words = comicBubble.Text.Split(new char[] { ' ' });
-						//comicBubble.Text = String.Empty;
-						//for (int w = 0; w < words.Length && comicBubble.Text.Length < 200; w++)
-						//{
-						//    comicBubble.Text += words[w] + " ";
-						//}
-						//comicBubble.Text += "...";
-
 					// Shouting / excited?
 					TextBubble bubble = speechBubble;
 					if (comicBubble.Text.Contains('!') || Regex.Matches(comicBubble.Text, "[A-Z]").Count > comicBubble.Text.Length / 4)
@@ -394,35 +410,62 @@ namespace Fredin.Comic.Worker
 						bubble = bubbleShout;
 					}
 
-					ComicGenerator.ImageAlign imageAlignment = ComicGenerator.ImageAlign.Center;
-					if (tag != Point.Empty && tag.Y <= image.Height / 3)
+					// Calculate tag x/y coords relative to the whole comic
+					if (tag != Point.Empty)
 					{
-						imageAlignment = ComicGenerator.ImageAlign.Top;
+						Size templateSize = new Size(templateItems[f].Width, templateItems[f].Height);
+						Rectangle cropArea = ComicGenerator.GetCropImageSize(image.Size, templateSize, imageAlignment);
+						tag.X = image.Size.Width * tag.X / 100 - cropArea.X + templateItems[f].X;
+						tag.Y = image.Size.Height * tag.Y / 100 - cropArea.Y + templateItems[f].Y;
 					}
 
+					// Tag users
+					try
+					{
+						// Lookup existing user
+						User taggedUser = entityContext.TryGetUser(task.Frames[f].Id, true);
+						if (taggedUser == null)
+						{
+							// User doesn't exist in the db yet - grab from facebook
+							dynamic facebookUser = facebook.Get(String.Format("/{0}", task.Frames[f].Id));
+							taggedUser = new User();
+							taggedUser.Uid = facebookUser.uid;
+							taggedUser.IsDeleted = false;
+							taggedUser.IsSubscribed = false;
+							taggedUser.Locale = facebookUser.locale;
+							taggedUser.Name = facebookUser.name;
+							taggedUser.Nickname = facebookUser.name;
+							taggedUser.FbLink = facebookUser.link;
+							entityContext.AddToUsers(taggedUser);
+						}
+
+						ComicTag comicTag = new ComicTag();
+						comicTag.User = taggedUser;
+						comicTag.Comic = comic;
+						if (tag != Point.Empty)
+						{
+							comicTag.X = tag.X;
+							comicTag.Y = tag.Y;
+						}
+					}
+					catch (Exception x)
+					{
+						this.Log.ErrorFormat("Failed to tag user {0} in comic. {1}", task.Frames[f].Id, x.ToString());
+					}
+
+
+					// Position text bubble
 					this.PositionFrameBubble(comicBubble, image, generator, bubble, squareBubble, templateItems[f], tag, imageAlignment);
 
-					// Resize to fit frame
-					image = ComicGenerator.FitImage(new Size(templateItems[f].Width, templateItems[f].Height), image);
-
-					// Apply render effect
-					if (task.Effect != ComicEffectType.None)
-					{
-						RenderHelper effectHelper = new RenderHelper(image.Size);
-						ImageRenderData renderResult = effectHelper.RenderEffect(image, task.Effect, parameterValues);
-						image = new Bitmap(renderResult.RenderStream);
-					}
-
-					// Read raw photo into memory
-					MemoryStream imageStream = new MemoryStream();
-					image.Save(imageStream, System.Drawing.Imaging.ImageFormat.Jpeg);
-					imageStream.Seek(0, SeekOrigin.Begin);
 
 					// Add photo as template item
 					Photo photo = new Photo();
 					photo.User = user;
 					photo.CreateTime = DateTime.Now;
 					photo.ImageData = imageStream.ToArray();
+					photo.StorageKey = Guid.NewGuid().ToString();
+					photo.Width = image.Width;
+					photo.Height = image.Height;
 					entityContext.AddToPhotos(photo);
 
 					ComicPhoto comicPhoto = new ComicPhoto();
@@ -480,29 +523,29 @@ namespace Fredin.Comic.Worker
 			textSize.Width += 6; // Measure error ?
 
 			// Photos are anchored at the top. Sides and bottom are cropped to fit
-			Size templateSize = new Size(templateItem.Width, templateItem.Height);
+			//Size templateSize = new Size(templateItem.Width, templateItem.Height);
 			Rectangle templateArea = new Rectangle(templateItem.X, templateItem.Y, templateItem.Width, templateItem.Height);
 
 			int centerOffset = (templateItem.Width - textSize.Width) / 2;
 
 			if (tag != Point.Empty)
 			{
-				Size fitSize = ComicGenerator.GetFitImageSize(new Size(image.Width, image.Height), templateSize);
-				Rectangle cropArea = ComicGenerator.GetCropImageSize(fitSize, templateSize, alignment);
+				//Size fitSize = ComicGenerator.GetFitImageSize(new Size(image.Width, image.Height), templateSize);
+				//Rectangle cropArea = ComicGenerator.GetCropImageSize(fitSize, templateSize, alignment);
 
 				// Get fitSize face location
-				int tagX = fitSize.Width * tag.X / 100 - cropArea.X + templateItem.X;
-				int tagY = fitSize.Height * tag.Y / 100 - cropArea.Y + templateItem.Y;
+				//int tagX = fitSize.Width * tag.X / 100 - cropArea.X + templateItem.X;
+				//int tagY = fitSize.Height * tag.Y / 100 - cropArea.Y + templateItem.Y;
 				int bufferX = textSize.Width / 4 + 10;
 				int bufferY = textSize.Height / 2 + 30;
 
 				// Attempt to position around the tag
-				Rectangle t = new Rectangle(tagX - (textSize.Width / 2), tagY - textSize.Height - bufferY, textSize.Width, textSize.Height);
-				Rectangle tl = new Rectangle(tagX - textSize.Width - bufferX, tagY - textSize.Height - bufferY, textSize.Width, textSize.Height);
-				Rectangle tr = new Rectangle(tagX + bufferX, tagY - textSize.Height - bufferY, textSize.Width, textSize.Height);
-				Rectangle bl = new Rectangle(tagX - textSize.Width - bufferX, tagY + bufferY, textSize.Width, textSize.Height);
-				Rectangle br = new Rectangle(tagX + bufferX, tagY + bufferY, textSize.Width, textSize.Height);
-				Rectangle b = new Rectangle(tagX - (textSize.Width / 2), tagY + bufferY, textSize.Width, textSize.Height);
+				Rectangle t = new Rectangle(tag.X - (textSize.Width / 2), tag.Y - textSize.Height - bufferY, textSize.Width, textSize.Height);
+				Rectangle tl = new Rectangle(tag.X - textSize.Width - bufferX, tag.Y - textSize.Height - bufferY, textSize.Width, textSize.Height);
+				Rectangle tr = new Rectangle(tag.X + bufferX, tag.Y - textSize.Height - bufferY, textSize.Width, textSize.Height);
+				Rectangle bl = new Rectangle(tag.X - textSize.Width - bufferX, tag.Y + bufferY, textSize.Width, textSize.Height);
+				Rectangle br = new Rectangle(tag.X + bufferX, tag.Y + bufferY, textSize.Width, textSize.Height);
+				Rectangle b = new Rectangle(tag.X - (textSize.Width / 2), tag.Y + bufferY, textSize.Width, textSize.Height);
 
 				// Allow for text to appear slightly outside the frame, but not outside the bounds of the comic
 				Rectangle bubbleArea = new Rectangle(Math.Max(0, templateArea.X - 25), Math.Max(0, templateArea.Y - 25), templateArea.Width + 25, templateArea.Height);
@@ -746,6 +789,15 @@ namespace Fredin.Comic.Worker
 				CloudBlob frameThumbBlob = directory.GetBlobReference(comic.StorageKey);
 				frameThumbBlob.Properties.ContentType = "image/jpeg";
 				frameThumbBlob.UploadFromStream(frameThumbStream);
+			}
+
+			// Push all photos
+			foreach (ComicPhoto photo in comic.ComicPhotos)
+			{
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.PhotoDirectory);
+				CloudBlob photoBlob = directory.GetBlobReference(photo.Photo.StorageKey);
+				photoBlob.Properties.ContentType = "image/jpeg";
+				photoBlob.UploadByteArray(photo.Photo.ImageData);
 			}
 		}
 

@@ -1,6 +1,4 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewRead>" %>
-<%@ Import Namespace="Fredin.Util" %>
-<%@ Import Namespace="Fredin.Comic.Web" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server"><%: Model.Comic.Title %> | Comic Mashup</asp:Content>
@@ -20,7 +18,15 @@
 	
 	<div class="wideskyscraper">
 		<% #if !DEBUG %>
-		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19168?ad_size=160x600&adkey=02c'></iframe>
+		<script type="text/javascript"><!--
+			google_ad_client = "ca-pub-8738340659342677";
+			/* mashup-directory */
+			google_ad_slot = "7165679501";
+			google_ad_width = 160;
+			google_ad_height = 600;
+			//-->
+			</script>
+			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 		<% #else %>
 		<div class="ad-debug"></div>
 		<% #endif %>
@@ -29,10 +35,19 @@
 	<div id="comicRead">
 		<div class="box content764">
 			
-			<span id="comicInfo">
+			<div id="comicInfo">
 				<%: Model.Comic.Stats.Readers %> readers | 
 				<a href="javascript:$.scrollTo('#comments', 200);"><span id="commentCount">0</span> comments</a>
-			</span>
+
+				<%-- Tags --%>
+				<div id="tags">
+					<% if(this.Model.Tags.Count > 0) { %>
+						<% foreach(var t in this.Model.Tags) { %>
+							<img title="<%= t.Nickname %>" width="25" height="25" src="<%= String.Format("http://graph.facebook.com/{0}/picture?type=square", t.Uid) %>" />
+						<% } %>
+					<% } %>
+				</div>
+			</div>
 
 			<%= Html.Partial("~/Views/Comic/Author.ascx", Model.Comic) %>
 			<div id="comicDescription"><%: Model.Comic.Description.StripHtml() %></div>

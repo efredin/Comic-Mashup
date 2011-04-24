@@ -110,6 +110,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PhotoTaskManager.cs" />
     <Compile Include="ProfileTaskManager.cs" />
     <Compile Include="StatUpdate.cs" />
     <Compile Include="RenderTaskManager.cs" />

@@ -214,13 +214,6 @@ input, textarea
 	width: 960px;
 	clear: both;
 }
-#content-clear
-{
-	clear: both;
-	height: 1px;
-	padding: 0;
-	margin: 0;
-}
 #login
 {
 	display: inline-block;
@@ -265,31 +258,39 @@ input, textarea
 	color: #F1F1F1;
 	margin: 8px auto;
 	width: 960px;
-}
-/*#footer-menu
-{
-	float: left;
 	font-size: 0.9em;
 }
-#footer-menu ul
+#footer ul
 {
 	list-style: none;
 	margin: 0;
 	padding: 0 0 0 8px;
 }
-#footer-menu ul li
+#footer ul li
 {
 	display: inline-block;
 	vertical-align: top;
-	margin: 0 8px 0 0;
-	padding: 1px 0;
+	margin: 0;
+	padding: 1px 20px;
+	border-right: 1px solid #61616B;
+	height: 100%;
 }
-#footer-menu ul li ul li
+#footer ul li:first-child
+{
+	padding-left: 0;
+}
+#footer ul li ul li
 {
 	display: block;
-}*/
-#footer-like
+	border: 0;
+	padding: 0;
+	margin: 0;
+	height: auto;
+}
+#footer a, #footer a:active, #footer a:visited
 {
+	color: #F1F1F1;
+	font-weight: normal;
 }
 #footer2-wrapper
 {
@@ -401,6 +402,19 @@ input, textarea
 .menu-misc
 {
 	width: 120px;
+}
+.ib
+{
+	display: inline-block;
+	zoom: 1; 
+	*display: inline;
+}
+.clear
+{
+	clear: both;
+	height: 1px;
+	padding: 0;
+	margin: 0;
 }
 .box
 {

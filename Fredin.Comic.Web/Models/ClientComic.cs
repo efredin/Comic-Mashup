@@ -29,6 +29,9 @@ namespace Fredin.Comic.Web.Models
 		public string FrameThumbUrl { get; set; }
 
 		public ClientUser Author { get; set; }
+		public List<ClientComicTextBubble> TextBubbles { get; set; }
+		public List<ClientPhoto> Photos { get; set; }
+		public ClientTemplate Template { get; set; }
 		public ClientComicStat Stats { get; set; }
 
 		public ClientComic(Data.Comic source)
@@ -64,6 +67,20 @@ namespace Fredin.Comic.Web.Models
 
 			this.Author = new ClientUser(source.Author);
 			this.Stats = new ClientComicStat(source.PeriodStats(statsPeriod));
+			this.Template = new ClientTemplate(source.Template);
+
+			if(source.ComicTextBubbles.IsLoaded)
+			{
+				this.TextBubbles = source.ComicTextBubbles.ToList().Select(b => new ClientComicTextBubble(b)).ToList();
+			}
+			if (source.ComicPhotos.IsLoaded)
+			{
+				this.Photos = source.ComicPhotos
+					.OrderBy(p => p.TemplateItem.Ordinal)
+					.ToList()
+					.Select(p => new ClientPhoto(p.Photo))
+					.ToList();
+			}
 		}
 	}
 }

@@ -64,6 +64,7 @@
 								<li><a href="<%= this.Url.Action("Funniest", "Directory") %>">Funniest</a></li>
 								<li><a href="<%= this.Url.Action("Smartest", "Directory") %>">Smartest</a></li>
 								<li><a href="<%= this.Url.Action("MostRandom", "Directory") %>">Most Random</a></li>
+								<li><a href="<%= this.Url.Action("Newest", "Directory") %>">Newest</a></li>
 							</ul>
 						</div>
 					</li>
@@ -81,7 +82,7 @@
 						<div class="ui-helper-hidden menu-help">
 							<ul>
 								<li><a href="<%= this.Url.Action("Faq", "Help") %>">FAQ</a></li>
-								<li><a href="<%= this.Url.Action("Contact", "Help") %>">Contact Us</a></li>
+								<li><a href="<%= this.Url.Action("Contact", "Help") %>">Contact</a></li>
 							</ul>
 						</div>
 					</li>
@@ -115,16 +116,42 @@
 	<div id="content-wrapper">
 		<div id="content">
 			<asp:ContentPlaceHolder id="cphCanvas" runat="server"></asp:ContentPlaceHolder>
-			<div id="content-clear"></div>
+			<div class="clear"></div>
 		</div>
 	</div>
 
 	<%-- Footer --%>
-	<%--<div id="footer-wrapper">
+	<div id="footer-wrapper">
 		<div id="footer">
-			<div id="footer-like"></fb:like></div>
+			<ul>
+				<li>
+					Directory
+					<ul>
+						<li><a href="<%= this.Url.Action("BestOverall", "Directory") %>">Best Overall</a></li>
+						<li><a href="<%= this.Url.Action("Funniest", "Directory") %>">Funniest</a></li>
+						<li><a href="<%= this.Url.Action("Smartest", "Directory") %>">Smartest</a></li>
+						<li><a href="<%= this.Url.Action("MostRandom", "Directory") %>">Most Random</a></li>
+						<li><a href="<%= this.Url.Action("Newest", "Directory") %>">Newest</a></li>
+					</ul>
+				</li>
+				<li><a href="<%= this.Url.Content("~/Directory/Author") %>">My Comics</a></li>
+				<li>
+					Create
+					<ul>
+						<li><a href="<%= this.Url.Action("CreateWizard", "Comic") %>">Mashup Wizard</a></li>
+						<li><a href="<%= ComicUrlHelper.GetFacebookUrl("/") %>">Profiles Facebook App</a></li>
+					</ul>
+				</li>
+				<li>
+					Help
+					<ul>
+						<li><a href="<%= this.Url.Action("Faq", "Help") %>">FAQ</a></li>
+						<li><a href="<%= this.Url.Action("Contact", "Help") %>">Contact</a></li>
+					</ul>
+				</li>
+			</ul>
 		</div>
-	</div>--%>
+	</div>
 	<div id="footer2-wrapper">
 		<div id="footer2">
 			<div id="attribution">

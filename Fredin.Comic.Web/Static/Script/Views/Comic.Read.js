@@ -25,15 +25,15 @@
 				$('#readerFb').button().click(function () { self.shareFb(); });
 
 				// Tooltips
-				$('#reader label').tooltip(
-				{
-					position:
-					{
-						my: "center bottom",
-						at: "center top",
-						offset: "0 0"
-					}
-				});
+//				$('#reader label').tooltip(
+//				{
+//					position:
+//					{
+//						my: "center bottom",
+//						at: "center top",
+//						offset: "0 0"
+//					}
+//				});
 
 				// Author delete
 				$('#authorDelete').click(function () { $('#dialog-authorDelete').dialog('open'); });

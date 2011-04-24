@@ -19,5 +19,7 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <ConfigurationSettings>
+    </ConfigurationSettings>
   </WebRole>
 </ServiceDefinition>

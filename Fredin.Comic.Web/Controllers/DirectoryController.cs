@@ -133,12 +133,9 @@ namespace Fredin.Comic.Web.Controllers
 				if (user != null)
 				{
 					// Load published comics
-					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriendOrSelf(user), ComicStat.ComicStatPeriod.AllTime, null).ToList();
-
-					if (comics.Count > 0)
-					{
-						comics = comics.OrderByDescending(c => c.PublishTime).ToList();
-					}
+					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriendOrSelf(user), ComicStat.ComicStatPeriod.AllTime, null)
+							.OrderByDescending(c => c.PublishTime)
+							.ToList();
 
 					// Get stats for each comic
 					if (this.Request[KEY_FORMAT] == VAL_JSON)

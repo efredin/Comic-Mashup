@@ -16,7 +16,7 @@
 
 #wizardCreate .ui-wizard-back { float: right; }
 #wizardCreate .ui-wizard-next { float: right; }
-#wizardCreate .ui-wizard-navPad { margin: 12px 0 0; }
+.ui-wizard-navPad { margin: 12px 0 0; }
 
 #wizardCreate .selectFilter { text-align: right; font-size: 0.8em; padding: 1em 2em 0 0; }
 #wizardCreate .selectFilter label { padding: 0 6px 0 1px; }
@@ -34,7 +34,16 @@
 #wizardCreate #stepOption .ui-select ul { width: 400px; height: 94px; }
 #wizardCreate #stepTemplate .ui-select ul li, #wizardCreate #stepOption .ui-select ul li { display: inline-block; text-align: center; vertical-align: middle; zoom: 1; *display: inline; }
 #wizardCreate .ui-select .template { height: 66px; display: inline-block; }
+#wizardCreate .ui-select .bubble { height: 66px; display: inline-block; }
 #wizardCreate .ui-select .effect { height: 80px; font-size: 0.9em; }
+
+#photoWizard .ui-wizard-back { float: right; }
+#albumContent { clear: both; height: 390px; overflow: auto; }
+#photoContent { clear: both; height: 390px; overflow: auto; }
+
+
+.ui-dialog .ui-select ul li { display: inline-block; text-align: center; vertical-align: middle; zoom: 1; *display: inline; }
+.ui-select .bubble .bubbleThumb { width: 50px; height: 50px; }
 
 #wizardCreate #renderComic { padding: 10px 0; }
 
@@ -45,7 +54,8 @@
 
 #comicRead { }
 #comicRead #comicDescription { margin: 10px 0; }
-#comicRead #comicInfo { float: right; font-size: 0.9em; }
+#comicRead #comicInfo { float: right; font-size: 0.9em; display: inline-block; zoom: 1; *display: inline; }
+#comicRead #comicInfo #tags { text-align: right; margin-top: 8px; }
 #comicRead #comic { clear: both; }
 #comicRead .fb_iframe_widget { margin: 10px 0; }
 #comicRead #reader { margin: 10px 0; }
@@ -98,6 +108,15 @@
 
 #contact { width: 300px; }
 #contact input, #contact textarea { width: 100%; }
+
+.ui-comic { }
+.ui-comic .ui-comic-canvas { position: relative; display: inline-block; zoom: 1; *display: inline; background: #000000; margin: 8px 0; overflow: hidden; }
+.ui-comic .ui-comic-frame { position: absolute; display: inline-block; zoom: 1; *display: inline; background: #EDEDED; overflow: hidden; }
+.ui-comic .ui-comic-frame img { position: absolute; }
+.ui-comic .ui-bubble { position: absolute; cursor: move; }
+.ui-comic .ui-comic-frameButton { position: absolute; top: 4px; left: 4px; }
+.ui-comic .ui-comic-framebutton a { margin: 0 auto; }
+
 
 /*
 #login-login input[type=text],

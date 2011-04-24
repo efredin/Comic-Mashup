@@ -8,7 +8,15 @@
 
 	<div class="wideskyscraper">
 		<% #if !DEBUG %>
-		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19165?ad_size=160x600&adkey=754'></iframe>
+		<script type="text/javascript"><!--
+			google_ad_client = "ca-pub-8738340659342677";
+			/* mashup-directory */
+			google_ad_slot = "7165679501";
+			google_ad_width = 160;
+			google_ad_height = 600;
+			//-->
+			</script>
+			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 		<% #else %>
 		<div class="ad-debug"></div>
 		<% #endif %>

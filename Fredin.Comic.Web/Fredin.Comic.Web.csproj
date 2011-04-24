@@ -144,6 +144,7 @@
     <Compile Include="Controllers\FacebookController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\JsonActionAttribute.cs" />
+    <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="FacebookHardAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -151,7 +152,11 @@
     </Compile>
     <Compile Include="Models\ClientComicRead.cs" />
     <Compile Include="Models\ClientComicStat.cs" />
+    <Compile Include="Models\ClientComicTag.cs" />
+    <Compile Include="Models\ClientComicTextBubble.cs" />
+    <Compile Include="Models\ClientPhoto.cs" />
     <Compile Include="Models\ClientRenderTask.cs" />
+    <Compile Include="Models\ClientTextBubbleDirection.cs" />
     <Compile Include="Models\ClientUser.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -161,9 +166,10 @@
     <Compile Include="Models\ClientTemplateItem.cs" />
     <Compile Include="Models\ClientProfileTask.cs" />
     <Compile Include="Models\ClientUserEngage.cs" />
+    <Compile Include="Models\ClientPhotoTask.cs" />
     <Compile Include="Models\ViewMessage.cs" />
     <Compile Include="Models\ViewContact.cs" />
-    <Compile Include="Models\ViewCreateWizard.cs" />
+    <Compile Include="Models\ViewCreate.cs" />
     <Compile Include="Models\ViewDirectory.cs" />
     <Compile Include="Models\ViewFacebook.cs" />
     <Compile Include="Models\ViewFacebookRender.cs" />
@@ -199,6 +205,7 @@
     <Content Include="Static\Css\icon.css" />
     <Content Include="Static\Css\images\loading.gif" />
     <Content Include="Static\Css\images\funny.png" />
+    <Content Include="Static\Css\images\tipsy.gif" />
     <Content Include="Static\Css\images\ui-anim_basic_16x16.gif" />
     <Content Include="Static\Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Static\Css\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -213,6 +220,7 @@
     <Content Include="Static\Css\images\ui-icons_454545_256x240.png" />
     <Content Include="Static\Css\images\ui-icons_888888_256x240.png" />
     <Content Include="Static\Css\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.comic.css" />
     <Content Include="Static\Css\jquery.ui\jquery.ui.list.css" />
     <Content Include="Static\Css\jquery.ui\jquery.ui.input.css" />
     <Content Include="Static\Css\jquery.ui\jquery.ui.load.css" />
@@ -223,19 +231,23 @@
     <Content Include="Static\Css\jquery.ui\jquery.ui.tabmenu.css" />
     <Content Include="Static\Css\jquery\jquery.form.wizard.css" />
     <Content Include="Static\Css\component.css" />
+    <Content Include="Static\Css\jquery\tipsy.css" />
     <Content Include="Static\Css\mashup.css" />
+    <Content Include="Static\Icon\16-mashup.png" />
     <Content Include="Static\Icon\32-funny-046a99.png" />
     <Content Include="Static\Icon\32-funny-ffffff.png" />
     <Content Include="Static\Icon\32-random-046a99.png" />
     <Content Include="Static\Icon\32-random-ffffff.png" />
     <Content Include="Static\Icon\32-smart-046a99.png" />
     <Content Include="Static\Icon\32-smart-ffffff.png" />
+    <Content Include="Static\Icon\75-mashup.png" />
     <Content Include="Static\Icon\96-create-046a99.png" />
     <Content Include="Static\Icon\96-create-ffffff.png" />
     <Content Include="Static\Icon\96-read.png-046a99.png" />
     <Content Include="Static\Icon\96-read.png-ffffff.png" />
     <Content Include="Static\Icon\96-share-046a99.png" />
     <Content Include="Static\Icon\96-share-ffffff.png" />
+    <Content Include="Static\Icon\mashup.ico" />
     <Content Include="Static\Icon\sprite32-reader-046A99.png" />
     <Content Include="Static\Icon\sprite32-reader-ffffff.png" />
     <Content Include="Static\Icon\sprite96-home-046A99.png" />
@@ -252,9 +264,16 @@
     <Content Include="Static\Image\Effect\comic.png" />
     <Content Include="Static\Image\Effect\pencil-sketch.png" />
     <Content Include="Static\Image\layout-head-bg.png" />
+    <Content Include="Static\Image\mashup-fb.jpg" />
+    <Content Include="Static\Image\mashup-icon110.gif" />
+    <Content Include="Static\Image\mashup-icon110.jpg" />
+    <Content Include="Static\Image\mashup-icon110.png" />
     <Content Include="Static\Image\mashup-profiles.png" />
     <Content Include="Static\Image\mashup-white.png" />
     <Content Include="Static\Image\menubar-bg.png" />
+    <Content Include="Static\Image\sample-colorsketch.jpg" />
+    <Content Include="Static\Image\sample-comic.jpg" />
+    <Content Include="Static\Image\sample-pencilsketch.jpg" />
     <Content Include="Static\Image\search.png" />
     <Content Include="Static\Image\Template\large-aa.png" />
     <Content Include="Static\Image\Template\large-ab.png" />
@@ -332,6 +351,7 @@
     <Content Include="Static\Image\watermark.png" />
     <Content Include="Static\Script\Application.js" />
     <Content Include="Static\Script\Date.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.comic.js" />
     <Content Include="Static\Script\jquery.ui\jquery.ui.optionset.js" />
     <Content Include="Static\Script\jquery.ui\jquery.ui.list.js" />
     <Content Include="Static\Script\jquery.ui\jquery.ui.input.js" />
@@ -341,6 +361,7 @@
     <Content Include="Static\Script\jquery\fg.menu.js" />
     <Content Include="Static\Script\jquery\hoverIntent.js" />
     <Content Include="Static\Script\jquery\jquery.ba-bbq.js" />
+    <Content Include="Static\Script\jquery.ui\jquery.ui.bubble.js" />
     <Content Include="Static\Script\jquery\jquery.data.js" />
     <Content Include="Static\Script\jquery\jquery.disable.js" />
     <Content Include="Static\Script\jquery\jquery.form.js" />
@@ -364,11 +385,13 @@
     <Content Include="Static\Script\jquery\jquery.postify.js" />
     <Content Include="Static\Script\jquery\jquery.scrollTo-1.4.2.js" />
     <Content Include="Static\Script\Array.js" />
+    <Content Include="Static\Script\jquery\jquery.tipsy.js" />
     <Content Include="Static\Script\jquery\jquery.watermark.js" />
     <Content Include="Static\Script\Math.js" />
     <Content Include="Static\Script\String.js" />
     <Content Include="Static\Script\Views\Comic.CreateWizard.js" />
     <Content Include="Static\Script\Views\Comic.Read.js" />
+    <Content Include="Static\Script\Views\Comic.Create.js" />
     <Content Include="Static\Script\Views\Facebook.Render.js" />
     <Content Include="Static\Script\Views\Directory.Directory.js" />
     <Content Include="Static\Script\Views\Facebook.Index.js" />
@@ -541,6 +564,7 @@
     <Content Include="Static\Theme\ui-lightness\layout.css" />
     <Content Include="Views\Comic\Author.ascx" />
     <Content Include="Views\Comic\ComicList.ascx" />
+    <Content Include="Views\Comic\Create.aspx" />
     <Content Include="Views\Comic\Delete.aspx" />
     <Content Include="Views\Comic\CreateWizard.aspx" />
     <Content Include="Views\Comic\ReadNotFound.aspx" />
@@ -624,6 +648,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Static\Css\jquery.ui\jquery.ui.optionset.css" />
+    <Content Include="Static\Css\jquery.ui\jquery.ui.bubble.css" />
     <None Include="Static\Font\smackattackbb_reg.eot" />
     <None Include="Static\Font\smackattackbb_reg.ttf" />
     <Content Include="Views\Web.config" />

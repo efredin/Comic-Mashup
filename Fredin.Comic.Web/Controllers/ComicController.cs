@@ -91,7 +91,11 @@ namespace Fredin.Comic.Web.Controllers
 						this.Log.Error("Reader error", x);
 					}
 
-					result = (ActionResult)this.View(new ViewRead(comic, read));
+					// Load tags
+					comic.ComicTags.Load();
+					List<ClientComicTag> tags = comic.ComicTags.Select(t => new ClientComicTag(t)).ToList();
+
+					result = (ActionResult)this.View(new ViewRead(new ClientComic(comic), new ClientComicRead(read), tags));
 				}
 			}
 			finally
@@ -219,11 +223,101 @@ namespace Fredin.Comic.Web.Controllers
 		//    bool isPrivate;
 		//}
 
-		#region [Wizard]
+		#region [Create]
+
+		public ViewResult Create()
+		{
+			List<ClientTemplate> templates = this.EntityContext.ListTemplates()
+				.ToList()
+				.Select(t => new ClientTemplate(t))
+				.ToList();
+
+			List<ClientTextBubbleDirection> bubbles = this.EntityContext.ListTextBubbles()
+				.SelectMany(b => b.TextBubbleDirections)
+				.ToList()
+				.Select(d => new ClientTextBubbleDirection(d))
+				.ToList();
+
+			return this.View(new ViewCreate(templates, this.GetEffects(), bubbles));
+		}
 
 		public ViewResult CreateWizard()
 		{
-			return this.View(new ViewCreateWizard(this.GetTemplates(), this.GetEffects()));
+			List<ClientTemplate> templates = this.EntityContext.ListTemplates()
+				.ToList()
+				.Select(t => new ClientTemplate(t))
+				.ToList();
+
+			return this.View(new ViewCreate(templates, this.GetEffects()));
+		}
+
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HandleError(View = "JsonError")]
+		public JsonResult QueuePhotoRender(ComicEffectType effect, string photoSource, int intensity)
+		{
+			// Generate render task
+			PhotoTask task = new PhotoTask();
+			task.TaskId = Guid.NewGuid();
+			task.Status = TaskStatus.Queued;
+			task.Effect = effect;
+			task.Intensity = intensity;
+			task.FacebookToken = this.Facebook.AccessToken;
+			task.SourceUrl = photoSource;
+			task.OwnerUid = this.ActiveUser.Uid;
+
+			// Queue the task up using Azure Queue services.  Store full task information using Blob storage.  Only the task id is queued.
+			// This is done because we need public visibility on render tasks before, during and after the task completes.
+
+			// Save task to storage
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.PhotoTaskDirectory);
+			CloudBlob blob = directory.GetBlobReference(task.TaskId.ToString());
+			blob.UploadText(task.ToXml());
+
+			// Queue up task
+			CloudQueue queue = this.QueueClient.GetQueueReference(ComicConfigSectionGroup.Queue.PhotoTaskQueue);
+			CloudQueueMessage message = new CloudQueueMessage(task.TaskId.ToString());
+			queue.AddMessage(message, TimeSpan.FromMinutes(5));
+
+			return this.Json(new ClientPhotoTask(task, null), JsonRequestBehavior.DenyGet);
+		}
+
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HandleError(View = "JsonError")]
+		public JsonResult PhotoRenderProgress(string taskId)
+		{
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.PhotoTaskDirectory);
+			CloudBlob blob = directory.GetBlobReference(taskId);
+
+			XmlSerializer serializer = new XmlSerializer(typeof(PhotoTask));
+			using (MemoryStream stream = new MemoryStream())
+			{
+				blob.DownloadToStream(stream);
+				stream.Seek(0, SeekOrigin.Begin);
+				PhotoTask task = (PhotoTask)serializer.Deserialize(stream);
+
+				if (task.OwnerUid != this.ActiveUser.Uid)
+				{
+					throw new Exception("Unknown task");
+				}
+
+				ClientPhoto clientPhoto = null;
+				if (task.PhotoId.HasValue)
+				{
+					// Load photo from database
+					Photo photo = this.EntityContext.TryGetPhoto(task.PhotoId.Value);
+					if (photo != null)
+					{
+						clientPhoto = new ClientPhoto(photo);
+					}
+				}
+
+				ClientPhotoTask clientTask = new ClientPhotoTask(task, clientPhoto);
+				return this.Json(clientTask, JsonRequestBehavior.AllowGet);
+			}
+
+			throw new Exception("Unknown task");
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
@@ -331,20 +425,6 @@ namespace Fredin.Comic.Web.Controllers
 			}
 
 			return this.Json(comic == null ? null : new ClientComic(comic), JsonRequestBehavior.DenyGet);
-		}
-
-		#endregion
-
-		#region [Template]
-
-		protected List<ClientTemplate> GetTemplates()
-		{
-			List<ClientTemplate> templates = new List<ClientTemplate>();
-			foreach (Template t in this.EntityContext.ListTemplates())
-			{
-				templates.Add(new ClientTemplate(t));
-			}
-			return templates;
 		}
 
 		#endregion

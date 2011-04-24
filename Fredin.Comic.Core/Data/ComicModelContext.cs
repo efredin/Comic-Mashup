@@ -172,6 +172,15 @@ namespace Fredin.Comic.Data
 
 		#endregion
 
+		#region [Photo]
+
+		public Photo TryGetPhoto(long photoId)
+		{
+			return this.Photos.FirstOrDefault(p => p.PhotoId == photoId);
+		}
+
+		#endregion
+
 		protected override void Dispose(bool disposing)
 		{
 			foreach (var entry in this.ObjectStateManager.GetObjectStateEntries(EntityState.Added | EntityState.Deleted | EntityState.Modified | EntityState.Unchanged))

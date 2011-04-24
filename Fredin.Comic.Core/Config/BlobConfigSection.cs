@@ -35,6 +35,13 @@ namespace Fredin.Comic.Config
 			set { this["profileTaskDirectory"] = value; }
 		}
 
+		[ConfigurationProperty("photoTaskDirectory", IsRequired = false, DefaultValue = "photo/")]
+		public string PhotoTaskDirectory
+		{
+			get { return (string)this["photoTaskDirectory"]; }
+			set { this["photoTaskDirectory"] = value; }
+		}
+
 		[ConfigurationProperty("comicDirectory", IsRequired = true)]
 		public string ComicDirectory
 		{

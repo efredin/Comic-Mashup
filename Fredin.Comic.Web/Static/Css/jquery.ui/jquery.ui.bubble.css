@@ -1,0 +1,5 @@
+﻿.ui-bubble { position: relative; display: inline-block; zoom: 1; *display: inline; }
+.ui-bubble .ui-bubbleImage { border: 0; }
+.ui-bubble .ui-bubbleText { display: inline-block; position: absolute; font-size: 8pt; margin: 0; padding: 0; border: 0; background: transparent; overflow: hidden; white-space: nowrap; text-align: center; }
+.ui-bubble .ui-bubbleSizer { position: absolute; top: 0; left: 0; display: inline-block; zoom: 1; *display: inline; visibility: hidden; font-size: 8pt; white-space: nowrap; }
+.ui-bubble .ui-bubbleDelete { position: absolute; width: 7px; height: 7px; border: 0; background: transparent url('images/tinyx.png') no-repeat 0 0; display: inline-block; zoom: 1; *display: inline; }

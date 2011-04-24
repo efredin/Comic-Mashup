@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewCreateWizard>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewCreate>" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 <%@ Import Namespace="Fredin.Comic.Web" %>
 <%@ Import Namespace="Fredin.Comic.Config" %>
@@ -12,7 +12,15 @@
 
 	<div class="wideskyscraper">
 		<% #if !DEBUG %>
-		<iframe width='160' height='600' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot19166?ad_size=160x600&adkey=be1'></iframe>
+		<script type="text/javascript"><!--
+			google_ad_client = "ca-pub-8738340659342677";
+			/* mashup-directory */
+			google_ad_slot = "7165679501";
+			google_ad_width = 160;
+			google_ad_height = 600;
+			//-->
+			</script>
+			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 		<% #else %>
 		<div class="ad-debug"></div>
 		<% #endif %>
@@ -140,7 +148,7 @@
 		<img class="feed-picture" src="http://graph.facebook.com/<#= this.from.id #>/picture/" alt="" />
 		<div class="feed-content">
 			<span class="feed-from name"><#= this.from.name #></span>
-			<span class="feed-message"><#= this.message.wordSubstr(0, 79, '...') #></span><br/>
+			<span class="feed-message"><#= this.message.wordSubstr(0, 200, '...') #></span><br/>
 			<# if(this.icon){ #><img class="feed-icon" alt="" src="<#= this.icon #>" /><# } #>
 			<span class="feed-time"><#= Date.parse8601(this.created_time).toContextual() #></span>
 			<span class="feed-commentCount"> - <#= this.comments ? this.comments.count : 0 #> comment(s)</span>
@@ -155,7 +163,7 @@
 		<img class="feed-picture" src="http://graph.facebook.com/<#= this.from.id #>/picture/" alt="" />
 		<div class="feed-content">
 			<span class="feed-from name"><#= this.from.name #></span>
-			<span class="feed-message"><#= this.message.wordSubstr(0, 79, '...') #></span>
+			<span class="feed-message"><#= this.message.wordSubstr(0, 200, '...') #></span>
 		</div>
 	</div>
 	]]>

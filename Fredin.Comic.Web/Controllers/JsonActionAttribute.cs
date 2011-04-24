@@ -22,7 +22,7 @@ namespace Fredin.Comic.Web.Controllers
 					
 					foreach(ParameterDescriptor p in filterContext.ActionDescriptor.GetParameters())
 					{
-						if(!parameters.ContainsKey(p.ParameterName))
+						if(parameters == null || !parameters.ContainsKey(p.ParameterName))
 						{
 							throw new ArgumentException("Missing parameter", p.ParameterName);
 						}

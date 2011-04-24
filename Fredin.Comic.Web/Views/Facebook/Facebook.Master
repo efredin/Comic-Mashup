@@ -71,7 +71,7 @@
 	<%-- Content --%>
 	<div id="fb-content">
 		<asp:ContentPlaceHolder id="cphCanvas" runat="server"></asp:ContentPlaceHolder>
-		<div id="content-clear"></div>
+		<div class="clear"></div>
 	</div>
 
 	<%-- Footer --%>
