@@ -5,7 +5,7 @@
       <Import moduleName="Diagnostics" />
     </Imports>
   </WorkerRole>
-  <WebRole name="Fredin.Comic.Web">
+  <WebRole name="Fredin.Comic.Web" vmsize="ExtraSmall">
     <Sites>
       <Site name="Web">
         <Bindings>

@@ -19,20 +19,22 @@ using Facebook.Web;
 namespace Fredin.Comic.Web.Controllers
 {
 	[HandleError]
-	[JsonAction]
 	public class UserController : ComicControllerBase
 	{
+		[JsonAction]
 		public ViewResult Login()
 		{
 			return this.View();
 		}
 
+		[JsonAction]
 		public EmptyResult Logout()
 		{
 			this.LogoutActiveUser();
 			return null;
 		}
 
+		[JsonAction]
 		public JsonResult Me()
 		{
 			ClientUser user = null;
@@ -44,6 +46,7 @@ namespace Fredin.Comic.Web.Controllers
 			return this.Json(user, JsonRequestBehavior.AllowGet);
 		}
 
+		[JsonAction]
 		public ActionResult Profile(long? id, string title)
 		{
 			return this.RedirectToAction("Author", "Directory", new { uid = id, nickname = title } );
@@ -51,6 +54,7 @@ namespace Fredin.Comic.Web.Controllers
 
 		[HttpGet]
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[JsonAction]
 		public ActionResult Settings()
 		{
 			ActionResult result;
@@ -84,6 +88,7 @@ namespace Fredin.Comic.Web.Controllers
 
 		[HttpPost]
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[JsonAction]
 		public ActionResult Settings(ViewSettings settings)
 		{
 			return new EmptyResult();
@@ -129,56 +134,58 @@ namespace Fredin.Comic.Web.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		[FacebookSubscriptionReceived(ParameterName = "data")]
-		public EmptyResult Subscription(string data)
+		public EmptyResult Subscription(Dictionary<string, object> data)
 		{
-            Dictionary<string, object> parameters = JsonSerializer.Current.DeserializeObject<Dictionary<string, object>>(data);
-			
-			if(parameters["object"] == "user")
+			if (data != null) // Facebook passing empty json arguments ?
 			{
-				foreach (Dictionary<string, object> u in ((Dictionary<string, object>)parameters["entry"]).Values)
+				if (data["object"].ToString() == "user")
 				{
-					try
+					foreach (Dictionary<string, object> u in ((Dictionary<string, object>)data["entry"]).Values)
 					{
-						long uid = long.Parse(u["uid"].ToString());
-						User user = this.EntityContext.TryGetUser(uid);
-						if (user != null)
+						try
 						{
-							if (u.ContainsKey("name"))
+							long uid = long.Parse(u["uid"].ToString());
+							User user = this.EntityContext.TryGetUser(uid);
+							if (user != null)
 							{
-								user.Name = u["name"].ToString();
-								user.Nickname = user.Name;
+								if (u.ContainsKey("name"))
+								{
+									user.Name = u["name"].ToString();
+									user.Nickname = user.Name;
+								}
+								if (u.ContainsKey("locale"))
+								{
+									user.Locale = u["locale"].ToString();
+								}
+								if (u.ContainsKey("link"))
+								{
+									user.FbLink = u["link"].ToString();
+								}
+								if (u.ContainsKey("email"))
+								{
+									user.Email = u["email"].ToString();
+								}
+								user.IsSubscribed = true; // Just in case
+								this.EntityContext.SaveChanges();
 							}
-							if (u.ContainsKey("locale"))
-							{
-								user.Locale = u["locale"].ToString();
-							}
-							if (u.ContainsKey("link"))
-							{
-								user.FbLink = u["link"].ToString();
-							}
-							if (u.ContainsKey("email"))
-							{
-								user.Email = u["email"].ToString();
-							}
-							user.IsSubscribed = true; // Just in case
-							this.EntityContext.SaveChanges();
+						}
+						catch (Exception x)
+						{
+							this.Log.Error("Unable to handle subscription callback.", x);
 						}
 					}
-					catch(Exception x)
-					{
-						this.Log.Error("Unable to handle subscription callback.", x);
-					}
 				}
-			}
-			else if (parameters["object"] == "permissions")
-			{
-				// Not implemented
-				throw new NotImplementedException("Cannot handle permissions subscription callbacks.");
+				else if (data["object"].ToString() == "permissions")
+				{
+					// Not implemented
+					throw new NotImplementedException("Cannot handle permissions subscription callbacks.");
+				}
 			}
 
 			return new EmptyResult();
 		}
 
+		[JsonAction]
 		public JsonResult ChangeTheme(string theme)
 		{
 			this.Theme = theme;

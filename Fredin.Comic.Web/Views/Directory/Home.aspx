@@ -6,23 +6,7 @@
 <asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Welcome</asp:Content>
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
-	<div class="wideskyscraper">
-		<% #if !DEBUG %>
-		<script type="text/javascript"><!--
-			google_ad_client = "ca-pub-8738340659342677";
-			/* mashup-directory */
-			google_ad_slot = "7165679501";
-			google_ad_width = 160;
-			google_ad_height = 600;
-			//-->
-			</script>
-			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-		<% #else %>
-		<div class="ad-debug"></div>
-		<% #endif %>
-	</div>
-
-	<div id="home" class="box content764">
+	<div id="home" class="box content734">
 
 		<div id="home-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" layout="box_count" show_faces="false" width="55" font=""></div>
 
@@ -41,7 +25,7 @@
 		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4d9a88e114b59f84"></script>
 	</div>
 
-	<div id="home-directory" class="content800">
+	<div id="home-directory" class="content760">
 		<h2>Latest Comics</h2>
 		<%= Html.Partial("~/Views/Comic/ComicList.ascx", Model.Comics) %>
 	</div>

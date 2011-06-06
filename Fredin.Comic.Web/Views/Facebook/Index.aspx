@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Facebook/Facebook.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewFacebook>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewFacebook>" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Profile Photo | Comic Mashup for Profiles</asp:Content>
@@ -11,7 +11,7 @@
 	<div class="fbrectangle">
 		<%--  Lifestreet Tag --%>
 		<% #if !DEBUG %>
-		<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/fbslot/slot19152?ad_size=300x250&adkey=7a7'></iframe>
+		<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/fbslot/slot19153?ad_size=300x250&adkey=1c1'></iframe>
 		<% #else %>
 		<div class="ad-debug"></div>
 		<% #endif %>

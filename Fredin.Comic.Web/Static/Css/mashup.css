@@ -85,7 +85,7 @@ input, textarea
 	height: 96px;
 	color: #F1F1F1;
 	margin: 2px auto;
-	width: 960px;
+	width: 920px;
 }
 #logo
 {
@@ -103,7 +103,7 @@ input, textarea
 #titlebar
 {
 	margin: 16px auto 2px auto;
-	width: 960px;
+	width: 920px;
 }
 #titlebar h1
 {
@@ -115,7 +115,7 @@ input, textarea
 {
 	position: absolute;
 	top: -30px;
-	width: 960px;
+	width: 920px;
 	margin: 0 auto;
 	background: #EDEDED;
 }
@@ -175,7 +175,7 @@ input, textarea
 {
 	position: absolute;
 	top: 3px;
-	left: 708px;
+	left: 668px;
 }
 #search-text
 {
@@ -211,7 +211,7 @@ input, textarea
 {
 	margin: 0 auto;
 	padding: 10px 0;
-	width: 960px;
+	width: 920px;
 	clear: both;
 }
 #login
@@ -257,7 +257,7 @@ input, textarea
 {
 	color: #F1F1F1;
 	margin: 8px auto;
-	width: 960px;
+	width: 920px;
 	font-size: 0.9em;
 }
 #footer ul
@@ -304,7 +304,7 @@ input, textarea
 {
 	color: #F1F1F1;
 	margin: 8px auto 2px auto;
-	width: 960px;
+	width: 920px;
 }
 #copyright
 {
@@ -393,7 +393,7 @@ input, textarea
 }
 .menu-directory
 {
-	width: 120px;
+	width: 140px;
 }
 .menu-help
 {

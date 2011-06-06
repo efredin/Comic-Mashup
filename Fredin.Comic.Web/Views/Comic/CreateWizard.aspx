@@ -3,30 +3,14 @@
 <%@ Import Namespace="Fredin.Comic.Web" %>
 <%@ Import Namespace="Fredin.Comic.Config" %>
 
-<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Create a Comic | Comic Mashup</asp:Content>
-<asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Create a Comic</asp:Content>
+<asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Comic Wizard | Comic Mashup</asp:Content>
+<asp:Content ID="cTitle" ContentPlaceHolderID="cphTitle" runat="server">Comic Mashup Wizard</asp:Content>
 
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 
     <% using (Html.BeginForm()) { %>
 
-	<div class="wideskyscraper">
-		<% #if !DEBUG %>
-		<script type="text/javascript"><!--
-			google_ad_client = "ca-pub-8738340659342677";
-			/* mashup-directory */
-			google_ad_slot = "7165679501";
-			google_ad_width = 160;
-			google_ad_height = 600;
-			//-->
-			</script>
-			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-		<% #else %>
-		<div class="ad-debug"></div>
-		<% #endif %>
-	</div>
-
-	<div id="wizardCreate" class="box content764">
+	<div id="wizardCreate" class="box content734">
 		<div id="wizardLoad"></div>
 		<div id="wizardContent" class="ui-wizard">
 			<div id="wizardTitle" class="ui-wizard-title">
@@ -104,6 +88,7 @@
 					Publish your comic to share it with your friends, or refresh to make another.<br /><br />
 					<a id="buttonPublish">Publish</a>
 					<a id="buttonRefresh">Refresh</a>
+					<a id="buttonEdit">Edit</a>
 					<div id="renderComic"></div>
 				</div>
 			</div>

@@ -5,7 +5,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphCanvas" runat="server">
 
-	<div class="box content764">
+	<div class="box content734">
 		
 		<% using(this.Html.BeginForm()) { %>
 

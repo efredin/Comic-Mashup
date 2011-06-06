@@ -55,38 +55,7 @@
 
 			<%--Navigation--%>
             <div id="menubar" class="ui-corner-all menu">
-				<ul>
-					<li>
-						<a href="<%= this.Url.Action("BestOverall", "Directory") %>">Browse</a>
-						<div class="ui-helper-hidden menu-directory">
-							<ul>
-								<li><a href="<%= this.Url.Action("BestOverall", "Directory") %>">Best Overall</a></li>
-								<li><a href="<%= this.Url.Action("Funniest", "Directory") %>">Funniest</a></li>
-								<li><a href="<%= this.Url.Action("Smartest", "Directory") %>">Smartest</a></li>
-								<li><a href="<%= this.Url.Action("MostRandom", "Directory") %>">Most Random</a></li>
-								<li><a href="<%= this.Url.Action("Newest", "Directory") %>">Newest</a></li>
-							</ul>
-						</div>
-					</li>
-					<li>
-						<a href="<%= this.Url.Content("~/Directory/Author") %>">My Comics</a>
-					</li>
-					<li>
-						<a href="<%= this.Url.Action("CreateWizard", "Comic") %>">Create</a>
-					</li>
-<%--					<li>
-						<a href="<%= this.Url.Action("Settings", "User") %>">Settings</a>
-					</li>--%>
-					<li>
-						<a href="<%= this.Url.Action("Faq", "Help") %>">Help</a>
-						<div class="ui-helper-hidden menu-help">
-							<ul>
-								<li><a href="<%= this.Url.Action("Faq", "Help") %>">FAQ</a></li>
-								<li><a href="<%= this.Url.Action("Contact", "Help") %>">Contact</a></li>
-							</ul>
-						</div>
-					</li>
-				</ul>
+				<%= Html.Partial("~/Views/Shared/MenuBar.ascx") %>
 				
 				<form id="search" method="post" action="<%= this.Url.Action("Search", "Directory") %>">
 					<input id="search-text" name="search" type="text" />
@@ -115,6 +84,21 @@
 	<%-- Content --%>
 	<div id="content-wrapper">
 		<div id="content">
+			<div class="wideskyscraper">
+				<% #if !DEBUG %>
+				<script type="text/javascript"><!--
+					google_ad_client = "ca-pub-8738340659342677";
+					/* mashup-directory */
+					google_ad_slot = "7165679501";
+					google_ad_width = 160;
+					google_ad_height = 600;
+					//-->
+					</script>
+					<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+				<% #else %>
+				<div class="ad-debug"></div>
+				<% #endif %>
+			</div>
 			<asp:ContentPlaceHolder id="cphCanvas" runat="server"></asp:ContentPlaceHolder>
 			<div class="clear"></div>
 		</div>

@@ -27,9 +27,10 @@ namespace Fredin.Comic.Web.Models
 		public string ThumbUrl { get; set; }
 		public string FrameUrl { get; set; }
 		public string FrameThumbUrl { get; set; }
+		public string RemixUrl { get; set; }
 
 		public ClientUser Author { get; set; }
-		public List<ClientComicTextBubble> TextBubbles { get; set; }
+		public List<ClientComicTextBubble> Bubbles { get; set; }
 		public List<ClientPhoto> Photos { get; set; }
 		public ClientTemplate Template { get; set; }
 		public ClientComicStat Stats { get; set; }
@@ -64,6 +65,7 @@ namespace Fredin.Comic.Web.Models
 			this.ThumbUrl = ComicUrlHelper.GetRenderUrl(source, RenderMode.Thumb);
 			this.FrameUrl = ComicUrlHelper.GetRenderUrl(source, RenderMode.Frame);
 			this.FrameThumbUrl = ComicUrlHelper.GetRenderUrl(source, RenderMode.FrameThumb);
+			this.RemixUrl = ComicUrlHelper.GetRemixUrl(source);
 
 			this.Author = new ClientUser(source.Author);
 			this.Stats = new ClientComicStat(source.PeriodStats(statsPeriod));
@@ -71,7 +73,7 @@ namespace Fredin.Comic.Web.Models
 
 			if(source.ComicTextBubbles.IsLoaded)
 			{
-				this.TextBubbles = source.ComicTextBubbles.ToList().Select(b => new ClientComicTextBubble(b)).ToList();
+				this.Bubbles = source.ComicTextBubbles.ToList().Select(b => new ClientComicTextBubble(b)).ToList();
 			}
 			if (source.ComicPhotos.IsLoaded)
 			{

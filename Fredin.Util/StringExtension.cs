@@ -42,5 +42,12 @@ namespace Fredin.Util
 			}
 			return s.ToString();
 		}
+
+		public static string ReplaceAt(this string source, int index, char replacement)
+		{
+			var temp = source.ToCharArray();
+			temp[index] = replacement;
+			return new String(temp);
+		}
 	}
 }

@@ -225,12 +225,62 @@ namespace Fredin.Comic.Web.Controllers
 
 		#region [Create]
 
-		public ViewResult Create()
+		//public ViewResult Create()
+		//{
+		//    return this.Create(null);
+		//}
+
+		public ViewResult Create(long? id)
 		{
+			ClientComic comic = null;
+			
 			List<ClientTemplate> templates = this.EntityContext.ListTemplates()
 				.ToList()
 				.Select(t => new ClientTemplate(t))
 				.ToList();
+
+			foreach (ClientTemplate t in templates)
+			{
+				int width = Math.Min(t.Width, 734);
+				double factor = Convert.ToDouble(width) / Convert.ToDouble(t.Width);
+				t.Width = width;
+				t.Height = Convert.ToInt32(Convert.ToDouble(t.Height) * factor);
+				foreach (ClientTemplateItem i in t.TemplateItems)
+				{
+					i.Width = Convert.ToInt32(Convert.ToDouble(i.Width) * factor);
+					i.Height = Convert.ToInt32(Convert.ToDouble(i.Height) * factor);
+					i.X = Convert.ToInt32(Convert.ToDouble(i.X) * factor);
+					i.Y = Convert.ToInt32(Convert.ToDouble(i.Y) * factor);
+				}
+			}
+
+			if (id.HasValue)
+			{
+				Data.Comic c = this.EntityContext.TryGetComic(id.Value, this.ActiveUser) ?? this.EntityContext.TryGetUnpublishedComic(id.Value, this.ActiveUser);
+				if (c != null)
+				{
+					c.ComicTextBubbles.Load();
+					c.ComicPhotos.Load();
+					comic = new ClientComic(c);
+
+					// inject newlines into text
+					int maxWidth = templates.SelectMany(t => t.TemplateItems).Select(t => t.Width).Min();
+					Font measureFont = new Font(ComicGenerator.ComicFont, 7, FontStyle.Regular, GraphicsUnit.Point);
+					ComicGenerator generator = new ComicGenerator(templates.Min(t => t.Width), templates.Min(t => t.Height));
+					foreach(ClientComicTextBubble b in comic.Bubbles)
+					{
+						Size textSize = generator.MeasureText(b.Text, maxWidth, measureFont).ToSize();
+						int lines = textSize.Height / measureFont.Height;
+						int cutWidth = b.Text.Length / lines - 4;
+						for (int l = 1; l < lines; l++)
+						{
+							int cut = cutWidth * l;
+							b.Text = b.Text.ReplaceAt(b.Text.IndexOf(' ', cut), '\n');
+						}
+					}
+				}
+			}
+
 
 			List<ClientTextBubbleDirection> bubbles = this.EntityContext.ListTextBubbles()
 				.SelectMany(b => b.TextBubbleDirections)
@@ -238,7 +288,7 @@ namespace Fredin.Comic.Web.Controllers
 				.Select(d => new ClientTextBubbleDirection(d))
 				.ToList();
 
-			return this.View(new ViewCreate(templates, this.GetEffects(), bubbles));
+			return this.View(new ViewCreate(comic, templates, this.GetEffects(), bubbles));
 		}
 
 		public ViewResult CreateWizard()
@@ -248,7 +298,7 @@ namespace Fredin.Comic.Web.Controllers
 				.Select(t => new ClientTemplate(t))
 				.ToList();
 
-			return this.View(new ViewCreate(templates, this.GetEffects()));
+			return this.View(new ViewCreate(null, templates, this.GetEffects()));
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
@@ -322,14 +372,39 @@ namespace Fredin.Comic.Web.Controllers
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
 		[HandleError(View = "JsonError")]
-		public JsonResult QueueRender(ComicEffectType effect, string photoSource, long templateId, List<RenderFrame> frames)
+		public JsonResult QueueRenderAdvanced(long? remixComicId, long templateId, List<RenderFrame> frames, List<RenderBubble> bubbles)
 		{
-			// Generate render task
+			// Generate advanced render task
 			RenderTask task = new RenderTask();
 			task.TaskId = Guid.NewGuid();
 			task.Status = TaskStatus.Queued;
 			task.CompletedOperations = 1;
-			task.TotalOperations = frames.Count + 1; // Operations = 1 per frame + save
+
+			task.TotalOperations = 2; // Operations = frames + bubbles + save + queue
+			if (frames != null) task.TotalOperations += frames.Count;
+
+			task.RemixComicId = remixComicId;
+			task.Effect = ComicEffectType.None;
+			task.PhotoSource = "Internal";
+			task.TemplateId = templateId;
+			task.Frames = frames;
+			task.Bubbles = bubbles;
+			task.OwnerUid = this.ActiveUser.Uid;
+			task.FacebookToken = this.Facebook.AccessToken;
+
+			return this.QueueRender(task);
+		}
+
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HandleError(View = "JsonError")]
+		public JsonResult QueueRenderWizard(ComicEffectType effect, string photoSource, long templateId, List<RenderFrame> frames)
+		{
+			// Generate wizard render task
+			RenderTask task = new RenderTask();
+			task.TaskId = Guid.NewGuid();
+			task.Status = TaskStatus.Queued;
+			task.CompletedOperations = 1;
+			task.TotalOperations = frames.Count + 2; // Operations = 1 per frame + save + queue
 			task.Effect = effect;
 			task.PhotoSource = photoSource;
 			task.TemplateId = templateId;
@@ -337,6 +412,11 @@ namespace Fredin.Comic.Web.Controllers
 			task.OwnerUid = this.ActiveUser.Uid;
 			task.FacebookToken = this.Facebook.AccessToken;
 
+			return this.QueueRender(task);
+		}
+
+		protected JsonResult QueueRender(RenderTask task)
+		{
 			// Queue the task up using Azure Queue services.  Store full task information using Blob storage.  Only the task id is queued.
 			// This is done because we need public visibility on render tasks before, during and after the task completes.
 

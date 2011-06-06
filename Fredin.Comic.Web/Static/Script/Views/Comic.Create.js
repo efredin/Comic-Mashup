@@ -33,6 +33,11 @@
 				{
 					self.render();
 					self.loadState();
+
+					if (self.options.comic.ComicId != null)
+					{
+						self.loadComic();
+					}
 				});
 			},
 
@@ -217,8 +222,32 @@
 				/* Wizard */
 				$('#wizardContent').wizard(
 				{
-					width: 764
+					width: 734
 				});
+
+				/* Comic Publisher */
+				$('#publishDialog').dialog(
+				{
+					autoOpen: false,
+					buttons:
+					{
+						Publish: function () { self.publishComic(); },
+						Cancel: function () { $(this).dialog("close"); }
+					},
+					closeOnEscape: true,
+					draggable: false,
+					modal: true,
+					resizable: false,
+					width: 500
+				});
+
+				$('.ui-comic-publish')
+					.button({ icons: { primary: 'ui-icon-signal-diag'} })
+					.click(function () { self.showPublishComic(); });
+
+				$('#buttonsetPrivacy').buttonset();
+
+				$('#publishLoad').load({ content: '#publishForm', progressbar: true });
 
 				$('#wizardContent').show();
 			},
@@ -241,14 +270,32 @@
 				}
 			},
 
+			loadComic: function ()
+			{
+				var self = this;
+
+				$.each(this.options.templates, function (t, template)
+				{
+					if (self.options.comic.Template.TemplateId == template.TemplateId)
+					{
+						$('#templateSelector').select2('select', t);
+					}
+				});
+
+				$.each(this.options.comic.Photos, function (p, photo) { self.addPhoto(p, photo); });
+				$.each(this.options.comic.Bubbles, function (b, bubble) { self.addBubble(b, bubble); });
+			},
+
 			loadTemplate: function ()
 			{
 				var self = this;
 
 				$('.ui-comic-canvas')
-					.remove('.ui-comic-frame')
+					//.remove('.ui-comic-frame') bug in jquery
 					.css('width', this.options.comic.Template.Width + 'px')
 					.css('height', this.options.comic.Template.Height + 'px');
+
+				$('.ui-comic-frame', '.ui-comic-canvas').remove();
 
 				$.each(this.options.comic.Template.TemplateItems, function (i, item)
 				{
@@ -481,6 +528,171 @@
 							console.debug("Queued photo render task");
 							console.debug(task);
 
+							progressCallback();
+							progressInterval = window.setInterval(progressCallback, progressFrequency);
+						}
+					}
+				});
+			},
+
+			showPublishComic: function ()
+			{
+				// Set title & description
+				$('#comicTitle').val(this.options.user.Name != '' ? this.options.user.Name + "'s Comic Mashup" : 'My Comic Mashup');
+
+				var description = '';
+				this.options.comic.Bubbles.each(function (index, bubble)
+				{
+					if (description == '') description = bubble.Text;
+				});
+				$('#comicDescription').val(description);
+
+				$('#publishLoad').load("complete");
+				$('#publishDialog').dialog('open');
+			},
+
+			publishComic: function ()
+			{
+				var self = this;
+				var task = null;
+				var load = $('#publishLoad').load("reset");
+
+				// Translate to request params
+				var data =
+				{
+					remixComicId: this.options.comic.ComicId != null && this.options.comic.ComicId > 0 ? this.options.comic.ComicId : null,
+					templateId: this.options.comic.Template.TemplateId,
+					frames: [],
+					bubbles: []
+				};
+
+				this.options.comic.Photos.each(function (index, photo)
+				{
+					data.frames.push({ PhotoId: photo.PhotoId });
+				});
+
+				this.options.comic.Bubbles.each(function (index, bubble)
+				{
+					data.bubbles.push({ TextBubbleDirectionId: bubble.TextBubbleDirection.TextBubbleDirectionId, Text: bubble.Text, X: bubble.X, Y: bubble.Y });
+				});
+
+				var publish = function ()
+				{
+					var publishData =
+					{
+						comicId: self.options.comic.ComicId,
+						title: $('#comicTitle').val(),
+						description: $('#comicDescription').val(),
+						isPrivate: $('[name=optionPrivacy]:checked').val() === 'Friends'
+					};
+
+					console.log('Publishing comic ' + self.options.comic.ComicId);
+					$.ajax(
+					{
+						dataType: 'json',
+						type: 'POST',
+						url: self.options.baseHref + 'Comic/Publish',
+						data: $.postify(publishData),
+						success: function (data, textStatus, request)
+						{
+							if (data)
+							{
+								self.options.comic = data;
+								console.log('Published comic ' + data.ComicId);
+
+								// Prompt for facebook wall post
+								FB.ui(
+								{
+									method: 'feed',
+									name: self.options.comic.Title,
+									description: self.options.comic.Description,
+									picture: self.options.comic.FrameThumbUrl,
+									link: self.options.comic.ReadUrl,
+									actions:
+									[
+										//{ name: 'Read', link: self.options.comic.ReadUrl },
+										{ name: 'Remix', link: self.options.comic.RemixUrl }
+									]
+								}, function (response)
+								{
+									document.location = data.ReadUrl;
+								});
+							}
+							else
+							{
+								self.error('Unable to publish your comic. Please try again later.');
+							}
+						}
+					});
+				};
+
+				var timeout = 1000 * 60 * 2; // 2 minute timeout!
+				var progressFrequency = 1000 * 5; // check every 5 seconds
+				var progressTime = 0;
+				var progressInterval = null;
+				var progressCallback = function ()
+				{
+					progressTime += progressFrequency;
+					if (progressTime > timeout)
+					{
+						window.clearInterval(progressInterval);
+						self.error("Unable to publish your comic. Please try again.");
+					}
+
+					// get progress from server
+					$.ajax
+					({
+						dataType: 'json',
+						type: 'GET',
+						url: self.options.baseHref + 'Comic/RenderProgress',
+						data: { taskId: task.TaskId },
+						success: function (data, textStatus, request)
+						{
+							// Update render progress ui
+							if (data)
+							{
+								task = data;
+								$('#publishLoad').load('progress', task.CompletedOperations / task.TotalOperations * 100);
+								if (task.Status == 2)
+								{
+									// Render complete
+									window.clearInterval(progressInterval);
+									self.options.comic = task.Comic;
+
+									// Publish
+									publish();
+								}
+								else if (task.Status == 3)
+								{
+									window.clearInterval(progressInterval);
+									$('#publishLoad').load("complete");
+									$('#publishDialog').dialog('close');
+									self.error('Unable to publish your comic. Please try again');
+								}
+							}
+						},
+						error: function (xhr, textStatus, x)
+						{
+							// Prevent application default error handler from firing
+						}
+					});
+				}
+
+				$.ajax(
+				{
+					dataType: 'json',
+					type: 'POST',
+					url: this.options.baseHref + 'Comic/QueueRenderAdvanced',
+					data: $.postify(data),
+					success: function (data, textStatus, request)
+					{
+						if (data)
+						{
+							task = data;
+							console.debug("Queued comic publish task");
+							console.debug(task);
+
+							// Callback to check on render progress
 							progressCallback();
 							progressInterval = window.setInterval(progressCallback, progressFrequency);
 						}

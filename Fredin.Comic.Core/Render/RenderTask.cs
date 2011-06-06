@@ -17,7 +17,10 @@ namespace Fredin.Comic.Render
 		public string PhotoSource { get; set; }
 		public long TemplateId { get; set; }
 		public List<RenderFrame> Frames { get; set; }
+		public List<RenderBubble> Bubbles { get; set; }
 
 		public long? ComicId { get; set; }
+
+		public long? RemixComicId { get; set; }
 	}
 }

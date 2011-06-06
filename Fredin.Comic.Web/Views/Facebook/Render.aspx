@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Facebook/Facebook.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewFacebookRender>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Web.Master" Inherits="Fredin.Comic.Web.ComicViewPage<Fredin.Comic.Web.Models.ViewFacebookRender>" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 
 <asp:Content ID="cPageTitle" ContentPlaceHolderID="cphPageTitle" runat="server">Profile Photo | Comic Mashup for Profiles</asp:Content>
@@ -28,7 +28,6 @@
 					<button id="renderShareRequest">Invite Friends</button>
 				</div>
 			</div>
-			<p>If you think this is cool, you should check out the full <a href="http://www.comicmashup.com/" target="_top">Comic Mashup</a> app.  Head on over to <a href="http://www.comicmashup.com/" target="_top">www.comicmashup.com</a> to transform your status updates into awesome web comics!</p>
 		</div>
 	</div>
 </asp:Content>

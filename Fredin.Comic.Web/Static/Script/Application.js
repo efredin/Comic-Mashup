@@ -35,9 +35,10 @@
         	user: null,
         	menuSelected: -1,
         	baseHref: '/',
-			facebookBaseHref: '/',
+        	facebookBaseHref: '/',
         	requireConnect: false,
-        	themeBase: ''
+        	themeBase: '',
+        	onCanvas: false
         },
 
     	init: function ()
@@ -70,6 +71,11 @@
     		// Hook into facebook auth status changes
     		FB.Event.subscribe('auth.sessionChange', sessionChangeCallback);
     		FB.getLoginStatus(sessionChangeCallback);
+
+    		if (this.options.onCanvas === true)
+    		{
+    			FB.Canvas.setSize();
+    		}
 
     		// Auth button click handlers
     		$('.button-fbLogin').click(function () { self.connect(); });
@@ -142,7 +148,7 @@
     		});
 
     		// Tooltips
-			$('[title]').not('.ui-button,div').tipsy();
+    		$('[title]').not('.ui-button,div').tipsy();
 
     		// Make links ui state awesome
     		$('a.ui-state-default').hover(function () { $(this).addClass('ui-state-hover'); }, function () { $(this).removeClass('ui-state-hover'); });

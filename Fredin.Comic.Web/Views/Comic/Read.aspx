@@ -16,24 +16,8 @@
 
 <asp:Content ID="cCanvas" ContentPlaceHolderID="cphCanvas" runat="server">
 	
-	<div class="wideskyscraper">
-		<% #if !DEBUG %>
-		<script type="text/javascript"><!--
-			google_ad_client = "ca-pub-8738340659342677";
-			/* mashup-directory */
-			google_ad_slot = "7165679501";
-			google_ad_width = 160;
-			google_ad_height = 600;
-			//-->
-			</script>
-			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-		<% #else %>
-		<div class="ad-debug"></div>
-		<% #endif %>
-	</div>
-
 	<div id="comicRead">
-		<div class="box content764">
+		<div class="box content734">
 			
 			<div id="comicInfo">
 				<%: Model.Comic.Stats.Readers %> readers | 
@@ -79,34 +63,50 @@
 			</div>
 		</div>
 
-		<div id="comments" class="box">
-			<h2>Comments</h2>
-			<fb:comments numposts="10" width="522" href="<%: Model.Comic.ReadUrl %>"></fb:comments>
+		<div id="column1">
+			<div id="comments" class="box">
+				<h2>Comments</h2>
+				<fb:comments numposts="10" width="400" href="<%: Model.Comic.ReadUrl %>"></fb:comments>
+			</div>
 		</div>
 
-		<div id="navigate" class="box">
-			<h2>See Also</h2>
-			<ul>
-				<li><a href="<%: Model.Comic.Author.AuthorUrl %>">More Comics by <%: Model.Comic.Author.Nickname %></a></li>
-				<li><a href="<%: this.Url.Action("Random", "Comic") %>">Random Comic</a></li>
-			</ul>
+		<div id="column2">
+			<div id="ad-rectangle" class="box">
+				<% if ( this.SessionManager.Fb) { %>
+					<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/fbslot/slot19152?ad_size=300x250&adkey=7a7'></iframe>
+				<% } else { %>
+					<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot21429?ad_size=300x250&adkey=d14'></iframe>
+				<% } %>
+			</div>
+
+			<div id="navigate" class="box">
+				<h2>See Also</h2>
+				<ul>
+					<% if (Model.Comic.CreateTime.Date > new DateTime(2011, 5, 30)) { %>
+					<li><a href="<%: Model.Comic.RemixUrl %>">Remix this Comic</a></li>
+					<% } %>
+					<li><a href="<%: Model.Comic.Author.AuthorUrl %>">More Comics by <%: Model.Comic.Author.Nickname %></a></li>
+					<li><a href="<%: this.Url.Action("Random", "Comic") %>">Random Comic</a></li>
+				</ul>
+			</div>
+
+			<%-- Author Edit Control --%>
+			<% if(this.Model.Comic.Uid == this.Model.Reader.Uid) { %>
+
+			<div id="edit" class="box">
+				<ul>
+					<li>
+						<a id="authorDelete" href="javascript:void(0);">Delete Comic</a>
+						<div id="dialog-authorDelete" class="ui-helper-hidden" title="Please Confirm">
+							<div id="dialog-authorDeleteMessage">Are you sure you want to delete this comic?</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<% } %>
+
 		</div>
-
-		<%-- Author Edit Control --%>
-		<% if(this.Model.Comic.Uid == this.Model.Reader.Uid) { %>
-
-		<div id="edit" class="box">
-			<ul>
-				<li>
-					<a id="authorDelete" href="javascript:void(0);">Delete Comic</a>
-					<div id="dialog-authorDelete" class="ui-helper-hidden" title="Please Confirm">
-						<div id="dialog-authorDeleteMessage">Are you sure you want to delete this comic?</div>
-					</div>
-				</li>
-			</ul>
-		</div>
-
-		<% } %>
 
 	</div>
 

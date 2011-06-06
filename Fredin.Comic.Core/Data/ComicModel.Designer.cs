@@ -36,6 +36,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__UserEngageH__Uid__1808A2B0", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "UserEngageHistory", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.UserEngageHistory))]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__ComicTag__ComicI__6083639C", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.Comic), "ComicTag", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicTag), true)]
 [assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__ComicTag__Uid__617787D5", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Fredin.Comic.Data.User), "ComicTag", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.ComicTag), true)]
+[assembly: EdmRelationshipAttribute("Fredin.Comic.Data", "FK__Comic__RemixComi__5FAC3F62", "Comic", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Fredin.Comic.Data.Comic), "Comic1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Fredin.Comic.Data.Comic))]
 
 #endregion
 
@@ -1086,6 +1087,66 @@ namespace Fredin.Comic.Data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ComicTag>("Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C", "ComicTag", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__Comic__RemixComi__5FAC3F62", "Comic1")]
+        public EntityCollection<Comic> Remixes
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic1");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic1", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Fredin.Comic.Data", "FK__Comic__RemixComi__5FAC3F62", "Comic")]
+        public Comic RemixedComic
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Comic> RemixedComicReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Comic>("Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62", "Comic", value);
                 }
             }
         }

@@ -21,6 +21,10 @@
           <EntitySet Name="User" EntityType="Fredin.Comic.Data.Store.User" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserEngage" EntityType="Fredin.Comic.Data.Store.UserEngage" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserEngageHistory" EntityType="Fredin.Comic.Data.Store.UserEngageHistory" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK__Comic__RemixComi__5FAC3F62" Association="Fredin.Comic.Data.Store.FK__Comic__RemixComi__5FAC3F62">
+            <End Role="Comic" EntitySet="Comic" />
+            <End Role="Comic1" EntitySet="Comic" />
+          </AssociationSet>
           <AssociationSet Name="FK__ComicTag__ComicI__6083639C" Association="Fredin.Comic.Data.Store.FK__ComicTag__ComicI__6083639C">
             <End Role="Comic" EntitySet="Comic" />
             <End Role="ComicTag" EntitySet="ComicTag" />
@@ -113,6 +117,7 @@
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="StorageKey" Type="varchar" Nullable="false" MaxLength="36" />
           <Property Name="Locale" Type="varchar" Nullable="false" MaxLength="5" />
+          <Property Name="RemixComicId" Type="bigint" />
         </EntityType>
         <EntityType Name="ComicPhoto">
           <Key>
@@ -266,6 +271,18 @@
           <Property Name="EngageTime" Type="datetime" Nullable="false" />
           <Property Name="RespondTime" Type="datetime" />
         </EntityType>
+        <Association Name="FK__Comic__RemixComi__5FAC3F62">
+          <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="0..1" />
+          <End Role="Comic1" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comic">
+              <PropertyRef Name="ComicId" />
+            </Principal>
+            <Dependent Role="Comic1">
+              <PropertyRef Name="RemixComicId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__ComicTag__ComicI__6083639C">
           <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="1" />
           <End Role="ComicTag" Type="Fredin.Comic.Data.Store.ComicTag" Multiplicity="*" />
@@ -582,6 +599,10 @@
             <End Role="User" EntitySet="Users" />
             <End Role="ComicTag" EntitySet="ComicTag" />
           </AssociationSet>
+          <AssociationSet Name="FK__Comic__RemixComi__5FAC3F62" Association="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62">
+            <End Role="Comic" EntitySet="Comics" />
+            <End Role="Comic1" EntitySet="Comics" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Comic">
           <Key>
@@ -609,6 +630,8 @@
           <Property Type="String" Name="StorageKey" Nullable="false" />
           <Property Type="String" Name="Locale" Nullable="false" MaxLength="5" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ComicTags" Relationship="Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C" FromRole="Comic" ToRole="ComicTag" />
+          <NavigationProperty Name="Remixes" Relationship="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62" FromRole="Comic" ToRole="Comic1" />
+          <NavigationProperty Name="RemixedComic" Relationship="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62" FromRole="Comic1" ToRole="Comic" />
         </EntityType>
         <EntityType Name="ComicPhoto">
           <Key>
@@ -989,6 +1012,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Comic__RemixComi__5FAC3F62">
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="0..1" />
+          <End Type="Fredin.Comic.Data.Comic" Role="Comic1" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1194,6 +1221,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="FK__Comic__RemixComi__5FAC3F62" TypeName="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62" StoreEntitySet="Comic">
+            <EndProperty Name="Comic1">
+              <ScalarProperty Name="ComicId" ColumnName="ComicId" />
+            </EndProperty>
+            <EndProperty Name="Comic">
+              <ScalarProperty Name="ComicId" ColumnName="RemixComicId" />
+            </EndProperty>
+            <Condition ColumnName="RemixComicId" IsNull="false" />
+          </AssociationSetMapping>
         </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -1215,7 +1251,7 @@
     <Diagrams>
       <Diagram Name="ComicModel" ZoomLevel="89">
         <EntityTypeShape EntityType="Fredin.Comic.Data.Comic" Width="2" PointX="9.75" PointY="5.5" Height="5.2494108072916656" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="9.875" PointY="11.25" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="10" PointY="12.25" Height="2.3648893229166674" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTextBubble" Width="2.375" PointX="9.625" PointY="1.875" Height="2.5571907552083388" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.Photo" Width="1.5" PointX="5.25" PointY="10.75" Height="1.9802864583333335" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.Template" Width="1.5" PointX="13" PointY="8" Height="2.7494921874999987" />
@@ -1224,28 +1260,28 @@
         <EntityTypeShape EntityType="Fredin.Comic.Data.TextBubbleDirection" Width="1.75" PointX="13.25" PointY="2.5" Height="2.1725878906249996" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.User" Width="1.5" PointX="5.25" PointY="6.375" Height="2.9417936197916656" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_Template" >
-          <ConnectorPoint PointX="13" PointY="9.3747054036458337" />
-          <ConnectorPoint PointX="11.75" PointY="9.3747054036458337" />
+          <ConnectorPoint PointX="13" PointY="9.37474609375" />
+          <ConnectorPoint PointX="11.75" PointY="9.37474609375" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_User" >
-          <ConnectorPoint PointX="6.75" PointY="9.0066943359374978" />
-          <ConnectorPoint PointX="9.75" PointY="9.0066943359374978" />
+          <ConnectorPoint PointX="6.75" PointY="9.0691943359374978" />
+          <ConnectorPoint PointX="9.75" PointY="9.0691943359374978" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Comic" >
-          <ConnectorPoint PointX="10.625" PointY="10.749410807291666" />
-          <ConnectorPoint PointX="10.625" PointY="11.25" />
+          <ConnectorPoint PointX="10.75" PointY="11.134013671875" />
+          <ConnectorPoint PointX="10.75" PointY="12.25" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_Comic" >
-          <ConnectorPoint PointX="10.75" PointY="5.5" />
-          <ConnectorPoint PointX="10.75" PointY="4.4321907552083388" />
+          <ConnectorPoint PointX="11.046873999999999" PointY="5.5" />
+          <ConnectorPoint PointX="11.046873999999999" PointY="4.4321907552083388" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Photo" >
-          <ConnectorPoint PointX="6.75" PointY="12.0862939453125" />
-          <ConnectorPoint PointX="9.875" PointY="12.0862939453125" />
+          <ConnectorPoint PointX="6.75" PointY="12.778595377604166" />
+          <ConnectorPoint PointX="10" PointY="12.778595377604166" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_TemplateItem" >
-          <ConnectorPoint PointX="12.875" PointY="12.432444661458334" />
-          <ConnectorPoint PointX="11.375" PointY="12.432444661458334" />
+          <ConnectorPoint PointX="12.875" PointY="13.124746093749998" />
+          <ConnectorPoint PointX="11.5" PointY="13.124746093749998" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicTextBubble_TextBubbleDirection" >
           <ConnectorPoint PointX="13.25" PointY="3.4660953776041694" />
@@ -1265,11 +1301,11 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicRead" Width="1.5" PointX="5.25" PointY="2.625" Height="2.5571907552083353" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_Comic" >
-          <ConnectorPoint PointX="10.218748" PointY="5.5" />
-          <ConnectorPoint PointX="10.218748" PointY="4.6821907552083388" />
+          <ConnectorPoint PointX="10.367185" PointY="5.5" />
+          <ConnectorPoint PointX="10.367185" PointY="4.6821907552083388" />
           <ConnectorPoint PointX="9.375" PointY="4.6821907552083388" />
-          <ConnectorPoint PointX="9.375" PointY="3.8437505" />
-          <ConnectorPoint PointX="6.75" PointY="3.8437505" />
+          <ConnectorPoint PointX="9.375" PointY="3.9035953776041676" />
+          <ConnectorPoint PointX="6.75" PointY="3.9035953776041676" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_User" >
           <ConnectorPoint PointX="5.9687475" PointY="6.375" />
@@ -1303,6 +1339,14 @@
         <AssociationConnector Association="Fredin.Comic.Data.FK__ComicTag__Uid__617787D5" >
           <ConnectorPoint PointX="6.75" PointY="7.086293945312498" />
           <ConnectorPoint PointX="7.375" PointY="7.086293945312498" />
+        </AssociationConnector>
+        <AssociationConnector Association="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62" >
+          <ConnectorPoint PointX="10.45923076923077" PointY="11.134013671875" />
+          <ConnectorPoint PointX="10.45923076923077" PointY="11.384013671875" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="11.384013671875" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="11.384013671875" />
+          <ConnectorPoint PointX="11.054615384615385" PointY="11.384013671875" />
+          <ConnectorPoint PointX="11.054615384615385" PointY="11.134013671875" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

@@ -92,6 +92,7 @@
     <Compile Include="Render\ComicRenderBase.cs" />
     <Compile Include="Render\PhotoTask.cs" />
     <Compile Include="Render\ProfileTask.cs" />
+    <Compile Include="Render\RenderBubble.cs" />
     <Compile Include="Render\RenderFrame.cs" />
     <Compile Include="Render\RenderMode.cs" />
     <Compile Include="Render\RenderTask.cs" />

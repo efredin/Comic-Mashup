@@ -7,18 +7,21 @@ namespace Fredin.Comic.Web.Models
 {
 	public class ViewCreate
 	{
+		public ClientComic Comic { get; set; }
 		public List<ClientTemplate> Templates { get; set; }
 		public List<ClientEffect> Effects { get; set; }
 		public List<ClientTextBubbleDirection> Bubbles { get; set; }
 
-		public ViewCreate(List<ClientTemplate> templates, List<ClientEffect> effects)
+		public ViewCreate(ClientComic comic, List<ClientTemplate> templates, List<ClientEffect> effects)
 		{
+			this.Comic = comic;
 			this.Templates = templates;
 			this.Effects = effects;
 		}
 
-		public ViewCreate(List<ClientTemplate> templates, List<ClientEffect> effects, List<ClientTextBubbleDirection> bubbles)
+		public ViewCreate(ClientComic comic, List<ClientTemplate> templates, List<ClientEffect> effects, List<ClientTextBubbleDirection> bubbles)
 		{
+			this.Comic = comic;
 			this.Templates = templates;
 			this.Effects = effects;
 			this.Bubbles = bubbles;

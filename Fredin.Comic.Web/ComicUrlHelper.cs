@@ -54,6 +54,15 @@ namespace Fredin.Comic.Web
 
 		public static string GetStaticUrl(string url)
 		{
+			if(url.Contains("?"))
+			{
+				url += String.Format("&{0}", RoleEnvironment.DeploymentId);
+			}
+			else
+			{
+				url += String.Format("?{0}", RoleEnvironment.DeploymentId);
+			}
+
 			Uri staticUrl = new Uri(new Uri(ComicConfigSectionGroup.Web.StaticBaseUrl), url);
 			return staticUrl.AbsoluteUri;
 		}
@@ -140,6 +149,11 @@ namespace Fredin.Comic.Web
 		public static string GetAuthorUrl(Fredin.Comic.Data.User user)
 		{
 			return GetWebUrl("/Directory/Author/{0}/{1}", user.Uid, Urlify(user.Nickname));
+		}
+
+		public static string GetRemixUrl(Fredin.Comic.Data.Comic comic)
+		{
+			return GetWebUrl("/Comic/Create/{0}", comic.ComicId);
 		}
 	}
 }

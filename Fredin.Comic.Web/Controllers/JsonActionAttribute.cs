@@ -22,9 +22,9 @@ namespace Fredin.Comic.Web.Controllers
 					
 					foreach(ParameterDescriptor p in filterContext.ActionDescriptor.GetParameters())
 					{
-						if(parameters == null || !parameters.ContainsKey(p.ParameterName))
+						if(filterContext.ActionParameters[p.ParameterName] == null && (parameters == null || !parameters.ContainsKey(p.ParameterName)))
 						{
-							throw new ArgumentException("Missing parameter", p.ParameterName);
+							throw new ArgumentException(String.Format("Missing parameter for action {0}", filterContext.ActionDescriptor.ActionName), p.ParameterName);
 						}
 						filterContext.ActionParameters[p.ParameterName] = method.MakeGenericMethod(p.ParameterType).Invoke(serializer, new[] {parameters[p.ParameterName]});
 					}

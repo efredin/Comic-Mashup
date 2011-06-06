@@ -87,11 +87,11 @@
 				({
 					method: 'feed',
 					from: this.options.user.uid,
-					description: 'I just used Comic Mashup for Profiles to transform my profile picture into something cool!',
+					description: 'I just used Comic Mashup for Profiles to transform my profile picture into a comic!',
 					name: 'Comic Mashup Profile Photo',
 					caption: 'http://apps.facebook.com/comicmashup/',
 					picture: this.options.task.RenderUrl,
-					link: this.options.facebookBaseHref
+					link: 'http://apps.facebook.com/comicmashup/Facebook/'
 				});
 			},
 

@@ -186,7 +186,7 @@
 				$('#wizardContent').wizard(
 				{
 					validator: validator,
-					width: 764,
+					width: 734,
 					stepActive: function (event, data)
 					{
 						if (data && data.step == 2)
@@ -235,11 +235,15 @@
 
 				$('#buttonsetPrivacy').buttonset();
 
-				$('#buttonPublish').button({ icons: { primary: 'ui-icon-signal-diag'} })
+				$('#buttonPublish')
+					.button({ icons: { primary: 'ui-icon-signal-diag'} })
 					.click(function () { self.showPublishComic(); });
 
 				$('#buttonRefresh').button({ icons: { primary: 'ui-icon-refresh'} })
 					.click(function () { self.renderComic(); });
+
+				$('#buttonEdit').button({ icons: { primary: 'ui-icon-pencil'} })
+					.click(function () { document.location = self.options.comic.RemixUrl; });
 			},
 
 			loadFeed: function (callback)
@@ -416,7 +420,7 @@
 				{
 					dataType: 'json',
 					type: 'POST',
-					url: this.options.baseHref + 'Comic/QueueRender',
+					url: this.options.baseHref + 'Comic/QueueRenderWizard',
 					data: $.postify(data),
 					success: function (data, textStatus, request)
 					{
@@ -440,7 +444,7 @@
 				$('#publishImage').html('<img src="' + this.options.comic.FrameThumbUrl + '" alt="' + this.options.comic.Title + '" />');
 
 				// Set title & description
-				$('#comicTitle').val(this.options.user.Name != '' ? this.options.user.Name + "'s Comic" : 'My Comic');
+				$('#comicTitle').val(this.options.user.Name != '' ? this.options.user.Name + "'s Comic Mashup" : 'My Comic Mashup');
 				$('#comicDescription').val(this.options.selectedStory.message);
 
 				$('#publishComic').dialog('open');
@@ -482,10 +486,15 @@
 									name: self.options.comic.Title,
 									description: self.options.comic.Description,
 									picture: self.options.comic.FrameThumbUrl,
-									link: self.options.comic.ReadUrl
+									link: self.options.comic.ReadUrl,
+									actions:
+									[
+										//{ name: 'Read', link: self.options.comic.ReadUrl },
+										{ name: 'Remix', link: self.options.comic.RemixUrl }
+									]
 								}, function (response)
 								{
-									window.location = data.ReadUrl;
+									document.location = data.ReadUrl;
 								});
 							}
 							else

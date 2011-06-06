@@ -205,6 +205,7 @@
     <Content Include="Static\Css\icon.css" />
     <Content Include="Static\Css\images\loading.gif" />
     <Content Include="Static\Css\images\funny.png" />
+    <Content Include="Static\Css\images\tinyx.png" />
     <Content Include="Static\Css\images\tipsy.gif" />
     <Content Include="Static\Css\images\ui-anim_basic_16x16.gif" />
     <Content Include="Static\Css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -310,6 +311,7 @@
     <Content Include="Static\Image\TextBubble\shout-bl.png" />
     <Content Include="Static\Image\TextBubble\shout-br.png" />
     <Content Include="Static\Image\TextBubble\shout-n.png" />
+    <Content Include="Static\Image\TextBubble\shout-t.png" />
     <Content Include="Static\Image\TextBubble\shout-thumb.png" />
     <Content Include="Static\Image\TextBubble\shout-tl.png" />
     <Content Include="Static\Image\TextBubble\shout-tr.png" />
@@ -580,6 +582,7 @@
     <Content Include="Views\Help\Faq.aspx" />
     <Content Include="Views\Shared\AdSkyscraper.ascx" />
     <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Shared\MenuBar.ascx" />
     <Content Include="Views\Shared\Web.Master" />
     <Content Include="Views\User\Login.aspx" />
     <Content Include="Views\Directory\Author.aspx" />
@@ -600,7 +603,7 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Facebook\Facebook.Master" />
+    <Content Include="Views\Shared\Facebook.Master" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

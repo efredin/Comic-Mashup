@@ -30,6 +30,7 @@ body#fb
 }
 #fb-menubar
 {
+	position: relative;
 	width: 760px;
 	margin: 0 auto 12px;
 	background: #EDEDED;
@@ -76,6 +77,12 @@ body#fb
 #fb-menubar ul li.active div ul
 {
 	font-size: 1.0em;
+}
+#fb-search
+{
+	position: absolute;
+	top: 3px;
+	left: 518px;
 }
 #fb-content
 {

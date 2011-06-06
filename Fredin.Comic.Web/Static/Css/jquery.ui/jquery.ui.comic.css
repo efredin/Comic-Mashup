@@ -1,1 +1,7 @@
-﻿/* asdf */
+﻿.ui-comic { }
+.ui-comic .ui-comic-canvas { position: relative; display: inline-block; zoom: 1; *display: inline; background: #000000; margin: 8px 0; overflow: hidden; }
+.ui-comic .ui-comic-frame { position: absolute; display: inline-block; zoom: 1; *display: inline; background: #EDEDED; overflow: hidden; z-index: 1; }
+.ui-comic .ui-comic-frame img { position: absolute; }
+.ui-comic .ui-bubble { position: absolute; cursor: move; z-index: 2; }
+.ui-comic .ui-comic-frameButton { position: absolute; top: 4px; left: 4px; }
+.ui-comic .ui-comic-framebutton a { margin: 0 auto; }

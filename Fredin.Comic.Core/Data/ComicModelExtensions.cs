@@ -48,15 +48,15 @@ namespace Fredin.Comic.Data
 
 		public static IQueryable<Comic> FilterComicVisibility(this IQueryable<Comic> comics, User user, bool isFriend)
 		{
-			IQueryable<Comic> filtered = comics;
+			IQueryable<Comic> filtered;
 
-			if(!isFriend)
+			if (user != null)
 			{
-				filtered = filtered.Where(c => !c.IsPrivate);
-				if (user != null)
-				{
-					filtered = filtered.Where(c => c.Uid == user.Uid);
-				}
+				filtered = comics.Where(c => c.Uid == user.Uid || !c.IsPrivate || isFriend);
+			}
+			else
+			{
+				filtered = comics.Where(c => !c.IsPrivate || isFriend);
 			}
 
 			return filtered.Where(c => c.IsPublished && !c.IsDeleted);

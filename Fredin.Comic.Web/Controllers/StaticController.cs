@@ -9,35 +9,46 @@ namespace Fredin.Comic.Web.Controllers
 {
     public class StaticController : Controller
     {
-		public FileResult File(string path)
+		public ActionResult File(string path)
 		{
-			string fullPath = Path.Combine(Server.MapPath(@"\Static"), path.Replace("/", @"\"));
-
-			string contentType = String.Empty;
-			switch(Path.GetExtension(fullPath))
+			if (String.IsNullOrWhiteSpace(path))
 			{
-				case ".js":
-					contentType = "application/javascript";
-					break;
-
-				case ".css":
-					contentType = "text/css";
-					break;
-
-				case ".png":
-					contentType = "image/png";
-					break;
-
-				case ".jpg":
-					contentType = "image/jpg";
-					break;
-
-				case ".gif":
-					contentType = "image/gif";
-					break;
+				return new HttpNotFoundResult();
 			}
+			else
+			{
+				string fullPath = Path.Combine(Server.MapPath(@"\Static"), path.Replace("/", @"\"));
 
-			return new FilePathResult(fullPath, contentType);
+				string contentType = "text/plain";
+				switch (Path.GetExtension(fullPath))
+				{
+					case ".js":
+						contentType = "application/javascript";
+						break;
+
+					case ".css":
+						contentType = "text/css";
+						break;
+
+					case ".png":
+						contentType = "image/png";
+						break;
+
+					case ".jpg":
+						contentType = "image/jpg";
+						break;
+
+					case ".gif":
+						contentType = "image/gif";
+						break;
+				}
+
+				this.Response.Cache.SetCacheability(HttpCacheability.Public);
+				this.Response.Cache.SetMaxAge(new TimeSpan(1, 0, 0, 0));
+				this.Response.Cache.SetExpires(DateTime.Now.AddDays(1));
+
+				return new FilePathResult(fullPath, contentType);
+			}
 		}
     }
 }

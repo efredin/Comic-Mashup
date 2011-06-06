@@ -1,5 +1,5 @@
 ﻿#home { }
-#home .actionButton { display: inline-block; width: 210px; margin: 10px; padding: 10px; text-align: center; font-size: 2em; }
+#home .actionButton { display: inline-block; width: 200px; margin: 10px; padding: 10px; text-align: center; font-size: 2em; }
 #home .actionButton:hover { text-decoration: none; }
 #home #home-buttonCreate { }
 #home #home-buttonDirectory { }
@@ -8,7 +8,7 @@
 #home-directory { margin: 20px 0 0 0; }
 
 #wizardCreate { display: block; }
-#wizardCreate #wizardContent { width: 764px; }
+#wizardCreate #wizardContent { width: 734px; }
 #wizardCreate #wizardTitle { display: inline-block; }
 #wizardCreate #wizardLoad { width: 100%; }
 
@@ -41,35 +41,37 @@
 #albumContent { clear: both; height: 390px; overflow: auto; }
 #photoContent { clear: both; height: 390px; overflow: auto; }
 
-
 .ui-dialog .ui-select ul li { display: inline-block; text-align: center; vertical-align: middle; zoom: 1; *display: inline; }
 .ui-select .bubble .bubbleThumb { width: 50px; height: 50px; }
 
 #wizardCreate #renderComic { padding: 10px 0; }
+#wizardCreate #renderComic img { width: 734px; }
 
-#publishComic #publishImage { float: left; }
 #publishComic #publishForm { float: right; width: 384px; }
 #publishComic #publishImage img { height: 75px; border: 2px solid black; }
-#publishComic #comicTitle, #publishComic #comicDescription { width: 100%; }
+#comicTitle, #comicDescription { width: 100%; }
 
 #comicRead { }
 #comicRead #comicDescription { margin: 10px 0; }
 #comicRead #comicInfo { float: right; font-size: 0.9em; display: inline-block; zoom: 1; *display: inline; }
 #comicRead #comicInfo #tags { text-align: right; margin-top: 8px; }
-#comicRead #comic { clear: both; }
+#comicRead #comic { clear: both; width: 734px; }
 #comicRead .fb_iframe_widget { margin: 10px 0; }
 #comicRead #reader { margin: 10px 0; }
 #comicRead #reader #readerRate { vertical-align: middle; }
 #comicRead #reader #readerRate #readerVote { display: inline-block; padding: 16px 0 0; }
 #comicRead #reader #readerAction { float: right; width: 188px; }
 #comicRead #reader label, #comicRead #reader a { font-size: 0.7em; }
-#comicRead #comments { float: left; display: inline-block; width: 522px; margin: 10px 10px 0 0; }
-#comicRead #navigate { float: left; display: inline-block; margin: 10px 0 0 0; width: 206px; }
+#comicRead #column1 { float: left; margin: 0; padding: 0; width: 434px; display: inline-block; }
+#comicRead #column2 { float: left; margin: 0; padding: 0; width: 308px; display: inline-block; }
+#comicRead #comments { display: inline-block; width: 400px; margin: 8px 8px 0 0; }
+#comicRead #navigate { display: inline-block; margin: 8px 0 0 0; width: 300px; }
 #comicRead #navigate ul { list-style: none; padding: 0; margin: 0; }
 #comicRead #navigate ul li { padding: 1px 0; }
-#comicRead #edit { float: left; display: inline-block; margin: 10px 0 0 0; width: 206px; }
+#comicRead #edit { display: inline-block; margin: 8px 0 0 0; width: 300px; }
 #comicRead #edit ul { list-style: none; padding: 0; margin: 0; }
 #comicRead #edit ul li { padding: 1px 0; }
+#comicRead #ad-rectangle { display: inline-block; margin: 8px 0 0 0; width: 300px; }
 
 .author { height: 50px; margin: 0; }
 .author-photo { float: left; display: inline-block; padding: 0 10px 0 0; height: 50px; width: 50px; }
@@ -79,10 +81,11 @@
 .author-title { margin: 4px 2px; }
 
 .comicList { list-style: none; margin: 0; padding: 0; }
-.comicList li { float: left; display: inline-block; margin: 6px 10px 6px 0; width: 364px; }
-.comicList li.odd { margin-right: 0; }
+.comicList li { float: left; display: inline-block; margin: 6px 4px 6px 0; width: 350px; }
+.comicList li.even { margin: 6px 8px 6px 0; }
+.comicList li.odd { margin: 6px 0 6px 0; }
 
-.comicList li img { width: 364px; }
+.comicList li img { width: 350px; }
 .comicList li .comicList-detail { display: block; padding: 4px 0; }
 .comicList li .comicList-detail .comicList-title { font-size: 1.2em; font-weight: bold; }
 .comicList li .comicList-detail .comicList-about { font-size: 0.8em; }
@@ -93,8 +96,8 @@
 #directory #directoryFilter ul li.active div ul li { padding: 2px; }
 #directory #directoryPaging { clear: left; text-align: right; padding: 2px 7px; font-size: 0.7em; }
 
-.content800 { width: 800px; }
-.content764 { width: 764px; }
+.content760 { width: 760px; }
+.content736 { width: 736px; }
 .contentIb { display: inline-block; }
 
 #directory-author { }
@@ -108,15 +111,6 @@
 
 #contact { width: 300px; }
 #contact input, #contact textarea { width: 100%; }
-
-.ui-comic { }
-.ui-comic .ui-comic-canvas { position: relative; display: inline-block; zoom: 1; *display: inline; background: #000000; margin: 8px 0; overflow: hidden; }
-.ui-comic .ui-comic-frame { position: absolute; display: inline-block; zoom: 1; *display: inline; background: #EDEDED; overflow: hidden; }
-.ui-comic .ui-comic-frame img { position: absolute; }
-.ui-comic .ui-bubble { position: absolute; cursor: move; }
-.ui-comic .ui-comic-frameButton { position: absolute; top: 4px; left: 4px; }
-.ui-comic .ui-comic-framebutton a { margin: 0 auto; }
-
 
 /*
 #login-login input[type=text],

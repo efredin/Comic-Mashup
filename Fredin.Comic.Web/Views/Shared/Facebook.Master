@@ -8,7 +8,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head runat="server" id="head">
-    <title><asp:ContentPlaceHolder ID="cphPageTitle" runat="server">Comic Mashup for Profiles</asp:ContentPlaceHolder></title>
+    <title><asp:ContentPlaceHolder ID="cphPageTitle" runat="server">Comic Mashup - Create and Share Social Comics</asp:ContentPlaceHolder></title>
 	
 	<link rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Css/Comic.min.css") %>" />
 	<link id="cssTheme" rel="Stylesheet" href="<%= ComicUrlHelper.GetStaticUrl("Theme/{0}/jquery.ui.theme.min.css", this.Theme) %>" />
@@ -19,40 +19,40 @@
 	<script type="text/javascript" src="<%= ComicUrlHelper.GetStaticUrl("Script/Comic.min.js") %>"></script>
 	<% #endif %>
 
-	<meta property="og:site_name" content="Comic Mashup for Profiles" />
+	<meta property="og:site_name" content="Comic Mashup" />
 	<%= String.Format("<meta property='fb:app_id' content='{0}' />", ComicConfigSectionGroup.Facebook.AppId) %>
     <asp:ContentPlaceHolder id="cphMeta" runat="server">
-		<meta property="og:title" content="Comic Mashup for Profiles" />
+		<meta property="description" content="Create and share social comics" />
+		<meta property="keywords" content="comic, mashup, create publish, webcomic, cartoon, generate, social, strip, app" />
+		<meta property="og:title" content="Comic Mashup" />
 		<meta property="og:type" content="website" />
 		<meta property="og:image" content="<%: ComicUrlHelper.GetStaticUrl("Image/cm64.png") %>" />
-		<meta property="og:url" content="<%: ComicUrlHelper.GetFacebookUrl("") %>" />
-		<meta property="og:site_name" content="Comic Mashup for Profiles" />
+		<meta property="og:url" content="<%: ComicUrlHelper.GetWebUrl("") %>" />
 	</asp:ContentPlaceHolder>
 </head>
 <body id="fb">
 
-	<%-- Facebook Connect --%>
-	<div id="fb-root"></div>
-	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
-
-    <div id="fb-logobar">
+	<div id="fb-logobar">
 
 		<%-- Like --%>
 		<div id="fb-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" show_faces="true" width="300" font=""></fb:like></div>
 
 		<%--Logo--%>
-		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-profiles.png") %>" alt="Comic Mashup for Profiles" /></a>
+		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-white.png") %>" alt="Comic Mashup" /></a>
 	</div>
 
+	<%--Navigation--%>
     <div id="fb-menubar" class="ui-corner-all menu">
-		<ul>
-			<li><a href="<%= this.Url.Action("Index", "Facebook") %>">Profile Photo</a></li>
-			<li><a href="http://www.comicmashup.com/Comic/CreateWizard" target="_blank">Create Comics</a></li>
-		</ul>
-    </div>
+		<%= Html.Partial("~/Views/Shared/MenuBar.ascx") %>
+		
+		<form id="fb-search" method="post" action="<%= this.Url.Action("Search", "Directory") %>">
+			<input id="search-text" name="search" type="text" />
+			<button id="search-go" type="submit"></button>
+		</form>
+	</div>
 
     <h1><asp:ContentPlaceHolder ID="cphTitle" runat="server"></asp:ContentPlaceHolder></h1>
-
+    
 	<%-- Application Options --%>
 	<script type="text/javascript">
 	appOptions =
@@ -63,8 +63,8 @@
 		useXfbml: <%= ComicConfigSectionGroup.Facebook.UseXfbml ? "true" : "false" %>,
 		user: <%= this.ActiveUser == null ? "null" : this.Json(new ClientUser(this.ActiveUser)) %>,
 		baseHref: '<%= ComicUrlHelper.GetWebUrl("") %>',
-		facebookBaseHref: '<%= ComicUrlHelper.GetFacebookUrl("") %>',
-		themeBase: '<%= ComicUrlHelper.GetStaticUrl("Theme") %>'
+		themeBase: '<%= ComicUrlHelper.GetStaticUrl("Theme") %>',
+		onCanvas: true
 	};
 	</script>
 
@@ -75,12 +75,13 @@
 	</div>
 
 	<%-- Footer --%>
-<%--	<div id="fb-footer">
-		<div id="footer-like"><fb:like href="" layout="box_count" show_faces="false" width="450" font=""></fb:like></div>
-	</div>--%>
-<%--	<div id="fb-footer2">
+	<div id="fb-footer2">
+		<div id="attribution">
+			<%-- Face.com Attribution - TOS Requirement --%>
+			<a href="http://face.com/" title="Face Recognition by face.com"><img src="http://static.face.com/badges/badge_2_light_bg.png" border="0" alt="Face Recognition by face.com" /></a>
+		</div>
 		<div id="copyright">© 2011. All right reserved.</div>
-	</div>--%>
+	</div>
 
 	<%-- Login Dialog --%>
 	<div id="dialog-requestConnect" class="ui-helper-hidden" title="Not Logged In">
@@ -93,6 +94,10 @@
 	<div id="dialog-error" class="ui-helper-hidden" title="Error">
 		<div id="dialog-error-message"></div>
 	</div>
+
+	<%-- Facebook Connect --%>
+	<div id="fb-root"></div>
+	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js"></script>
 
 	<asp:ContentPlaceHolder id="cphScript" runat="server">
 		<script type="text/javascript">

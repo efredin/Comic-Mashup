@@ -23,6 +23,8 @@ namespace Fredin.Comic.Worker
 {
 	public sealed class RenderTaskManager
 	{
+		private const string RenderCacheControl = "public, max-age=31536000";
+ 
 		#region [Singelton]
 
 		private static RenderTaskManager _instance;
@@ -213,6 +215,8 @@ namespace Fredin.Comic.Worker
 				Template template = entityContext.ListTemplates().First(t => t.TemplateId == task.TemplateId);
 				List<TemplateItem> templateItems = template.TemplateItems.OrderBy(t => t.Ordinal).ToList();
 
+				List<TextBubbleDirection> bubbles = entityContext.ListTextBubbles().SelectMany(b => b.TextBubbleDirections).ToList();
+
 				TextBubble speechBubble = entityContext.ListTextBubbles().First(b => b.Title == "speech");
 				TextBubble bubbleShout = entityContext.ListTextBubbles().First(b => b.Title == "shout");
 				TextBubble squareBubble = entityContext.ListTextBubbles().First(b => b.Title == "square");
@@ -234,6 +238,11 @@ namespace Fredin.Comic.Worker
 				comic.IsDeleted = false;
 				comic.Locale = user.Locale ?? "en-US";
 				comic.StorageKey = Guid.NewGuid().ToString();
+
+				if (task.RemixComicId.HasValue)
+				{
+					comic.RemixedComic = entityContext.TryGetComic(task.RemixComicId.Value, user);
+				}
 
 				// Comic generator only used to size text
 				ComicGenerator generator = new ComicGenerator(template.Width, template.Height);
@@ -258,112 +267,123 @@ namespace Fredin.Comic.Worker
 				// Get photos for each frame
 				for (int f = 0; f < task.Frames.Count; f++)
 				{
+					Photo photo = null;
 					Bitmap image = null;
 					string imageUrl = String.Empty;
+					ComicGenerator.ImageAlign imageAlignment = ComicGenerator.ImageAlign.Center;
 					Point tag = Point.Empty;
 					bool tagConfident = false;
 
-					// Tagged facebook photos
-					if (task.PhotoSource == "Tagged")
+					if (task.PhotoSource == "Internal" && task.Frames[f].PhotoId.HasValue)
 					{
-						try
+						// Load image from database
+						photo = entityContext.TryGetPhoto(task.Frames[f].PhotoId.Value);
+						photo.ImageData = this.GetStoredImage(photo.StorageKey);
+						image = new Bitmap(new MemoryStream(photo.ImageData));
+					}
+					else
+					{
+						// Tagged facebook photos
+						if (task.PhotoSource == "Tagged")
 						{
-							// List photos of the user
-							Dictionary<string, object> args = new Dictionary<string, object>();
-							args.Add("limit", "50");
-
-							dynamic photoResult = facebook.Get(String.Format("/{0}/photos", task.Frames[f].Id), args);
-
-							if (photoResult.data.Count > 0)
+							try
 							{
-								// Pick a random photo with 2 or fewer tags
-								dynamic photoData = ((IList<dynamic>)photoResult.data)
-									.OrderBy(p => Guid.NewGuid())
-									.FirstOrDefault(p => p.tags.data.Count <= 2);
+								// List photos of the user
+								Dictionary<string, object> args = new Dictionary<string, object>();
+								args.Add("limit", "50");
 
-								if (photoData != null)
+								dynamic photoResult = facebook.Get(String.Format("/{0}/photos", task.Frames[f].Id), args);
+
+								if (photoResult.data.Count > 0)
 								{
-									imageUrl = (string)photoData.source;
+									// Pick a random photo with 2 or fewer tags
+									dynamic photoData = ((IList<dynamic>)photoResult.data)
+										.OrderBy(p => Guid.NewGuid())
+										.FirstOrDefault(p => p.tags.data.Count <= 2);
 
-									// Look for user tag location
-									int id;
-									dynamic tagData = ((IList<dynamic>)photoData.tags.data)
-										.FirstOrDefault(t => int.TryParse(t.id, out id) && id == task.Frames[f].Id);
-
-									if (tagData != null)
+									if (photoData != null)
 									{
-										tag = new Point((int)Math.Round((double)tagData.x), (int)Math.Round((double)tagData.y));
-										tagConfident = false;
+										imageUrl = (string)photoData.source;
+
+										// Look for user tag location
+										int id;
+										dynamic tagData = ((IList<dynamic>)photoData.tags.data)
+											.FirstOrDefault(t => int.TryParse(t.id, out id) && id == task.Frames[f].Id);
+
+										if (tagData != null)
+										{
+											tag = new Point((int)Math.Round((double)tagData.x), (int)Math.Round((double)tagData.y));
+											tagConfident = false;
+										}
 									}
 								}
 							}
-						}
-						catch (Exception x)
-						{
-							this.Log.Error("Unable to retrieve tagged photo from facebook.", x);
-						}
-					}
-
-					// Look for any photo of the user
-					else if (task.PhotoSource == "Any")
-					{
-						try
-						{
-							FaceRestAPI faceApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
-							List<string> ids = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
-							FaceRestAPI.FaceAPI anyResult = faceApi.facebook_get(ids, null, "1", null, "random");
-
-							if (anyResult.status == "success" && anyResult.photos.Count > 0)
+							catch (Exception x)
 							{
-								FaceRestAPI.Photo p = anyResult.photos[0];
-								imageUrl = p.url;
-								tag = new Point((int)Math.Round(p.tags.First().mouth_center.x), (int)Math.Round(p.tags.First().mouth_center.y));
-								tagConfident = true;
+								this.Log.Error("Unable to retrieve tagged photo from facebook.", x);
 							}
 						}
-						catch (Exception x)
+
+						// Look for any photo of the user
+						else if (task.PhotoSource == "Any")
 						{
-							this.Log.Error("Unable to retrieve photo through face.com api.", x);
-						}
-					}
-
-					// Use profile photo
-					if (String.IsNullOrEmpty(imageUrl))
-					{
-						imageUrl = String.Format("https://graph.facebook.com/{0}/picture?access_token={1}&type=large", task.Frames[f].Id, facebook.AccessToken);
-					}
-					image = this.GetImage(imageUrl);
-
-
-					// Find faces when confidence in tag location is low
-					if (!tagConfident)
-					{
-						try
-						{
-							FaceRestAPI tagApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
-							//List<string> tagIds = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
-							List<string> urls = new List<string>(new string[] { imageUrl });
-							FaceRestAPI.FaceAPI tagResult = tagApi.faces_detect(urls, null, "Normal", null, null);
-
-							if (tagResult.status == "success" && tagResult.photos.Count > 0 && tagResult.photos[0].tags.Count > 0)
+							try
 							{
-								FaceRestAPI.Tag t = tagResult.photos[0].tags.First();
-								tag = new Point((int)Math.Round(t.mouth_center.x), (int)Math.Round(t.mouth_center.y));
-								tagConfident = true;
+								FaceRestAPI faceApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
+								List<string> ids = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
+								FaceRestAPI.FaceAPI anyResult = faceApi.facebook_get(ids, null, "1", null, "random");
+
+								if (anyResult.status == "success" && anyResult.photos.Count > 0)
+								{
+									FaceRestAPI.Photo p = anyResult.photos[0];
+									imageUrl = p.url;
+									tag = new Point((int)Math.Round(p.tags.First().mouth_center.x), (int)Math.Round(p.tags.First().mouth_center.y));
+									tagConfident = true;
+								}
+							}
+							catch (Exception x)
+							{
+								this.Log.Error("Unable to retrieve photo through face.com api.", x);
 							}
 						}
-						catch (Exception x)
+
+						// Use profile photo as backup image
+						if (String.IsNullOrEmpty(imageUrl))
 						{
-							this.Log.Error("Unable to detected faces.", x);
+							imageUrl = String.Format("https://graph.facebook.com/{0}/picture?access_token={1}&type=large", task.Frames[f].Id, facebook.AccessToken);
+						}
+
+						image = this.GetImage(imageUrl);
+
+
+						// Find faces when confidence in tag location is low
+						if (!tagConfident)
+						{
+							try
+							{
+								FaceRestAPI tagApi = this.CreateFaceApi(task.FacebookToken, user.Uid);
+								//List<string> tagIds = new List<string>(new string[] { String.Format("{0}@facebook.com", task.Frames[f].Id) });
+								List<string> urls = new List<string>(new string[] { imageUrl });
+								FaceRestAPI.FaceAPI tagResult = tagApi.faces_detect(urls, null, "Normal", null, null);
+
+								if (tagResult.status == "success" && tagResult.photos.Count > 0 && tagResult.photos[0].tags.Count > 0)
+								{
+									FaceRestAPI.Tag t = tagResult.photos[0].tags.First();
+									tag = new Point((int)Math.Round(t.mouth_center.x), (int)Math.Round(t.mouth_center.y));
+									tagConfident = true;
+								}
+							}
+							catch (Exception x)
+							{
+								this.Log.Error("Unable to detected faces.", x);
+							}
+						}
+
+						if (tag != Point.Empty && tag.Y <= image.Height / 3)
+						{
+							imageAlignment = ComicGenerator.ImageAlign.Top;
 						}
 					}
-
-					ComicGenerator.ImageAlign imageAlignment = ComicGenerator.ImageAlign.Center;
-					if (tag != Point.Empty && tag.Y <= image.Height / 3)
-					{
-						imageAlignment = ComicGenerator.ImageAlign.Top;
-					}
-
 
 					// Resize to fit frame
 					image = ComicGenerator.FitImage(new Size(templateItems[f].Width, templateItems[f].Height), image);
@@ -382,91 +402,97 @@ namespace Fredin.Comic.Worker
 					imageStream.Seek(0, SeekOrigin.Begin);
 
 
-					// Text Bubbles
-					ComicTextBubble comicBubble = new ComicTextBubble();
-					entityContext.AddToComicTextBubbles(comicBubble);
-					comicBubble.Comic = comic;
-					comicBubble.Text = task.Frames[f].Message;
-
-					// Remove newlines
-					comicBubble.Text = comicBubble.Text.Replace('\n', ' ');
-
-					// Font size
-					int fontSize = 7;
-					if (comicBubble.Text.Length > 160)
+					// Frame text bubbles
+					if (!String.IsNullOrWhiteSpace(task.Frames[f].Message))
 					{
-						fontSize = 6;
-					}
-					if (comicBubble.Text.Length > 200)
-					{
-						fontSize = 5;
-					}
-					comicBubble.Font = new Font(ComicGenerator.ComicFont, fontSize, FontStyle.Regular, GraphicsUnit.Point);
+						ComicTextBubble comicBubble = new ComicTextBubble();
+						entityContext.AddToComicTextBubbles(comicBubble);
+						comicBubble.Comic = comic;
+						comicBubble.Text = task.Frames[f].Message;
 
-					// Shouting / excited?
-					TextBubble bubble = speechBubble;
-					if (comicBubble.Text.Contains('!') || Regex.Matches(comicBubble.Text, "[A-Z]").Count > comicBubble.Text.Length / 4)
-					{
-						bubble = bubbleShout;
-					}
+						// Remove newlines
+						comicBubble.Text = comicBubble.Text.Replace('\n', ' ');
 
-					// Calculate tag x/y coords relative to the whole comic
-					if (tag != Point.Empty)
-					{
-						Size templateSize = new Size(templateItems[f].Width, templateItems[f].Height);
-						Rectangle cropArea = ComicGenerator.GetCropImageSize(image.Size, templateSize, imageAlignment);
-						tag.X = image.Size.Width * tag.X / 100 - cropArea.X + templateItems[f].X;
-						tag.Y = image.Size.Height * tag.Y / 100 - cropArea.Y + templateItems[f].Y;
+						// Font size
+						int fontSize = 7;
+						if (comicBubble.Text.Length > 160)
+						{
+							fontSize = 6;
+						}
+						if (comicBubble.Text.Length > 200)
+						{
+							fontSize = 5;
+						}
+						comicBubble.Font = new Font(ComicGenerator.ComicFont, fontSize, FontStyle.Regular, GraphicsUnit.Point);
+
+						// Shouting / excited?
+						TextBubble bubble = speechBubble;
+						if (comicBubble.Text.Contains('!') || Regex.Matches(comicBubble.Text, "[A-Z]").Count > comicBubble.Text.Length / 4)
+						{
+							bubble = bubbleShout;
+						}
+
+						// Calculate tag x/y coords relative to the whole comic
+						if (tag != Point.Empty)
+						{
+							Size templateSize = new Size(templateItems[f].Width, templateItems[f].Height);
+							Rectangle cropArea = ComicGenerator.GetCropImageSize(image.Size, templateSize, imageAlignment);
+							tag.X = image.Size.Width * tag.X / 100 - cropArea.X + templateItems[f].X;
+							tag.Y = image.Size.Height * tag.Y / 100 - cropArea.Y + templateItems[f].Y;
+						}
+
+						// Position text bubble
+						this.PositionFrameBubble(comicBubble, image, generator, bubble, squareBubble, templateItems[f], tag, imageAlignment);
+
+						// Add photo as template item
+						photo = new Photo();
+						photo.User = user;
+						photo.CreateTime = DateTime.Now;
+						photo.ImageData = imageStream.ToArray();
+						photo.StorageKey = Guid.NewGuid().ToString();
+						photo.Width = image.Width;
+						photo.Height = image.Height;
+						entityContext.AddToPhotos(photo);
 					}
 
 					// Tag users
-					try
+					if (task.Frames[f].Id > 0)
 					{
-						// Lookup existing user
-						User taggedUser = entityContext.TryGetUser(task.Frames[f].Id, true);
-						if (taggedUser == null)
+						try
 						{
-							// User doesn't exist in the db yet - grab from facebook
-							dynamic facebookUser = facebook.Get(String.Format("/{0}", task.Frames[f].Id));
-							taggedUser = new User();
-							taggedUser.Uid = facebookUser.uid;
-							taggedUser.IsDeleted = false;
-							taggedUser.IsSubscribed = false;
-							taggedUser.Locale = facebookUser.locale;
-							taggedUser.Name = facebookUser.name;
-							taggedUser.Nickname = facebookUser.name;
-							taggedUser.FbLink = facebookUser.link;
-							entityContext.AddToUsers(taggedUser);
-						}
 
-						ComicTag comicTag = new ComicTag();
-						comicTag.User = taggedUser;
-						comicTag.Comic = comic;
-						if (tag != Point.Empty)
+							// Lookup existing user
+							User taggedUser = entityContext.TryGetUser(task.Frames[f].Id, true);
+							if (taggedUser == null)
+							{
+								// User doesn't exist in the db yet - grab from facebook
+								dynamic facebookUser = facebook.Get(String.Format("/{0}", task.Frames[f].Id));
+								taggedUser = new User();
+								taggedUser.Uid = long.Parse(facebookUser.id);
+								taggedUser.IsDeleted = false;
+								taggedUser.IsSubscribed = false;
+								taggedUser.Locale = facebookUser.locale;
+								taggedUser.Name = facebookUser.name;
+								taggedUser.Nickname = facebookUser.name;
+								taggedUser.FbLink = facebookUser.link;
+								entityContext.AddToUsers(taggedUser);
+							}
+
+							ComicTag comicTag = new ComicTag();
+							comicTag.User = taggedUser;
+							comicTag.Comic = comic;
+							if (tag != Point.Empty)
+							{
+								comicTag.X = tag.X;
+								comicTag.Y = tag.Y;
+							}
+						}
+						catch (Exception x)
 						{
-							comicTag.X = tag.X;
-							comicTag.Y = tag.Y;
+							this.Log.ErrorFormat("Failed to tag user {0} in comic. {1}", task.Frames[f].Id, x.ToString());
 						}
 					}
-					catch (Exception x)
-					{
-						this.Log.ErrorFormat("Failed to tag user {0} in comic. {1}", task.Frames[f].Id, x.ToString());
-					}
 
-
-					// Position text bubble
-					this.PositionFrameBubble(comicBubble, image, generator, bubble, squareBubble, templateItems[f], tag, imageAlignment);
-
-
-					// Add photo as template item
-					Photo photo = new Photo();
-					photo.User = user;
-					photo.CreateTime = DateTime.Now;
-					photo.ImageData = imageStream.ToArray();
-					photo.StorageKey = Guid.NewGuid().ToString();
-					photo.Width = image.Width;
-					photo.Height = image.Height;
-					entityContext.AddToPhotos(photo);
 
 					ComicPhoto comicPhoto = new ComicPhoto();
 					comicPhoto.Comic = comic;
@@ -480,8 +506,27 @@ namespace Fredin.Comic.Worker
 					this.UpdateTask(task);
 				}
 
+				for (int b = 0; task.Bubbles != null && b < task.Bubbles.Count; b++)
+				{
+					ComicTextBubble comicBubble = new ComicTextBubble();
+					entityContext.AddToComicTextBubbles(comicBubble);
+					comicBubble.Comic = comic;
+					comicBubble.Text = task.Bubbles[b].Text;
+					comicBubble.Font = new Font(ComicGenerator.ComicFont, 7, FontStyle.Regular, GraphicsUnit.Point);
+					comicBubble.TextBubbleDirection = bubbles.First(d => d.TextBubbleDirectionId == task.Bubbles[b].TextBubbleDirectionId);
+					comicBubble.Position = new Rectangle(new Point(task.Bubbles[b].X, task.Bubbles[b].Y), generator.MeasureText(comicBubble.Text, comicBubble.Font).ToSize());
+				}
+
+				// Fix for position to x,y coordinates
+				foreach (ComicTextBubble b in comic.ComicTextBubbles)
+				{
+					b.X = b.Position.X;
+					b.Y = b.Position.Y;
+				}
+
 				this.SaveComic(comic, entityContext);
 
+				task.CompletedOperations = task.TotalOperations;
 				task.Status = TaskStatus.Complete;
 				task.ComicId = comic.ComicId;
 				this.UpdateTask(task);
@@ -751,6 +796,7 @@ namespace Fredin.Comic.Worker
 				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.ComicDirectory);
 				CloudBlob comicBlob = directory.GetBlobReference(comic.StorageKey);
 				comicBlob.Properties.ContentType = "image/jpeg";
+				comicBlob.Properties.CacheControl = RenderCacheControl;
 				comicBlob.UploadFromStream(comicStream);
 			}
 
@@ -764,6 +810,7 @@ namespace Fredin.Comic.Worker
 				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.ThumbDirectory);
 				CloudBlob thumbBlob = directory.GetBlobReference(comic.StorageKey);
 				thumbBlob.Properties.ContentType = "image/jpeg";
+				thumbBlob.Properties.CacheControl = RenderCacheControl;
 				thumbBlob.UploadFromStream(thumbStream);
 			}
 
@@ -776,6 +823,7 @@ namespace Fredin.Comic.Worker
 				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.FrameDirectory);
 				CloudBlob frameBlob = directory.GetBlobReference(comic.StorageKey);
 				frameBlob.Properties.ContentType = "image/jpeg";
+				frameBlob.Properties.CacheControl = RenderCacheControl;
 				frameBlob.UploadFromStream(frameStream);
 			}
 
@@ -788,6 +836,7 @@ namespace Fredin.Comic.Worker
 				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.FrameThumbDirectory);
 				CloudBlob frameThumbBlob = directory.GetBlobReference(comic.StorageKey);
 				frameThumbBlob.Properties.ContentType = "image/jpeg";
+				frameThumbBlob.Properties.CacheControl = RenderCacheControl;
 				frameThumbBlob.UploadFromStream(frameThumbStream);
 			}
 
@@ -797,8 +846,24 @@ namespace Fredin.Comic.Worker
 				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.PhotoDirectory);
 				CloudBlob photoBlob = directory.GetBlobReference(photo.Photo.StorageKey);
 				photoBlob.Properties.ContentType = "image/jpeg";
+				photoBlob.Properties.CacheControl = RenderCacheControl;
 				photoBlob.UploadByteArray(photo.Photo.ImageData);
 			}
+		}
+
+		private byte[] GetStoredImage(string storageKey)
+		{
+			byte[] image = null;
+			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.RenderContainer);
+			CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.PhotoDirectory);
+			CloudBlob photoBlob = directory.GetBlobReference(storageKey);
+
+			using (MemoryStream stream = new MemoryStream())
+			{
+				photoBlob.DownloadToStream(stream);
+				image = stream.ToArray();
+			}
+			return image;
 		}
 
 		private FaceRestAPI CreateFaceApi(string accessToken, long uid)

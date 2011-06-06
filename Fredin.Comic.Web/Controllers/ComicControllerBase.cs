@@ -21,6 +21,7 @@ namespace Fredin.Comic.Web.Controllers
 	public abstract class ComicControllerBase : System.Web.Mvc.Controller
 	{
 		protected const string VERIFY_TOKEN = "erock";
+		protected const string FB = "fb";
 		public const string KEY_FORMAT = "f";
 		public const string VAL_JSON = "json";
 
@@ -80,6 +81,11 @@ namespace Fredin.Comic.Web.Controllers
 		protected virtual void InitFacebook()
 		{
 			this.Facebook = new FacebookWebClient();
+
+			if (FacebookWebContext.Current.SignedRequest != null)
+			{
+				this.SessionManager.Fb = true;
+			}
 		}
 
 		#endregion
@@ -113,24 +119,6 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		#endregion
-
-		//#region [S3]
-
-		///// <summary>
-		///// S3 API
-		///// </summary>
-		//protected IThreeSharp S3 { get; set; }
-
-		//protected virtual void InitS3()
-		//{
-		//    ThreeSharpConfig s3Config = new ThreeSharpConfig();
-		//    s3Config.AwsAccessKeyID = ComicConfigSectionGroup.S3.PublicKey;
-		//    s3Config.AwsSecretAccessKey = ComicConfigSectionGroup.S3.PrivateKey;
-		//    s3Config.IsSecure = false;
-		//    this.S3 = new ThreeSharpQuery(s3Config);
-		//}
-
-		//#endregion
 
 		#region [User]
 
@@ -336,6 +324,17 @@ namespace Fredin.Comic.Web.Controllers
 					this.SessionManager.Locale = this.GuestUser.Locale;
 				}
 			}
+		}
+
+		protected override void OnActionExecuted(ActionExecutedContext filterContext)
+		{
+			var action = filterContext.Result as ViewResult;
+			if (action != null)
+			{
+				action.MasterName = this.SessionManager.Fb ? "Facebook" : "Web";
+			}
+
+			base.OnActionExecuted(filterContext);
 		}
 	}
 }
