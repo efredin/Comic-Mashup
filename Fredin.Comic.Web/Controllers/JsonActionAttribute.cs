@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using log4net;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -30,6 +31,31 @@ namespace Fredin.Comic.Web.Controllers
 					}
 				}
 			}
+		}
+
+		public override void OnActionExecuted(ActionExecutedContext filterContext)
+		{
+			if (filterContext.Exception != null)
+			{
+				LogManager.GetLogger(filterContext.Controller.GetType()).Error(filterContext.Exception);
+
+#if DEBUG
+				object data = new { error = filterContext.Exception.ToString() };
+#else
+				object data = new { error = filterContext.Exception.Message };
+#endif
+
+				filterContext.HttpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+				filterContext.Result = new JsonResult()
+				{
+					JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+					ContentType = "application/json",
+					Data = data
+				};
+				filterContext.ExceptionHandled = true;
+			}
+
+			base.OnActionExecuted(filterContext);
 		}
 
 		//public override void OnResultExecuted(ResultExecutedContext filterContext)

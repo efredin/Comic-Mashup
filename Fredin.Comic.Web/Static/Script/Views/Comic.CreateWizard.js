@@ -352,12 +352,18 @@
 				var task = null;
 				var load = $('#renderLoad').load("reset");
 
+				var templateId = $('#templateSelector').val();
+				if (!templateId || templateId == '')
+				{
+					templateId = 22;
+				}
+
 				// Translate to request params
 				var data =
 				{
 					effect: $('#effectSelector').val(),
 					photoSource: $('[name=optionPhoto]:checked').val(),
-					templateId: $('#templateSelector').val(),
+					templateId: templateId,
 					frames: [{ message: this.options.selectedStory.message, id: this.options.selectedStory.from.id}]
 				};
 
@@ -489,8 +495,8 @@
 									link: self.options.comic.ReadUrl,
 									actions:
 									[
-										//{ name: 'Read', link: self.options.comic.ReadUrl },
-										{ name: 'Remix', link: self.options.comic.RemixUrl }
+									//{ name: 'Read', link: self.options.comic.ReadUrl },
+										{name: 'Remix', link: self.options.comic.RemixUrl }
 									]
 								}, function (response)
 								{

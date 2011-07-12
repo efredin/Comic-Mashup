@@ -151,7 +151,7 @@ namespace Fredin.Comic.Web.Controllers
 				{
 					if (id.HasValue)
 					{
-						throw new Exception("Unknown user.");
+						throw new Exception(String.Format("Unknown user '{0}'.", id.Value));
 					}
 					else
 					{

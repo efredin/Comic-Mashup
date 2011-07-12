@@ -14,7 +14,9 @@ public partial class _Default : System.Web.UI.Page
 		Bitmap imageIn = new Bitmap(@"C:\Dev\Fredin\Fredin.Comic.WebTest\in.jpg");
 
 		RenderHelper effectHelper = new RenderHelper(imageIn.Size);
-		ImageRenderData renderResult = effectHelper.RenderEffect(imageIn, ComicEffectType.Comic, null);
+		Dictionary<string, object> parameters = new Dictionary<string, object>();
+		parameters.Add("coloring", 6);
+		ImageRenderData renderResult = effectHelper.RenderEffect(imageIn, ComicEffectType.Comic, parameters);
 
 		Bitmap imageOut = new Bitmap(renderResult.RenderStream);
 		imageOut.Save(@"C:\Dev\Fredin\Fredin.Comic.WebTest\out.jpg");

@@ -38,7 +38,7 @@
 		<div id="fb-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" show_faces="true" width="300" font=""></fb:like></div>
 
 		<%--Logo--%>
-		<a href="<%= this.Url.Action("Index", "Facebook") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-white.png") %>" alt="Comic Mashup" /></a>
+		<a href="<%= this.Url.Action("Index", "Directory") %>"><img id="logo" src="<%= ComicUrlHelper.GetStaticUrl("Image/mashup-white.png") %>" alt="Comic Mashup" /></a>
 	</div>
 
 	<%--Navigation--%>
@@ -64,7 +64,7 @@
 		user: <%= this.ActiveUser == null ? "null" : this.Json(new ClientUser(this.ActiveUser)) %>,
 		baseHref: '<%= ComicUrlHelper.GetWebUrl("") %>',
 		themeBase: '<%= ComicUrlHelper.GetStaticUrl("Theme") %>',
-		onCanvas: true
+		fbCanvas: true
 	};
 	</script>
 

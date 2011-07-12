@@ -22,6 +22,14 @@ namespace Fredin.Comic.Web
 		{
 			if (this.SessionManager.Locale != null)
 			{
+				// Remap some cultures
+				switch (this.SessionManager.Locale)
+				{
+					case "es-LA":
+						this.SessionManager.Locale = "es-MX";
+						break;
+				}
+
 				try
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(this.SessionManager.Locale);

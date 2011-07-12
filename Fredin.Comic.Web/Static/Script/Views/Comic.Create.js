@@ -291,7 +291,7 @@
 				var self = this;
 
 				$('.ui-comic-canvas')
-					//.remove('.ui-comic-frame') bug in jquery
+				//.remove('.ui-comic-frame') bug in jquery
 					.css('width', this.options.comic.Template.Width + 'px')
 					.css('height', this.options.comic.Template.Height + 'px');
 
@@ -388,11 +388,12 @@
 					({
 						stop: function (event, ui)
 						{
-							var b = self.options.comic.Bubbles[$('textarea', this).data('index')];
+							var element = $('textarea', this);
+							var b = self.options.comic.Bubbles[element.data('index')];
 							if (b) // occasionally undefined when drag stop occurs out of frame
 							{
-								b.X = ui.position.left;
-								b.Y = ui.position.top;
+								b.X = ui.position.left + parseInt(element.css('margin-left'));
+								b.Y = ui.position.top + parseInt(element.css('margin-top'));
 							}
 						}
 					});
@@ -610,8 +611,8 @@
 									link: self.options.comic.ReadUrl,
 									actions:
 									[
-										//{ name: 'Read', link: self.options.comic.ReadUrl },
-										{ name: 'Remix', link: self.options.comic.RemixUrl }
+									//{ name: 'Read', link: self.options.comic.ReadUrl },
+										{name: 'Remix', link: self.options.comic.RemixUrl }
 									]
 								}, function (response)
 								{

@@ -116,7 +116,16 @@ namespace Fredin.Comic.Web
 		protected void Application_Error(object sender, EventArgs e)
 		{
 			ILog log = LogManager.GetLogger(typeof(Global));
-			log.Error("Unhandled Exception", Server.GetLastError());
+			Exception x = Server.GetLastError();
+
+			if(x is HttpException)
+			{
+				//log.Info(x);
+			}
+			else
+			{
+				log.Error("Unhandled Exception", x);
+			}
 		}
 
 		protected void Session_End(object sender, EventArgs e)

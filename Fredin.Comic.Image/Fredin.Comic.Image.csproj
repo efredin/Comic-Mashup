@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Filter\ColorDodge.cs" />
     <Compile Include="Filter\ColorBurn.cs" />
+    <Compile Include="Filter\Overlay.cs" />
     <Compile Include="Filter\Cutout.cs" />
     <Compile Include="Filter\Darken.cs" />
     <Compile Include="Filter\HardLight.cs" />

@@ -59,7 +59,7 @@ namespace Fredin.Comic.Data
 				filtered = comics.Where(c => !c.IsPrivate || isFriend);
 			}
 
-			return filtered.Where(c => c.IsPublished && !c.IsDeleted);
+			return filtered.Where(c => c.IsPublished && !c.IsDeleted && !c.Author.IsDeleted);
 		}
 
 		public static IQueryable<Comic> FilterComicVisibility(this IQueryable<Comic> comics, User user, List<long> friends)
@@ -75,7 +75,7 @@ namespace Fredin.Comic.Data
 				filtered = comics.Where(c => !c.IsPrivate);
 			}
 
-			return filtered.Where(c => c.IsPublished && !c.IsDeleted);
+			return filtered.Where(c => c.IsPublished && !c.IsDeleted && !c.Author.IsDeleted);
 		}
 
 		public static IQueryable<Comic> FilterComicLanguage(this IQueryable<Comic> comics, string languageCode)

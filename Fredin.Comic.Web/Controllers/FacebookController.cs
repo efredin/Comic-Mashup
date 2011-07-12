@@ -65,7 +65,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/Facebook/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
 		public ActionResult RenderProgress(string taskId)
 		{
 			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);

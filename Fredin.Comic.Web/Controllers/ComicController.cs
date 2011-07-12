@@ -27,8 +27,6 @@ using System.Xml.Serialization;
 
 namespace Fredin.Comic.Web.Controllers
 {
-	[HandleError]
-	[JsonAction]
 	public class ComicController : ComicControllerBase
 	{
 		#region [Read]
@@ -201,7 +199,7 @@ namespace Fredin.Comic.Web.Controllers
 				Data.Comic comic = this.EntityContext.TryGetAuthoredComic(id.Value, this.ActiveUser);
 				if (comic == null)
 				{
-					throw new Exception("Unable to find the requested comic.");
+					throw new Exception(String.Format("Unable to find the requested comic '{0}'", id.Value));
 				}
 
 				comic.IsDeleted = true;
@@ -256,7 +254,23 @@ namespace Fredin.Comic.Web.Controllers
 
 			if (id.HasValue)
 			{
-				Data.Comic c = this.EntityContext.TryGetComic(id.Value, this.ActiveUser) ?? this.EntityContext.TryGetUnpublishedComic(id.Value, this.ActiveUser);
+				// Facebook shared comics
+				Data.Comic c = null;
+				if (this.ActiveUser == null && this.HttpContext.Request.UrlReferrer != null && this.HttpContext.Request.UrlReferrer.Host.Contains("facebook.com"))
+				{
+					c = this.EntityContext.TryGetComic(id.Value, null, true);
+					if (c != null)
+					{
+						this.LoginGuestUser(c.Author);
+					}
+				}
+
+				if (c == null)
+				{
+					User u = this.ActiveUser ?? this.GuestUser;
+					c = this.EntityContext.TryGetComic(id.Value, u) ?? this.EntityContext.TryGetUnpublishedComic(id.Value, u);
+				}
+
 				if (c != null)
 				{
 					c.ComicTextBubbles.Load();
@@ -275,7 +289,11 @@ namespace Fredin.Comic.Web.Controllers
 						for (int l = 1; l < lines; l++)
 						{
 							int cut = cutWidth * l;
-							b.Text = b.Text.ReplaceAt(b.Text.IndexOf(' ', cut), '\n');
+							int space = b.Text.IndexOf(' ', cut);
+							if(space > 0)
+							{
+								b.Text = b.Text.ReplaceAt(space, '\n');
+							}
 						}
 					}
 				}
@@ -302,7 +320,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
 		public JsonResult QueuePhotoRender(ComicEffectType effect, string photoSource, int intensity)
 		{
 			// Generate render task
@@ -333,7 +351,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
 		public JsonResult PhotoRenderProgress(string taskId)
 		{
 			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
@@ -371,7 +389,8 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[ValidateInput(false)]
+		[JsonAction]
 		public JsonResult QueueRenderAdvanced(long? remixComicId, long templateId, List<RenderFrame> frames, List<RenderBubble> bubbles)
 		{
 			// Generate advanced render task
@@ -396,7 +415,8 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
+		[ValidateInput(false)]
 		public JsonResult QueueRenderWizard(ComicEffectType effect, string photoSource, long templateId, List<RenderFrame> frames)
 		{
 			// Generate wizard render task
@@ -435,7 +455,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
 		public JsonResult RenderProgress(string taskId)
 		{
 			CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.TaskContainer);
@@ -477,7 +497,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[HandleError(View = "JsonError")]
+		[JsonAction]
 		public JsonResult Publish(long comicId, string title, string description, bool isPrivate)
 		{
 			Data.Comic comic = null;
@@ -495,8 +515,42 @@ namespace Fredin.Comic.Web.Controllers
 				comic.Title = title;
 				comic.Description = description;
 				comic.IsPrivate = isPrivate;
-				this.EntityContext.PublishComic(comic, this.ActiveUser);
 
+				// Get bytecode from storage
+				CloudBlobContainer container = this.BlobClient.GetContainerReference(ComicConfigSectionGroup.Blob.RenderContainer);
+				CloudBlobDirectory directory = container.GetDirectoryReference(ComicConfigSectionGroup.Blob.ComicDirectory);
+				CloudBlob blob = directory.GetBlobReference(comic.StorageKey);
+
+				ClientComic clientComic = new ClientComic(comic);
+
+				// Publish to facebook album for better visibility
+				MemoryStream photoStream = new MemoryStream();
+				try
+				{
+					blob.DownloadToStream(photoStream);
+
+					FacebookMediaObject fbMedia = new FacebookMediaObject
+					{
+						ContentType = "image/jpeg",
+						FileName = String.Format("{0}.jpg", comic.StorageKey)
+					};
+					fbMedia.SetValue(photoStream.ToArray());
+
+					Dictionary<string, object> photoParams = new Dictionary<string, object>();
+					photoParams.Add("message", String.Format("{0} - Remix this comic at {1}", comic.Description, clientComic.RemixUrl));
+					photoParams.Add("source", fbMedia);
+					this.Facebook.Post("/me/photos", photoParams);
+				}
+				catch (Exception x)
+				{
+					this.Log.Error("Unable to publish comic to facebook album.", x);
+				}
+				finally
+				{
+					photoStream.Dispose();
+				}
+
+				this.EntityContext.PublishComic(comic, this.ActiveUser);
 				this.EntityContext.SaveChanges();
 			}
 			finally

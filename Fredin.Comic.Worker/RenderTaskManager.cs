@@ -265,7 +265,7 @@ namespace Fredin.Comic.Worker
 				}
 
 				// Get photos for each frame
-				for (int f = 0; f < task.Frames.Count; f++)
+				for (int f = 0; f < task.Frames.Count && f < templateItems.Count; f++)
 				{
 					Photo photo = null;
 					Bitmap image = null;
@@ -456,42 +456,42 @@ namespace Fredin.Comic.Worker
 					}
 
 					// Tag users
-					if (task.Frames[f].Id > 0)
-					{
-						try
-						{
+					//if (task.Frames[f].Id > 0)
+					//{
+					//    try
+					//    {
 
-							// Lookup existing user
-							User taggedUser = entityContext.TryGetUser(task.Frames[f].Id, true);
-							if (taggedUser == null)
-							{
-								// User doesn't exist in the db yet - grab from facebook
-								dynamic facebookUser = facebook.Get(String.Format("/{0}", task.Frames[f].Id));
-								taggedUser = new User();
-								taggedUser.Uid = long.Parse(facebookUser.id);
-								taggedUser.IsDeleted = false;
-								taggedUser.IsSubscribed = false;
-								taggedUser.Locale = facebookUser.locale;
-								taggedUser.Name = facebookUser.name;
-								taggedUser.Nickname = facebookUser.name;
-								taggedUser.FbLink = facebookUser.link;
-								entityContext.AddToUsers(taggedUser);
-							}
+					//        // Lookup existing user
+					//        User taggedUser = entityContext.TryGetUser(task.Frames[f].Id, true);
+					//        if (taggedUser == null)
+					//        {
+					//            // User doesn't exist in the db yet - grab from facebook
+					//            dynamic facebookUser = facebook.Get(String.Format("/{0}", task.Frames[f].Id));
+					//            taggedUser = new User();
+					//            taggedUser.Uid = long.Parse(facebookUser.id);
+					//            taggedUser.IsDeleted = false;
+					//            taggedUser.IsSubscribed = false;
+					//            taggedUser.Locale = facebookUser.locale;
+					//            taggedUser.Name = facebookUser.name;
+					//            taggedUser.Nickname = facebookUser.name;
+					//            taggedUser.FbLink = facebookUser.link;
+					//            entityContext.AddToUsers(taggedUser);
+					//        }
 
-							ComicTag comicTag = new ComicTag();
-							comicTag.User = taggedUser;
-							comicTag.Comic = comic;
-							if (tag != Point.Empty)
-							{
-								comicTag.X = tag.X;
-								comicTag.Y = tag.Y;
-							}
-						}
-						catch (Exception x)
-						{
-							this.Log.ErrorFormat("Failed to tag user {0} in comic. {1}", task.Frames[f].Id, x.ToString());
-						}
-					}
+					//        ComicTag comicTag = new ComicTag();
+					//        comicTag.User = taggedUser;
+					//        comicTag.Comic = comic;
+					//        if (tag != Point.Empty)
+					//        {
+					//            comicTag.X = tag.X;
+					//            comicTag.Y = tag.Y;
+					//        }
+					//    }
+					//    catch (Exception x)
+					//    {
+					//        this.Log.ErrorFormat("Failed to tag user {0} in comic. {1}", task.Frames[f].Id, x.ToString());
+					//    }
+					//}
 
 
 					ComicPhoto comicPhoto = new ComicPhoto();

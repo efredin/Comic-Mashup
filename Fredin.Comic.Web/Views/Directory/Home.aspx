@@ -8,7 +8,7 @@
 
 	<div id="home" class="box content734">
 
-		<div id="home-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" layout="box_count" show_faces="false" width="55" font=""></div>
+		<!--<div id="home-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" layout="box_count" show_faces="false" width="55" font=""></div>-->
 
 		<p>Create, read and share web comics with your online profile.  It's fun and easy!</p>
 		<h2>How it Works</h2>

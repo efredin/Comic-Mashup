@@ -53,11 +53,8 @@ namespace Fredin.Comic.Render
 		/// </summary>
 		public override Bitmap Render(Bitmap sourceImage)
 		{
-			Bitmap smoothLayer;
-			Bitmap posterLayer;
-			Bitmap grayscale;
-
 			GrayscaleToRGB convertColor = new GrayscaleToRGB();
+			HistogramEqualization autoLevels = new HistogramEqualization();
 
 			// Convert grayscal images
 			if (sourceImage.PixelFormat == PixelFormat.Format8bppIndexed)
@@ -65,39 +62,38 @@ namespace Fredin.Comic.Render
 				sourceImage = convertColor.Apply(sourceImage);
 			}
 
-			HistogramEqualization autoLevels = new HistogramEqualization();
-			smoothLayer = autoLevels.Apply(sourceImage);
+			Bitmap smoothLayer = autoLevels.Apply(sourceImage);
 
-			AdaptiveSmoothing smooth = new AdaptiveSmoothing(12);
-			smoothLayer = smooth.Apply(sourceImage);
+			AdaptiveSmoothing adaptiveSmooth = new AdaptiveSmoothing(10);
+			adaptiveSmooth.ApplyInPlace(smoothLayer);
 
-			grayscale = Grayscale.CommonAlgorithms.Y.Apply(smoothLayer);
+			Bitmap grayscale = Grayscale.CommonAlgorithms.Y.Apply(smoothLayer);
 
 			// Haven't been able to come up with a good edge detection for posterized comics.. Oh well
-			// Edges
-			//SobelEdgeDetector sobelEdge = new SobelEdgeDetector();
-			//sobelEdge.ScaleIntensity = false;
-			//edgeLayer = sobelEdge.Apply(grayscale);
-			//Invert invertEdge = new Invert();
-			//invertEdge.ApplyInPlace(edgeLayer);
-			//Threshold thresholdEdge = new Threshold(128);
-			//thresholdEdge.ApplyInPlace(edgeLayer);
-			//edgeLayer = convertColor.Apply(edgeLayer);
-			//smooth.ApplyInPlace(edgeLayer);
+			SobelEdgeDetector sobelEdge = new SobelEdgeDetector();
+			sobelEdge.ScaleIntensity = true;
+			Bitmap edgeLayer = sobelEdge.Apply(grayscale);
+			Threshold thresholdEdge = new Threshold(36);
+			thresholdEdge.ApplyInPlace(edgeLayer);
+			Invert invertEdge = new Invert();
+			invertEdge.ApplyInPlace(edgeLayer);
+			edgeLayer = convertColor.Apply(edgeLayer);
 
-			// Merge edges with working layer
-			//Multiply multEdge = new Multiply(edgeLayer);
-			//multEdge.ApplyInPlace(smoothLayer);
+			ColorDodge dodgeEdge = new ColorDodge(edgeLayer);
+			edgeLayer = dodgeEdge.Apply(smoothLayer);
 
 			// Posterize
 			Posterize posterColor = new Posterize(this.Coloring);
-			posterLayer = posterColor.Apply(smoothLayer);
+			Bitmap posterLayer = posterColor.Apply(smoothLayer);
+			GaussianBlur gausPoster = new GaussianBlur(18);
+			gausPoster.ApplyInPlace(posterLayer);
 			Darken darkenPoster = new Darken(posterLayer);
 			darkenPoster.ApplyInPlace(smoothLayer);
 
-			// Smooth again - posterization leaves rough edges
-			smooth.ApplyInPlace(smoothLayer);
-
+			// Merge edges with working layer
+			Multiply multEdge = new Multiply(edgeLayer);
+			multEdge.ApplyInPlace(smoothLayer);
+			
 			return smoothLayer;
 		}
 

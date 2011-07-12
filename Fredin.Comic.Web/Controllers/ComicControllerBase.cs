@@ -18,10 +18,10 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace Fredin.Comic.Web.Controllers
 {
+	[HandleError]
 	public abstract class ComicControllerBase : System.Web.Mvc.Controller
 	{
 		protected const string VERIFY_TOKEN = "erock";
-		protected const string FB = "fb";
 		public const string KEY_FORMAT = "f";
 		public const string VAL_JSON = "json";
 
@@ -82,10 +82,19 @@ namespace Fredin.Comic.Web.Controllers
 		{
 			this.Facebook = new FacebookWebClient();
 
-			if (FacebookWebContext.Current.SignedRequest != null)
+			bool fbCanvas = this.SessionManager.FbCanvas;
+
+			// Check for forced fb removal (frame detection from js)
+			if (!String.IsNullOrEmpty(this.Request[SessionHelper.KEY_FBCANVAS]))
 			{
-				this.SessionManager.Fb = true;
+				bool.TryParse(this.Request[SessionHelper.KEY_FBCANVAS], out fbCanvas);
 			}
+			// Check for facebook signed post (indicates fb canvas)
+			else if (FacebookWebContext.Current.SignedRequest != null)
+			{
+				fbCanvas = true;
+			}
+			this.SessionManager.FbCanvas = fbCanvas;
 		}
 
 		#endregion
@@ -155,8 +164,9 @@ namespace Fredin.Comic.Web.Controllers
 			{
 				if (FacebookWebContext.Current.IsAuthenticated())
 				{
-					if (this.ActiveUser == null || (this.ActiveUser != null && FacebookWebContext.Current.UserId != this.ActiveUser.Uid))
-					{
+					// Updating active user on every request now because of sync issues with deleted users
+					//if (this.ActiveUser == null || (this.ActiveUser != null && FacebookWebContext.Current.UserId != this.ActiveUser.Uid))
+					//{
 						// Load user details into session
 						this.ActiveUser = this.EntityContext.TryGetUser(FacebookWebContext.Current.UserId, true);
 
@@ -207,7 +217,7 @@ namespace Fredin.Comic.Web.Controllers
 						this.Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket)));
 
 						this.Log.DebugFormat("Session created for user {0}", this.ActiveUser.Uid);
-					}
+					//}
 				}
 				else
 				{
@@ -331,7 +341,7 @@ namespace Fredin.Comic.Web.Controllers
 			var action = filterContext.Result as ViewResult;
 			if (action != null)
 			{
-				action.MasterName = this.SessionManager.Fb ? "Facebook" : "Web";
+				action.MasterName = this.SessionManager.FbCanvas ? "Facebook" : "Web";
 			}
 
 			base.OnActionExecuted(filterContext);

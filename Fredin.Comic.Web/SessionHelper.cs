@@ -17,7 +17,7 @@ namespace Fredin.Comic.Web
 		public const string KEY_FRIENDS = "friends";
 		public const string KEY_GUEST_USER = "guest";
 		public const string KEY_LOCALE = "locale";
-		public const string KEY_FB = "fb";
+		public const string KEY_FBCANVAS = "fbcanvas";
 		
 		protected HttpContextBase HttpContext { get; set; }
 
@@ -54,10 +54,10 @@ namespace Fredin.Comic.Web
 			set { this.HttpContext.Session[KEY_LOCALE] = value; }
 		}
 
-		public bool Fb
+		public bool FbCanvas
 		{
-			get { return this.HttpContext.Session[KEY_FB] == null ? false : (bool)this.HttpContext.Session[KEY_FB]; }
-			set { this.HttpContext.Session[KEY_FB] = value; }
+			get { return this.HttpContext.Session[KEY_FBCANVAS] == null ? false : (bool)this.HttpContext.Session[KEY_FBCANVAS]; }
+			set { this.HttpContext.Session[KEY_FBCANVAS] = value; }
 		}
 
 		public SessionHelper(HttpContextBase httpContext)

@@ -351,6 +351,7 @@
     <Content Include="Static\Image\TextBubble\thought-tl.png" />
     <Content Include="Static\Image\TextBubble\thought-tr.png" />
     <Content Include="Static\Image\watermark.png" />
+    <Content Include="Static\robots.txt" />
     <Content Include="Static\Script\Application.js" />
     <Content Include="Static\Script\Date.js" />
     <Content Include="Static\Script\jquery.ui\jquery.ui.comic.js" />

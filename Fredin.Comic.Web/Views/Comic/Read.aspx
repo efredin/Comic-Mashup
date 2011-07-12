@@ -72,7 +72,7 @@
 
 		<div id="column2">
 			<div id="ad-rectangle" class="box">
-				<% if ( this.SessionManager.Fb) { %>
+				<% if ( this.SessionManager.FbCanvas) { %>
 					<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/fbslot/slot19152?ad_size=300x250&adkey=7a7'></iframe>
 				<% } else { %>
 					<iframe width='300' height='250' frameborder='no' framespacing='0' scrolling='no'  src='http://ads.lfstmedia.com/slot/slot21429?ad_size=300x250&adkey=d14'></iframe>

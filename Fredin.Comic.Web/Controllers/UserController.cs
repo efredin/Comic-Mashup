@@ -18,7 +18,6 @@ using Facebook.Web;
 
 namespace Fredin.Comic.Web.Controllers
 {
-	[HandleError]
 	public class UserController : ComicControllerBase
 	{
 		[JsonAction]

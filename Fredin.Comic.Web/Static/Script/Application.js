@@ -38,13 +38,39 @@
         	facebookBaseHref: '/',
         	requireConnect: false,
         	themeBase: '',
-        	onCanvas: false
+        	fbCanvas: false
         },
 
     	init: function ()
     	{
     		var self = this;
     		console.info('Initializing application');
+    		console.warn(this.options);
+    		if (this.options.fbCanvas === true)
+    		{
+    			// Check for presense of parent facebook frame.  If its missing we aren't actually on facebook and should therefore
+    			// reload the page with the fbcanvas=false parameter
+    			try
+    			{
+    				console.log(top.location);
+    				if (top.location.href == window.location.href)
+    				{
+    					console.log('matches...');
+    					var href = window.location.href;
+    					if (href.indexOf('?') <= 0)
+    					{
+    						href += '?';
+    					}
+    					href += '&fbcanvas=false';
+    					window.location = href;
+    				}
+    			}
+    			catch (x)
+    			{
+    				console.log(x);
+    				// Meant to catch cross-domain scripting exception. Indicates the parent frame is in fact facebook
+    			}
+    		}
 
     		// Ajax defaults
     		$.ajaxSetup({ error: function (request, status, x) { self.error("An error has occured.", request, status, x); } });
@@ -72,7 +98,7 @@
     		FB.Event.subscribe('auth.sessionChange', sessionChangeCallback);
     		FB.getLoginStatus(sessionChangeCallback);
 
-    		if (this.options.onCanvas === true)
+    		if (this.options.fbCanvas === true)
     		{
     			FB.Canvas.setSize();
     		}
