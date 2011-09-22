@@ -182,11 +182,15 @@ namespace Fredin.Comic.Web.Controllers
 						// Update from facebook - this will be modified once subscription updates are functional
 						var facebookUser = (IDictionary<string, object>)this.Facebook.Get("/me");
 
+						if (this.ActiveUser.IsDeleted)
+						{
+							this.Log.InfoFormat("Restoring deleted user '{0}'", this.ActiveUser.Uid);
+						}
 						this.ActiveUser.IsDeleted = false; // Restored user if previously deleted (uninstall)
 						this.ActiveUser.Name = facebookUser["name"].ToString();
 						this.ActiveUser.FbLink = facebookUser["link"].ToString();
 						this.ActiveUser.Nickname = facebookUser["name"].ToString();
-						if (facebookUser.ContainsKey("email"))
+						if (facebookUser.ContainsKey("email") && String.IsNullOrWhiteSpace(this.ActiveUser.Email))
 						{
 							this.ActiveUser.Email = facebookUser["email"].ToString();
 						}
@@ -195,11 +199,11 @@ namespace Fredin.Comic.Web.Controllers
 							this.ActiveUser.Locale = facebookUser["locale"].ToString().Replace('_', '-');
 						}
 
-						if (!this.ActiveUser.IsSubscribed)
-						{
-							this.SubscribeActiveUser();
-							this.ActiveUser.IsSubscribed = true;
-						}
+						//if (!this.ActiveUser.IsSubscribed)
+						//{
+						//    this.SubscribeActiveUser();
+						//    this.ActiveUser.IsSubscribed = true;
+						//}
 
 						// Get list of friends from facebook and persist in session
 						dynamic facebookFriends = this.Facebook.Get("/me/friends");
@@ -291,6 +295,23 @@ namespace Fredin.Comic.Web.Controllers
 				isVisible = this.IsFriend(user);
 			}
 			return isVisible;
+		}
+
+		protected UserEngage GetUserEngage(User user)
+		{
+			UserEngage engage = this.EntityContext.TryGetUserEngage(user);
+			if (engage == null)
+			{
+				engage = new UserEngage();
+				engage.User = user;
+				engage.Comment = true;
+				engage.ComicCreate = true;
+				engage.ComicRemix = true;
+				engage.Unsubscribe = false;
+				this.EntityContext.AddToUserEngage(engage);
+				this.EntityContext.SaveChanges();
+			}
+			return engage;
 		}
 
 		#endregion

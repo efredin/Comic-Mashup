@@ -28,5 +28,11 @@ namespace Fredin.Comic.Config
 			get { return (string)this["photoTaskQueue"]; }
 			set { this["photoTaskQueue"] = value; }
 		}
+
+		public string NotificationQueue
+		{
+			get { return (string)this["notificationQueue"]; }
+			set { this["notificationQueue"] = value; }
+		}
 	}
 }

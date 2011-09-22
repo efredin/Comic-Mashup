@@ -10,13 +10,11 @@
 
 		<!--<div id="home-like"><fb:like href="http://www.facebook.com/apps/application.php?id=<%= ComicConfigSectionGroup.Facebook.AppId %>" layout="box_count" show_faces="false" width="55" font=""></div>-->
 
-		<p>Create, read and share web comics with your online profile.  It's fun and easy!</p>
+		<p>Create, read and share comics with your friends online.  It's fun, easy, and best of all, you don't need to draw!</p>
 		<h2>How it Works</h2>
 		<p>
-			Comic Mashup uses your social profile to generate fun web comics. 
-			<a href="javascript:void(0);" class="button-fbLogin">Connect your facebook</a> account to get started. 
-			Then, share your comics with your family and friends on facebook.
-			The more visitors you send to your comic, the more votes it will get.
+			Comic Mashup uses your photos and status updates to generate web comics.  Just <a href="javascript:void(0);" class="button-fbLogin">connect</a> your account to get started.
+			You have complete control over the appearance of your comic.  You can even add cool effects to your photots.
 		</p>
 		<a href="<%= this.Url.Action("CreateWizard", "Comic") %>" class="actionButton ui-state-default" id="home-buttonCreate"><span class="icon96 icon96-create"></span><br />Create</a>
 		<a href="<%= this.Url.Action("BestOverall", "Directory") %>" class="actionButton ui-state-default" id="home-buttonDirectory"><span class="icon96 icon96-read"></span><br />Read</a>

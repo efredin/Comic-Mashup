@@ -127,10 +127,10 @@ namespace Fredin.Comic.Web.Controllers
 				}
 				else if (id.HasValue)
 				{
-					user = this.EntityContext.TryGetUser(id.Value);
+					user = this.EntityContext.TryGetUser(id.Value, true);
 				}
 
-				if (user != null)
+				if (user != null && !user.IsDeleted)
 				{
 					// Load published comics
 					List<Data.Comic> comics = this.EntityContext.ListPublishedComics(user, this.ActiveUser, this.IsFriendOrSelf(user), ComicStat.ComicStatPeriod.AllTime, null)
@@ -149,7 +149,11 @@ namespace Fredin.Comic.Web.Controllers
 				}
 				else
 				{
-					if (id.HasValue)
+					if (id.HasValue && user != null)
+					{
+						result = this.View("Removed", new { Message = String.Format("User {0} is deleted.", user.Uid) });
+					}
+					else if (id.HasValue)
 					{
 						throw new Exception(String.Format("Unknown user '{0}'.", id.Value));
 					}

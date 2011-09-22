@@ -13,7 +13,7 @@
 		{
 			var self = this;
 
-			$(this.element).addClass('ui-widget ui-widget-content ui-corner-all ui-optionset');
+			//$(this.element).addClass('ui-widget ui-widget-content ui-corner-all ui-optionset');
 
 			if(this.options.title == null)
 			{

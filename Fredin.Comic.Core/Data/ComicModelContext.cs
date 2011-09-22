@@ -84,6 +84,13 @@ namespace Fredin.Comic.Data
 				.FirstOrDefault(c => c.ComicId == comicId && c.Uid == author.Uid);
 		}
 
+		public Comic TryGetComic(long comicId)
+		{
+			return this.Comics
+				.Where(c => c.IsPublished && !c.IsDeleted && !c.Author.IsDeleted)
+				.FirstOrDefault(c => c.ComicId == comicId);
+		}
+
 		public Comic TryGetComic(long comicId, User reader)
 		{
 			return this.TryGetComic(comicId, reader, false);
@@ -168,6 +175,11 @@ namespace Fredin.Comic.Data
 		public UserEngage TryGetUserEngage(User user)
 		{
 			return this.UserEngage.FirstOrDefault(e => e.Uid == user.Uid);
+		}
+
+		public UserEngageHistory TryGetUserEngageHistory(long engageHistoryId)
+		{
+			return this.UserEngageHistory.FirstOrDefault(h => h.EngageHistoryId == engageHistoryId);
 		}
 
 		#endregion

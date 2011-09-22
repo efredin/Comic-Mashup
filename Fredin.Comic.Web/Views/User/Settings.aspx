@@ -5,19 +5,32 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphCanvas" runat="server">
 
-	<div class="box content734">
+	<div id="settings" class="box content734">
 		
 		<% using(this.Html.BeginForm()) { %>
 
-		<h2>Notifications</h2>
-		Notifications are sent via email to your facebook email address. If you wish to change your address, please do so <a href="https://www.facebook.com/editaccount.php" target="_blank">here</a>.
-		
-		<p>Your current email address is <span class="setting-email"><%: this.Model.Email %></span></p>
+		<% if(!String.IsNullOrWhiteSpace(this.Model.Feedback)) { %>
+			<div class="ui-state-highlight"><%= this.Model.Feedback %></div>
+		<% } %>
 
-		<div>
-			Send me a notification when someone:
-			<div><%: this.Html.CheckBoxFor(s => s.Engage.Comment) %><%: this.Html.LabelFor(s => s.Engage.Comment, "Comments on my comic") %></div>
-			<div><%: this.Html.CheckBoxFor(s => s.Engage.Tag) %><%: this.Html.LabelFor(s => s.Engage.Comment, "I am tagged in a comic") %></div>
+		<h2>Notifications</h2>
+		<div id="optionsetEmail" class="ui-optionset">
+			<div class="ui-optionset-title">Email</div>
+			<span class="ui-optionset-caption">Your current email address.</span>
+			<div class="ui-optionset-content"><%: this.Html.TextBoxFor(s => s.Email, new { @class = "email" })%></div>
+		</div>
+
+		<div id="optionsetSubscribe" class="ui-optionset">
+			<div class="ui-optionset-content">
+				<%: this.Html.CheckBoxFor(s => s.Engage.Subscribe)%><%: this.Html.LabelFor(s => s.Engage.Subscribe, "Send me notifications") %>
+				<div id="engage-setting">
+					<ul>
+						<li><%: this.Html.CheckBoxFor(s => s.Engage.ComicCreate) %><%: this.Html.LabelFor(s => s.Engage.ComicCreate, "When I publish a comic")%></li>
+						<li><%: this.Html.CheckBoxFor(s => s.Engage.ComicRemix) %><%: this.Html.LabelFor(s => s.Engage.ComicRemix, "When my comic is remixed")%></li>
+						<li><%: this.Html.CheckBoxFor(s => s.Engage.Comment) %><%: this.Html.LabelFor(s => s.Engage.Comment, "When my comic receives a comment") %></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 
 		<button type="submit">Save Changes</button>
@@ -26,4 +39,9 @@
 
 	</div>
 
+</asp:Content>
+<asp:Content ID="cScript" ContentPlaceHolderID="cphScript" runat="server">
+	<script type="text/javascript">
+		User.Settings(appOptions);
+	</script>
 </asp:Content>

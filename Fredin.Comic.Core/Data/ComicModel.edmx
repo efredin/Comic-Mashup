@@ -258,18 +258,19 @@
           </Key>
           <Property Name="Uid" Type="bigint" Nullable="false" />
           <Property Name="Comment" Type="bit" Nullable="false" />
-          <Property Name="Vote" Type="bit" Nullable="false" />
-          <Property Name="Tag" Type="bit" Nullable="false" />
+          <Property Name="ComicCreate" Type="bit" Nullable="false" />
+          <Property Name="ComicRemix" Type="bit" Nullable="false" />
+          <Property Name="Unsubscribe" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UserEngageHistory">
           <Key>
-            <PropertyRef Name="EngageHash" />
+            <PropertyRef Name="EngageHistoryId" />
           </Key>
-          <Property Name="EngageHash" Type="varchar" Nullable="false" MaxLength="8" />
           <Property Name="Uid" Type="bigint" Nullable="false" />
           <Property Name="Engagement" Type="nvarchar" Nullable="false" MaxLength="10" />
           <Property Name="EngageTime" Type="datetime" Nullable="false" />
           <Property Name="RespondTime" Type="datetime" />
+          <Property Name="EngageHistoryId" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
         </EntityType>
         <Association Name="FK__Comic__RemixComi__5FAC3F62">
           <End Role="Comic" Type="Fredin.Comic.Data.Store.Comic" Multiplicity="0..1" />
@@ -581,14 +582,9 @@
             <End Role="ProfileRender" EntitySet="ProfileRender" />
           </AssociationSet>
           <EntitySet Name="UserEngage" EntityType="Fredin.Comic.Data.UserEngage" />
-          <EntitySet Name="UserEngageHistory" EntityType="Fredin.Comic.Data.UserEngageHistory" />
           <AssociationSet Name="FK__UserEngage__Uid__0F735CAF" Association="Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF">
             <End Role="User" EntitySet="Users" />
             <End Role="UserEngage" EntitySet="UserEngage" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserEngageH__Uid__1808A2B0" Association="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0">
-            <End Role="User" EntitySet="Users" />
-            <End Role="UserEngageHistory" EntitySet="UserEngageHistory" />
           </AssociationSet>
           <EntitySet Name="ComicTag" EntityType="Fredin.Comic.Data.ComicTag" />
           <AssociationSet Name="FK__ComicTag__ComicI__6083639C" Association="Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C">
@@ -602,6 +598,11 @@
           <AssociationSet Name="FK__Comic__RemixComi__5FAC3F62" Association="Fredin.Comic.Data.FK__Comic__RemixComi__5FAC3F62">
             <End Role="Comic" EntitySet="Comics" />
             <End Role="Comic1" EntitySet="Comics" />
+          </AssociationSet>
+          <EntitySet Name="UserEngageHistory" EntityType="Fredin.Comic.Data.UserEngageHistory" />
+          <AssociationSet Name="FK__UserEngageH__Uid__1808A2B0" Association="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserEngageHistory" EntitySet="UserEngageHistory" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Comic">
@@ -740,8 +741,8 @@
           <Property Type="String" Name="Locale" Nullable="false" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsSubscribed" Nullable="false" />
           <NavigationProperty Name="UserEngage" Relationship="Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF" FromRole="User" ToRole="UserEngage" />
-          <NavigationProperty Name="UserEngageHistory" Relationship="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" FromRole="User" ToRole="UserEngageHistory" />
           <NavigationProperty Name="ComicTags" Relationship="Fredin.Comic.Data.FK__ComicTag__Uid__617787D5" FromRole="User" ToRole="ComicTag" />
+          <NavigationProperty Name="UserEngageHistory" Relationship="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" FromRole="User" ToRole="UserEngageHistory" />
         </EntityType>
         <Association Name="FK_Comic_Template">
           <End Type="Fredin.Comic.Data.Template" Role="Template" Multiplicity="1" />
@@ -946,19 +947,10 @@
           </Key>
           <Property Type="Int64" Name="Uid" Nullable="false" />
           <Property Type="Boolean" Name="Comment" Nullable="false" />
-          <Property Type="Boolean" Name="Vote" Nullable="false" />
-          <Property Type="Boolean" Name="Tag" Nullable="false" />
           <NavigationProperty Name="User" Relationship="Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF" FromRole="UserEngage" ToRole="User" />
-        </EntityType>
-        <EntityType Name="UserEngageHistory">
-          <Key>
-            <PropertyRef Name="EngageHash" />
-          </Key>
-          <Property Type="String" Name="EngageHash" Nullable="false" MaxLength="8" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Engagement" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Type="DateTime" Name="EngageTime" Nullable="false" />
-          <Property Type="DateTime" Name="RespondTime" />
-          <NavigationProperty Name="User" Relationship="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" FromRole="UserEngageHistory" ToRole="User" />
+          <Property Type="Boolean" Name="ComicCreate" Nullable="false" />
+          <Property Type="Boolean" Name="ComicRemix" Nullable="false" />
+          <Property Type="Boolean" Name="Unsubscribe" Nullable="false" />
         </EntityType>
         <Association Name="FK__UserEngage__Uid__0F735CAF">
           <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
@@ -971,10 +963,6 @@
               <PropertyRef Name="Uid" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__UserEngageH__Uid__1808A2B0">
-          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
-          <End Type="Fredin.Comic.Data.UserEngageHistory" Role="UserEngageHistory" Multiplicity="*" />
         </Association>
         <EntityType Name="ComicTag">
           <Key>
@@ -1015,6 +1003,20 @@
         <Association Name="FK__Comic__RemixComi__5FAC3F62">
           <End Type="Fredin.Comic.Data.Comic" Role="Comic" Multiplicity="0..1" />
           <End Type="Fredin.Comic.Data.Comic" Role="Comic1" Multiplicity="*" />
+        </Association>
+        <EntityType Name="UserEngageHistory">
+          <Key>
+            <PropertyRef Name="EngageHistoryId" />
+          </Key>
+          <Property Type="String" Name="Engagement" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="EngageTime" Nullable="false" />
+          <Property Type="DateTime" Name="RespondTime" />
+          <Property Type="Int64" Name="EngageHistoryId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="User" Relationship="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" FromRole="UserEngageHistory" ToRole="User" />
+        </EntityType>
+        <Association Name="FK__UserEngageH__Uid__1808A2B0">
+          <End Type="Fredin.Comic.Data.User" Role="User" Multiplicity="1" />
+          <End Type="Fredin.Comic.Data.UserEngageHistory" Role="UserEngageHistory" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -1186,31 +1188,14 @@
           <EntitySetMapping Name="UserEngage">
             <EntityTypeMapping TypeName="Fredin.Comic.Data.UserEngage">
               <MappingFragment StoreEntitySet="UserEngage">
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="Vote" ColumnName="Vote" />
+                <ScalarProperty Name="Unsubscribe" ColumnName="Unsubscribe" />
+                <ScalarProperty Name="ComicRemix" ColumnName="ComicRemix" />
+                <ScalarProperty Name="ComicCreate" ColumnName="ComicCreate" />
                 <ScalarProperty Name="Comment" ColumnName="Comment" />
                 <ScalarProperty Name="Uid" ColumnName="Uid" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserEngageHistory">
-            <EntityTypeMapping TypeName="Fredin.Comic.Data.UserEngageHistory">
-              <MappingFragment StoreEntitySet="UserEngageHistory">
-                <ScalarProperty Name="RespondTime" ColumnName="RespondTime" />
-                <ScalarProperty Name="EngageTime" ColumnName="EngageTime" />
-                <ScalarProperty Name="Engagement" ColumnName="Engagement" />
-                <ScalarProperty Name="EngageHash" ColumnName="EngageHash" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="FK__UserEngageH__Uid__1808A2B0" TypeName="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" StoreEntitySet="UserEngageHistory">
-            <EndProperty Name="UserEngageHistory">
-              <ScalarProperty Name="EngageHash" ColumnName="EngageHash" />
-            </EndProperty>
-            <EndProperty Name="User">
-              <ScalarProperty Name="Uid" ColumnName="Uid" />
-            </EndProperty>
-          </AssociationSetMapping>
           <EntitySetMapping Name="ComicTag">
             <EntityTypeMapping TypeName="Fredin.Comic.Data.ComicTag">
               <MappingFragment StoreEntitySet="ComicTag">
@@ -1229,6 +1214,24 @@
               <ScalarProperty Name="ComicId" ColumnName="RemixComicId" />
             </EndProperty>
             <Condition ColumnName="RemixComicId" IsNull="false" />
+          </AssociationSetMapping>
+          <EntitySetMapping Name="UserEngageHistory">
+            <EntityTypeMapping TypeName="Fredin.Comic.Data.UserEngageHistory">
+              <MappingFragment StoreEntitySet="UserEngageHistory">
+                <ScalarProperty Name="EngageHistoryId" ColumnName="EngageHistoryId" />
+                <ScalarProperty Name="RespondTime" ColumnName="RespondTime" />
+                <ScalarProperty Name="EngageTime" ColumnName="EngageTime" />
+                <ScalarProperty Name="Engagement" ColumnName="Engagement" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK__UserEngageH__Uid__1808A2B0" TypeName="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" StoreEntitySet="UserEngageHistory">
+            <EndProperty Name="UserEngageHistory">
+              <ScalarProperty Name="EngageHistoryId" ColumnName="EngageHistoryId" />
+            </EndProperty>
+            <EndProperty Name="User">
+              <ScalarProperty Name="Uid" ColumnName="Uid" />
+            </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>
 </Mapping></edmx:Mappings>
@@ -1249,7 +1252,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="ComicModel" ZoomLevel="89">
+      <Diagram Name="ComicModel" ZoomLevel="83">
         <EntityTypeShape EntityType="Fredin.Comic.Data.Comic" Width="2" PointX="9.75" PointY="5.5" Height="5.2494108072916656" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicPhoto" Width="1.5" PointX="10" PointY="12.25" Height="2.3648893229166674" />
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTextBubble" Width="2.375" PointX="9.625" PointY="1.875" Height="2.5571907552083388" />
@@ -1264,8 +1267,8 @@
           <ConnectorPoint PointX="11.75" PointY="9.37474609375" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_Comic_User" >
-          <ConnectorPoint PointX="6.75" PointY="9.0691943359374978" />
-          <ConnectorPoint PointX="9.75" PointY="9.0691943359374978" />
+          <ConnectorPoint PointX="6.75" PointY="8.586293945312498" />
+          <ConnectorPoint PointX="9.75" PointY="8.586293945312498" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicPhoto_Comic" >
           <ConnectorPoint PointX="10.75" PointY="11.134013671875" />
@@ -1308,8 +1311,8 @@
           <ConnectorPoint PointX="6.75" PointY="3.9035953776041676" />
         </AssociationConnector>
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicRead_User" >
-          <ConnectorPoint PointX="5.9687475" PointY="6.375" />
-          <ConnectorPoint PointX="5.9687475" PointY="5.1821907552083353" />
+          <ConnectorPoint PointX="6" PointY="6.375" />
+          <ConnectorPoint PointX="6" PointY="5.1821907552083353" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicStat" Width="1.5" PointX="13" PointY="5.25" Height="2.5571907552083317" />
         <AssociationConnector Association="Fredin.Comic.Data.FK_ComicStat_Comic" >
@@ -1321,15 +1324,10 @@
           <ConnectorPoint PointX="5.25" PointY="6.6439925130208373" />
           <ConnectorPoint PointX="2.125" PointY="6.6439925130208373" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="Fredin.Comic.Data.UserEngage" Width="1.5" PointX="2.5" PointY="7" Height="1.9802864583333388" />
-        <EntityTypeShape EntityType="Fredin.Comic.Data.UserEngageHistory" Width="1.5" PointX="0.5" PointY="8.875" Height="1.9802864583333388" />
+        <EntityTypeShape EntityType="Fredin.Comic.Data.UserEngage" Width="1.5" PointX="2.5" PointY="7" Height="1.5956835937499996" />
         <AssociationConnector Association="Fredin.Comic.Data.FK__UserEngage__Uid__0F735CAF" >
-          <ConnectorPoint PointX="5.25" PointY="7.9901432291666694" />
-          <ConnectorPoint PointX="4" PointY="7.9901432291666694" />
-        </AssociationConnector>
-        <AssociationConnector Association="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" >
-          <ConnectorPoint PointX="5.25" PointY="9.66054361979167" />
-          <ConnectorPoint PointX="2" PointY="9.66054361979167" />
+          <ConnectorPoint PointX="5.25" PointY="8.0862939453125" />
+          <ConnectorPoint PointX="4" PointY="8.0862939453125" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Fredin.Comic.Data.ComicTag" Width="1.5" PointX="7.375" PointY="5.625" Height="2.1725878906249969" />
         <AssociationConnector Association="Fredin.Comic.Data.FK__ComicTag__ComicI__6083639C" >
@@ -1347,6 +1345,11 @@
           <ConnectorPoint PointX="10.833333333333334" PointY="11.384013671875" />
           <ConnectorPoint PointX="11.054615384615385" PointY="11.384013671875" />
           <ConnectorPoint PointX="11.054615384615385" PointY="11.134013671875" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="Fredin.Comic.Data.UserEngageHistory" Width="2.25" PointX="1.875" PointY="9.75" Height="1.9802864583333388" />
+        <AssociationConnector Association="Fredin.Comic.Data.FK__UserEngageH__Uid__1808A2B0" >
+          <ConnectorPoint PointX="5.25" PointY="10.014150390625" />
+          <ConnectorPoint PointX="4.125" PointY="10.014150390625" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

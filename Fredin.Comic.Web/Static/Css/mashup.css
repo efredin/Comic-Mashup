@@ -70,6 +70,11 @@ input, textarea
 	padding: 3px 0;
 	font-family: "Lucida Grande", "Lucida Sans", Arial, sans-serif;
 }
+label
+{
+	margin: 2px 4px;
+	padding: 4px;
+}
 
 /*********************
  Mashup Layout Items *

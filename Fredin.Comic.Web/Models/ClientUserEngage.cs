@@ -10,15 +10,26 @@ namespace Fredin.Comic.Web.Models
 	{
 		public long Uid { get; set; }
 		public bool Comment { get; set; }
-		public bool Vote { get; set; }
-		public bool Tag { get; set; }
+		public bool ComicCreate { get; set; }
+		public bool ComicRemix { get; set; }
+		public bool Unsubscribe { get; set; }
+		public bool Subscribe
+		{
+			get { return !this.Unsubscribe; }
+			set { this.Unsubscribe = !value; }
+		}
+
+		public ClientUserEngage()
+		{
+		}
 
 		public ClientUserEngage(UserEngage engage)
 		{
 			this.Uid = engage.Uid;
 			this.Comment = engage.Comment;
-			this.Vote = engage.Vote;
-			this.Tag = engage.Tag;
+			this.ComicCreate = engage.ComicCreate;
+			this.ComicRemix = engage.ComicRemix;
+			this.Unsubscribe = engage.Unsubscribe;
 		}
 	}
 }

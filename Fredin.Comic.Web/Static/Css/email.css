@@ -1,0 +1,37 @@
+﻿#email-logobar
+{
+	height: 96px;
+	color: #F1F1F1;
+	margin: 2px auto;
+	width: 620px;
+}
+#email-titlebar
+{
+	margin: 16px auto 2px auto;
+	width: 620px;
+}
+#email-content
+{
+	margin: 0 auto;
+	padding: 10px 0;
+	width: 620px;
+	clear: both;
+}
+#email-footer
+{
+	color: #F1F1F1;
+	margin: 8px auto;
+	width: 620px;
+}
+#email-footer #fine
+{
+	font-size: 0.8em;
+}
+.email h1
+{
+	font-size: 12px;
+}
+.email
+{
+	font-size: 10pt;
+}

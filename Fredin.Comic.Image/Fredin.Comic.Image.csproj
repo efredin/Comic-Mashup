@@ -79,8 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapExtension.cs" />
+    <Compile Include="Filter\Alpha.cs" />
+    <Compile Include="Filter\BilateralBlur.cs" />
     <Compile Include="Filter\ColorDodge.cs" />
     <Compile Include="Filter\ColorBurn.cs" />
+    <Compile Include="Filter\PinLight.cs" />
     <Compile Include="Filter\Overlay.cs" />
     <Compile Include="Filter\Cutout.cs" />
     <Compile Include="Filter\Darken.cs" />

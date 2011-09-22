@@ -16,6 +16,7 @@ using System.Web.Script.Serialization;
 using Facebook;
 
 using Fredin.Comic.Render;
+using Fredin.Comic.Web.Email;
 using Fredin.Comic.Web.Models;
 using Fredin.Comic.Config;
 using Fredin.Util;
@@ -39,26 +40,29 @@ namespace Fredin.Comic.Web.Controllers
 			{
 				Data.Comic comic = null;
 
-				// Facebook shared comics
-				if (this.ActiveUser == null && this.HttpContext.Request.UrlReferrer != null && this.HttpContext.Request.UrlReferrer.Host.Contains("facebook.com"))
-				{
-					comic = this.EntityContext.TryGetComic(comicId, null, true);
-					if (comic != null)
-					{
-						this.LoginGuestUser(comic.Author);
-					}
-				}
-				// Guest user logged in
-				else if (this.GuestUser != null)
-				{
-					comic = this.EntityContext.TryGetComic(comicId, this.GuestUser);
-				}
-				else
-				{
-					// All other entry points
-					this.EntityContext.TryAttach(this.ActiveUser);
-					comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
-				}
+				//// Facebook shared comics
+				//if (this.ActiveUser == null && this.HttpContext.Request.UrlReferrer != null && this.HttpContext.Request.UrlReferrer.Host.Contains("facebook.com"))
+				//{
+				//    comic = this.EntityContext.TryGetComic(comicId, null, true);
+				//    if (comic != null)
+				//    {
+				//        this.LoginGuestUser(comic.Author);
+				//    }
+				//}
+				//// Guest user logged in
+				//else if (this.GuestUser != null)
+				//{
+				//    comic = this.EntityContext.TryGetComic(comicId, this.GuestUser);
+				//}
+				//else
+				//{
+				//    // All other entry points
+				//    this.EntityContext.TryAttach(this.ActiveUser);
+				//    comic = this.EntityContext.TryGetComic(comicId, this.ActiveUser, this.Friends);
+				//}
+
+				// Asume that if the user found the comic, they are allowed to read it (hard to track shares and whatnot)
+				comic = this.EntityContext.TryGetComic(comicId);
 
 				if (comic == null)
 				{
@@ -67,6 +71,7 @@ namespace Fredin.Comic.Web.Controllers
 				else
 				{
 					// Track read
+					this.EntityContext.TryAttach(this.ActiveUser);
 					ComicRead read = this.EntityContext.TryGetComicRead(comic, this.ActiveUser);
 					try // Having an entity issue.. trying to track it down with this.
 					{
@@ -87,6 +92,10 @@ namespace Fredin.Comic.Web.Controllers
 					catch (Exception x)
 					{
 						this.Log.Error("Reader error", x);
+					}
+					finally
+					{
+						this.EntityContext.TryDetach(this.ActiveUser);
 					}
 
 					// Load tags
@@ -127,6 +136,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HttpPost]
 		public JsonResult ReaderFunny(long comicId)
 		{
 			ComicRead read = this.GetReader(comicId);
@@ -137,6 +147,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HttpPost]
 		public JsonResult ReaderSmart(long comicId)
 		{
 			ComicRead read = this.GetReader(comicId);
@@ -147,6 +158,7 @@ namespace Fredin.Comic.Web.Controllers
 		}
 
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		[HttpPost]
 		public JsonResult ReaderRandom(long comicId)
 		{
 			ComicRead read = this.GetReader(comicId);
@@ -154,6 +166,58 @@ namespace Fredin.Comic.Web.Controllers
 			this.EntityContext.SaveChanges();
 
 			return this.Json(new { result = "ok" });
+		}
+
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
+		public EmptyResult ReaderComment(long id)
+		{
+			try
+			{
+				this.EntityContext.TryAttach(this.ActiveUser);
+				Data.Comic comic = this.EntityContext.TryGetComic(id, this.ActiveUser);
+				if (comic != null)
+				{
+					comic.AuthorReference.Load();
+					UserEngage engage = this.GetUserEngage(comic.Author);
+
+					comic.Author.UserEngageReference.Load();
+		
+					UserEngageHistory history = comic.Author.UserEngageHistory
+						.OrderByDescending(h => h.EngageTime)
+						.FirstOrDefault(h => h.Engagement == UserEngageHistory.EngagementType.Comment);
+
+					if (!engage.Unsubscribe && engage.Comment && (history == null || history.EngageTime <= DateTime.Now.AddDays(-1)))
+					{
+						ClientComic c = new ClientComic(comic);
+
+						// create & save history
+						history = new UserEngageHistory();
+						history.Engagement = UserEngageHistory.EngagementType.Comment;
+						history.EngageTime = DateTime.Now;
+						history.User = comic.Author;
+						this.EntityContext.AddToUserEngageHistory(history);
+						this.EntityContext.SaveChanges();
+
+						// Generate email message
+						EmailManager email = new EmailManager(this.Server);
+						Dictionary<string, string> data = new Dictionary<string,string>();
+						data.Add("id", history.EngageHistoryId.ToString());
+						data.Add("title", String.Format("New Comment - {0}", comic.Title));
+						data.Add("reader.name", this.ActiveUser.Nickname);
+						data.Add("comic.title", comic.Title);
+						data.Add("comic.readUrl", c.ReadUrl);
+					
+						// Send email
+						email.SendEmail(comic.Author, "Comment.html", data);
+					}
+				}
+			}
+			finally
+			{
+				this.EntityContext.TryDetach(this.ActiveUser);
+			}
+
+			return new EmptyResult();
 		}
 
 		protected ComicRead GetReader(long comicId)
@@ -228,6 +292,7 @@ namespace Fredin.Comic.Web.Controllers
 		//    return this.Create(null);
 		//}
 
+		[FacebookAuthorize(LoginUrl = "~/User/Login")]
 		public ViewResult Create(long? id)
 		{
 			ClientComic comic = null;
@@ -255,21 +320,7 @@ namespace Fredin.Comic.Web.Controllers
 			if (id.HasValue)
 			{
 				// Facebook shared comics
-				Data.Comic c = null;
-				if (this.ActiveUser == null && this.HttpContext.Request.UrlReferrer != null && this.HttpContext.Request.UrlReferrer.Host.Contains("facebook.com"))
-				{
-					c = this.EntityContext.TryGetComic(id.Value, null, true);
-					if (c != null)
-					{
-						this.LoginGuestUser(c.Author);
-					}
-				}
-
-				if (c == null)
-				{
-					User u = this.ActiveUser ?? this.GuestUser;
-					c = this.EntityContext.TryGetComic(id.Value, u) ?? this.EntityContext.TryGetUnpublishedComic(id.Value, u);
-				}
+				Data.Comic c = this.EntityContext.TryGetComic(id.Value, this.ActiveUser) ?? this.EntityContext.TryGetUnpublishedComic(id.Value, this.ActiveUser);
 
 				if (c != null)
 				{
@@ -281,20 +332,26 @@ namespace Fredin.Comic.Web.Controllers
 					int maxWidth = templates.SelectMany(t => t.TemplateItems).Select(t => t.Width).Min();
 					Font measureFont = new Font(ComicGenerator.ComicFont, 7, FontStyle.Regular, GraphicsUnit.Point);
 					ComicGenerator generator = new ComicGenerator(templates.Min(t => t.Width), templates.Min(t => t.Height));
-					foreach(ClientComicTextBubble b in comic.Bubbles)
+					foreach(ComicTextBubble bubble in c.ComicTextBubbles)
 					{
-						Size textSize = generator.MeasureText(b.Text, maxWidth, measureFont).ToSize();
+						Size rawTextSize = generator.MeasureText(bubble.Text, maxWidth, measureFont).ToSize();
+						Size textSize = this.CalculateTextSize(bubble.Text, rawTextSize, bubble.TextBubbleDirection.TextBubble);
+						textSize.Width = Math.Min(textSize.Width, maxWidth); // Don't exceede template item area
+						textSize = generator.MeasureText(bubble.Text, textSize.Width, measureFont).ToSize();
+						textSize.Width += 6; // Measure error ?
+
 						int lines = textSize.Height / measureFont.Height;
-						int cutWidth = b.Text.Length / lines - 4;
+						int cutWidth = (bubble.Text.Length / lines) - 4;
 						for (int l = 1; l < lines; l++)
 						{
 							int cut = cutWidth * l;
-							int space = b.Text.IndexOf(' ', cut);
+							int space = bubble.Text.IndexOf(' ', cut);
 							if(space > 0)
 							{
-								b.Text = b.Text.ReplaceAt(space, '\n');
+								bubble.Text = bubble.Text.ReplaceAt(space, '\n');
 							}
 						}
+						comic.Bubbles.First(b => b.ComicTextBubbleId == bubble.ComicTextBubbleId).Text = bubble.Text;
 					}
 				}
 			}
@@ -307,6 +364,26 @@ namespace Fredin.Comic.Web.Controllers
 				.ToList();
 
 			return this.View(new ViewCreate(comic, templates, this.GetEffects(), bubbles));
+		}
+
+		private Size CalculateTextSize(string text, Size rawTextSize, TextBubble bubble)
+		{
+			Size textSize = rawTextSize;
+			if (rawTextSize.Width >= (bubble.TextScaleX / 2))
+			{
+				// Wrap text nicely
+				double area = Convert.ToDouble(rawTextSize.Width) * Convert.ToDouble(rawTextSize.Height);
+				double factor = Math.Sqrt(area / (Convert.ToDouble(bubble.TextScaleX) * Convert.ToDouble(bubble.TextScaleY)));
+
+				textSize.Width = Convert.ToInt32(Math.Round(factor * Convert.ToDouble(bubble.TextScaleX)));
+				textSize.Height = Convert.ToInt32(Math.Round(factor * Convert.ToDouble(bubble.TextScaleY)));
+			}
+			else
+			{
+				textSize.Width += 40; // Short shouldn't get wrapped
+			}
+
+			return textSize;
 		}
 
 		public ViewResult CreateWizard()
@@ -501,6 +578,7 @@ namespace Fredin.Comic.Web.Controllers
 		public JsonResult Publish(long comicId, string title, string description, bool isPrivate)
 		{
 			Data.Comic comic = null;
+			ClientComic c = null;
 
 			try
 			{
@@ -551,14 +629,71 @@ namespace Fredin.Comic.Web.Controllers
 				}
 
 				this.EntityContext.PublishComic(comic, this.ActiveUser);
+				c = new ClientComic(comic);
 				this.EntityContext.SaveChanges();
+
+
+				// Email notifications
+				UserEngage engage = this.GetUserEngage(this.ActiveUser);
+
+				if (!engage.Unsubscribe && engage.ComicCreate)
+				{
+					// create & save history
+					UserEngageHistory history = new UserEngageHistory();
+					history.Engagement = UserEngageHistory.EngagementType.ComicCreate;
+					history.EngageTime = DateTime.Now;
+					history.User = this.ActiveUser;
+					this.EntityContext.AddToUserEngageHistory(history);
+					this.EntityContext.SaveChanges();
+
+					// Generate email message
+					EmailManager email = new EmailManager(this.Server);
+					Dictionary<string, string> data = new Dictionary<string, string>();
+					data.Add("id", history.EngageHistoryId.ToString());
+					data.Add("title", String.Format("New Comic - {0}", comic.Title));
+					data.Add("comic.title", c.Title);
+					data.Add("comic.readUrl", c.ReadUrl);
+
+					// Send email
+					email.SendEmail(this.ActiveUser, "ComicCreate.html", data);
+				}
+
+				// Check for notifications of a remixed comic
+				if (comic.RemixedComic != null)
+				{
+					engage = this.EntityContext.TryGetUserEngage(comic.RemixedComic.Author);
+					ClientComic remixed = new ClientComic(comic.RemixedComic);
+
+					if (!engage.Unsubscribe && engage.ComicRemix)
+					{
+						UserEngageHistory history = new UserEngageHistory();
+						history.Engagement = UserEngageHistory.EngagementType.ComicRemix;
+						history.EngageTime = DateTime.Now;
+						history.User = comic.RemixedComic.Author;
+						this.EntityContext.AddToUserEngageHistory(history);
+						this.EntityContext.SaveChanges();
+
+						// Generate email message
+						EmailManager email = new EmailManager(this.Server);
+						Dictionary<string, string> data = new Dictionary<string, string>();
+						data.Add("id", history.EngageHistoryId.ToString());
+						data.Add("title", String.Format("Remixed Comic - {0}", comic.Title));
+						data.Add("comic.title", c.Title);
+						data.Add("comic.readUrl", c.ReadUrl);
+						data.Add("remix.title", remixed.Title);
+						data.Add("remix.readUrl", remixed.ReadUrl);
+
+						// Send email
+						email.SendEmail(comic.RemixedComic.Author, "ComicRemix.html", data);
+					}
+				}
 			}
 			finally
 			{
 				this.EntityContext.TryDetach(this.ActiveUser);
 			}
 
-			return this.Json(comic == null ? null : new ClientComic(comic), JsonRequestBehavior.DenyGet);
+			return this.Json(c, JsonRequestBehavior.DenyGet);
 		}
 
 		#endregion

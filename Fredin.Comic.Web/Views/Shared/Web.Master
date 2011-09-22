@@ -105,7 +105,7 @@
 	</div>
 
 	<%-- Footer --%>
-	<div id="footer-wrapper">
+	<%--<div id="footer-wrapper">
 		<div id="footer">
 			<ul>
 				<li>
@@ -135,7 +135,7 @@
 				</li>
 			</ul>
 		</div>
-	</div>
+	</div>--%>
 	<div id="footer2-wrapper">
 		<div id="footer2">
 			<div id="attribution">

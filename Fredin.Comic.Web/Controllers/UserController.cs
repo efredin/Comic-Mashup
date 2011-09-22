@@ -56,25 +56,12 @@ namespace Fredin.Comic.Web.Controllers
 		[JsonAction]
 		public ActionResult Settings()
 		{
-			ActionResult result;
+			ActionResult result = new EmptyResult();
 
 			try
 			{
 				this.EntityContext.TryAttach(this.ActiveUser);
-
-				// Load engagement settings
-				UserEngage engage = this.EntityContext.TryGetUserEngage(this.ActiveUser);
-				if (engage == null)
-				{
-					engage = new UserEngage();
-					engage.User = this.ActiveUser;
-					engage.Comment = true;
-					engage.Tag = true;
-					engage.Vote = true;
-					this.EntityContext.AddToUserEngage(engage);
-					this.EntityContext.SaveChanges();
-				}
-
+				UserEngage engage = this.GetUserEngage(this.ActiveUser);
 				result = this.View(new ViewSettings(new ClientUserEngage(engage), this.ActiveUser.Email));
 			}
 			finally
@@ -87,10 +74,56 @@ namespace Fredin.Comic.Web.Controllers
 
 		[HttpPost]
 		[FacebookAuthorize(LoginUrl = "~/User/Login")]
-		[JsonAction]
 		public ActionResult Settings(ViewSettings settings)
 		{
-			return new EmptyResult();
+			ActionResult result = new EmptyResult();
+			try
+			{
+				this.EntityContext.TryAttach(this.ActiveUser);
+				UserEngage engage = this.GetUserEngage(this.ActiveUser);
+
+				this.ActiveUser.Email = settings.Email;
+				engage.Unsubscribe = settings.Engage.Unsubscribe;
+				engage.Comment = settings.Engage.Comment;
+				engage.ComicCreate = settings.Engage.ComicCreate;
+				engage.ComicRemix = settings.Engage.ComicRemix;
+
+				this.EntityContext.SaveChanges();
+
+				ViewSettings model = new ViewSettings(new ClientUserEngage(engage), this.ActiveUser.Email);
+				model.Feedback = "Your changes have been saved.";
+
+				result = this.View(model);
+			}
+			finally
+			{
+				this.EntityContext.TryDetach(this.ActiveUser);
+			}
+			return result;
+		}
+
+		[HttpGet]
+		public ActionResult Unsubscribe(long id, string emailHash)
+		{
+			UserEngageHistory history = this.EntityContext.TryGetUserEngageHistory(id);
+			if (history == null)
+			{
+				throw new Exception(String.Format("Unable to unsubscribe. Could not find the requested engagement {0}", id));
+			}
+
+			history.UserReference.Load();
+			history.User.UserEngageReference.Load();
+
+			if (history.User.Email.ComputeMd5() != emailHash)
+			{
+				throw new Exception(String.Format("Unable to verify hash for engagement {0}. Received hash {1}", id, emailHash));
+			}
+
+			history.RespondTime = DateTime.Now;
+			history.User.UserEngage.Unsubscribe = true;
+			this.EntityContext.SaveChanges();
+
+			return this.View();
 		}
 
 		/// <summary>

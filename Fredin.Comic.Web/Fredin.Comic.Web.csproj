@@ -140,12 +140,15 @@
     </Compile>
     <Compile Include="Controllers\ComicController.cs" />
     <Compile Include="Controllers\ComicControllerBase.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\FacebookController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\JsonActionAttribute.cs" />
     <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="EmailAttribute.cs" />
+    <Compile Include="Email\EmailManager.cs" />
     <Compile Include="FacebookHardAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -197,9 +200,15 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="crossdomain.xml" />
+    <Content Include="Email\Comment.html" />
+    <Content Include="Email\ComicCreate.html" />
+    <Content Include="Email\ComicRemix.html" />
+    <Content Include="Email\ProfileRender.html" />
+    <Content Include="Email\Master.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="robots.txt" />
+    <Content Include="Static\Css\email.css" />
     <Content Include="Static\Css\facebook.css" />
     <Content Include="Static\Css\facebookbutton.css" />
     <Content Include="Static\Css\icon.css" />
@@ -258,6 +267,7 @@
     <Content Include="Static\Icon\ui-icon-toggle16.png" />
     <Content Include="Static\Icon\ui-icon-toggle32-active.png" />
     <Content Include="Static\Icon\ui-icon-toggle32.png" />
+    <Content Include="Static\Image\Ad\bored-leaderboard.jpg" />
     <Content Include="Static\Image\cm16.png" />
     <Content Include="Static\Image\cm64.png" />
     <Content Include="Static\Image\Effect\none.png" />
@@ -395,6 +405,7 @@
     <Content Include="Static\Script\Views\Comic.CreateWizard.js" />
     <Content Include="Static\Script\Views\Comic.Read.js" />
     <Content Include="Static\Script\Views\Comic.Create.js" />
+    <Content Include="Static\Script\Views\User.Settings.js" />
     <Content Include="Static\Script\Views\Facebook.Render.js" />
     <Content Include="Static\Script\Views\Directory.Directory.js" />
     <Content Include="Static\Script\Views\Facebook.Index.js" />
@@ -584,10 +595,12 @@
     <Content Include="Views\Shared\AdSkyscraper.ascx" />
     <Content Include="Views\Shared\Error.aspx" />
     <Content Include="Views\Shared\MenuBar.ascx" />
+    <Content Include="Views\Shared\Removed.aspx" />
     <Content Include="Views\Shared\Web.Master" />
     <Content Include="Views\User\Login.aspx" />
     <Content Include="Views\Directory\Author.aspx" />
     <Content Include="Views\User\Settings.aspx" />
+    <Content Include="Views\User\Unsubscribe.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

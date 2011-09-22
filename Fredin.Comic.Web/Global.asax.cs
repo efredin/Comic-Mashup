@@ -22,6 +22,15 @@ namespace Fredin.Comic.Web
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+			// Email response
+			routes.MapRoute
+			(
+				"Unsubscribe",
+				"User/Unsubscribe/{id}/{emailHash}",
+				new { controller = "User", action = "Unsubscribe" }//,
+				//new { engageHistoryId = @"\d+", emailHash = @"[a-zA-Z0-9]^32" }
+			);
+
 			// Azure cdn path for static content
 			routes.MapRoute
 			(
@@ -61,7 +70,7 @@ namespace Fredin.Comic.Web
 
 			routes.MapRoute
 			(
-				"Index",
+				"Action",
 				"{controller}/{action}",
 				new { controller = "Directory", action = "Index" }
 			);

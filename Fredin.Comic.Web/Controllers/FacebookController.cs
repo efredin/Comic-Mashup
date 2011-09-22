@@ -11,6 +11,7 @@ using Fredin.Comic.Config;
 using Fredin.Util;
 using System.Xml.Serialization;
 using System.IO;
+using Fredin.Comic.Web.Email;
 
 namespace Fredin.Comic.Web.Controllers
 {
@@ -60,7 +61,6 @@ namespace Fredin.Comic.Web.Controllers
 				this.Session[SESSION_AUTO_SHARE] = true;
 			}
 
-
 			return this.View("Render", new ViewFacebookRender(new ClientProfileTask(task), autoShareFeed));
 		}
 
@@ -85,6 +85,46 @@ namespace Fredin.Comic.Web.Controllers
 				}
 
 				ClientProfileTask clientTask = new ClientProfileTask(task);
+
+				// Email re-engagement after successfull render
+				if (task.Status == TaskStatus.Complete)
+				{
+					try
+					{
+						this.EntityContext.TryAttach(this.ActiveUser);
+						Data.UserEngage engage = this.GetUserEngage(this.ActiveUser);
+
+						Data.UserEngageHistory history = this.ActiveUser.UserEngageHistory
+							.OrderByDescending(h => h.EngageTime)
+							.FirstOrDefault(h => h.Engagement == Data.UserEngageHistory.EngagementType.ProfileRender);
+
+						if (!engage.Unsubscribe && engage.ComicCreate && (history == null || history.EngageTime <= DateTime.Now.AddDays(-1)))
+						{
+							// create & save history
+							history = new Data.UserEngageHistory();
+							history.Engagement = Data.UserEngageHistory.EngagementType.ProfileRender;
+							history.EngageTime = DateTime.Now;
+							history.User = this.ActiveUser;
+							this.EntityContext.AddToUserEngageHistory(history);
+							this.EntityContext.SaveChanges();
+
+							// Generate email message
+							EmailManager email = new EmailManager(this.Server);
+							Dictionary<string, string> data = new Dictionary<string, string>();
+							data.Add("id", history.EngageHistoryId.ToString());
+							data.Add("title", "Comic Mashup Profile Photo");
+							data.Add("to.render", clientTask.RenderUrl);
+
+							// Send email
+							email.SendEmail(this.ActiveUser, "ProfileRender.html", data);
+						}
+					}
+					finally
+					{
+						this.EntityContext.TryDetach(this.ActiveUser);
+					}
+				}
+
 				return this.Json(clientTask, JsonRequestBehavior.AllowGet);
 			}
 

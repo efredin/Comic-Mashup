@@ -38,27 +38,17 @@
 			<img id="comic" src="<%: Model.Comic.ComicUrl %>" alt="" />
 
 			<div id="reader">
-				<div id="readerAction">
-					<!-- AddThis Button BEGIN -->
-					<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-					<a class="addthis_button_preferred_1"></a>
-					<a class="addthis_button_preferred_2"></a>
-					<a class="addthis_button_preferred_3"></a>
-					<a class="addthis_button_preferred_4"></a>
-					<a class="addthis_button_compact"></a>
-					</div>
-					<script type="text/javascript">	var addthis_config = { "data_track_clickback": true };</script>
-					<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4d9a88e114b59f84"></script>
-					<!-- AddThis Button END -->
-				</div>
 				<div id="readerRate">
+					<span id="readerVote">Vote for this comic<br /><br /></span>
 					<%: Html.CheckBox("readerFunny", Model.Reader.IsFunny) %>
 					<label for="readerFunny" title="Funny"><span class="ui-icon-toggle32 ui-icon-toggle32-funny"></span><br /><span class="readerCount"><%: Model.Comic.Stats.Funny > 0 ? Model.Comic.Stats.Funny.ToString() : "-" %></span></label>
 					<%: Html.CheckBox("readerSmart", Model.Reader.IsSmart) %>
 					<label for="readerSmart" title="Smart"><span class="ui-icon-toggle32 ui-icon-toggle32-smart"></span><br /><span class="readerCount"><%: Model.Comic.Stats.Smart > 0 ? Model.Comic.Stats.Smart.ToString() : "-" %></span></label>
 					<%: Html.CheckBox("readerRandom", Model.Reader.IsRandom) %>
 					<label for="readerRandom" title="Random"><span class="ui-icon-toggle32 ui-icon-toggle32-random"></span><br /><span class="readerCount"><%: Model.Comic.Stats.Random > 0 ? Model.Comic.Stats.Random.ToString() : "-" %></span></label>
-					<span id="readerVote">Vote for this comic<br /><br /></span>
+				</div>
+				<div id="readerAction">
+					<fb:like send="true" width="400" show_faces="false"></fb:like>
 				</div>
 			</div>
 		</div>

@@ -21,6 +21,7 @@
 		</div>
 		<div id="renderContent">
 			<div class="box contentIb">
+				<p>Be sure to check out the our other comic creation tools.  <a href="<%= this.Url.Action("CreateWizard", "Comic") %>">Create something fun</a> to share with your friends!</p>
 				<div id="renderPhoto"></div>
 				<div id="renderAction">
 					<a id="renderBack" href="<%= this.Url.Action("Index", "Facebook") %>">Back</a>

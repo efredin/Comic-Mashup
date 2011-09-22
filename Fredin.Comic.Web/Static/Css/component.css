@@ -58,9 +58,9 @@
 #comicRead #comic { clear: both; width: 734px; }
 #comicRead .fb_iframe_widget { margin: 10px 0; }
 #comicRead #reader { margin: 10px 0; }
-#comicRead #reader #readerRate { vertical-align: middle; }
+#comicRead #reader #readerRate { vertical-align: middle; float: right; }
 #comicRead #reader #readerRate #readerVote { display: inline-block; padding: 16px 0 0; }
-#comicRead #reader #readerAction { float: right; width: 188px; }
+#comicRead #reader #readerAction { width: 400px; }
 #comicRead #reader label, #comicRead #reader a { font-size: 0.7em; }
 #comicRead #column1 { float: left; margin: 0; padding: 0; width: 434px; display: inline-block; }
 #comicRead #column2 { float: left; margin: 0; padding: 0; width: 308px; display: inline-block; }
@@ -111,6 +111,10 @@
 
 #contact { width: 300px; }
 #contact input, #contact textarea { width: 100%; }
+
+.email { width: 300px; }
+
+#settings ul { list-style: none; }
 
 /*
 #login-login input[type=text],

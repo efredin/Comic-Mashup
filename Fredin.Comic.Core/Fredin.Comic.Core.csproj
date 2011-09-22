@@ -83,6 +83,7 @@
     <Compile Include="Data\ComicStat.cs" />
     <Compile Include="Data\ComicTextBubble.cs" />
     <Compile Include="Data\Photo.cs" />
+    <Compile Include="Data\UserEngageHistory.cs" />
     <Compile Include="Render\ComicGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\Colorize.cs" />

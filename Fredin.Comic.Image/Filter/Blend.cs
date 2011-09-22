@@ -55,26 +55,23 @@ namespace Fredin.Comic.Image.Filter
 		{
 			this._formatTransalations = new Dictionary<PixelFormat, PixelFormat>();
 
-			// All grayscale formats
 			this.FormatTransalations.Add(PixelFormat.Format8bppIndexed, PixelFormat.Format8bppIndexed);
 			this.FormatTransalations.Add(PixelFormat.Format16bppGrayScale, PixelFormat.Format16bppGrayScale);
 
-			// All color formats
-			this.FormatTransalations.Add(PixelFormat.Format16bppArgb1555, PixelFormat.Format16bppArgb1555);
 			this.FormatTransalations.Add(PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb);
 			this.FormatTransalations.Add(PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb);
 			this.FormatTransalations.Add(PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb);
-			this.FormatTransalations.Add(PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb);
-			this.FormatTransalations.Add(PixelFormat.Format48bppRgb, PixelFormat.Format48bppRgb);
-			this.FormatTransalations.Add(PixelFormat.Format4bppIndexed, PixelFormat.Format4bppIndexed);
-			this.FormatTransalations.Add(PixelFormat.Format64bppArgb, PixelFormat.Format64bppArgb);
-			this.FormatTransalations.Add(PixelFormat.Format64bppPArgb, PixelFormat.Format64bppPArgb);
 		}
 
 		protected abstract byte BlendFunction(byte a, byte b);
 
 		protected override unsafe void ProcessFilter(UnmanagedImage image, UnmanagedImage overlay)
 		{
+			if (image.PixelFormat != overlay.PixelFormat)
+			{
+				throw new Exception("Pixel formats must match.");
+			}
+
 			// get image dimension
 			int width = image.Width;
 			int height = image.Height;
@@ -85,8 +82,24 @@ namespace Fredin.Comic.Image.Filter
 			int ovrW = overlay.Width;
 			int ovrH = overlay.Height;
 
-			// initialize other variables
-			int pixelSize = (image.PixelFormat == PixelFormat.Format8bppIndexed) ? 1 : 3;
+			int pixelSize = 1;
+			switch(image.PixelFormat)
+			{
+				case PixelFormat.Format8bppIndexed:
+				case PixelFormat.Format16bppGrayScale:
+					pixelSize = 1;
+					break;
+
+				case PixelFormat.Format32bppRgb:
+				case PixelFormat.Format24bppRgb:
+					pixelSize = 3;
+					break;
+
+				case PixelFormat.Format32bppArgb:
+					pixelSize = 4;
+					break;
+			}
+
 			int offset = image.Stride - pixelSize * width;
 			int ovrOffset, lineSize;
 

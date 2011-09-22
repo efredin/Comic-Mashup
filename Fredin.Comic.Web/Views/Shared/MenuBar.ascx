@@ -25,9 +25,9 @@
 			</ul>
 		</div>
 	</li>
-<%--<li>
+	<li>
 		<a href="<%= this.Url.Action("Settings", "User") %>">Settings</a>
-	</li>--%>
+	</li>
 	<li>
 		<a href="<%= this.Url.Action("Faq", "Help") %>">Help</a>
 		<div class="ui-helper-hidden menu-help">

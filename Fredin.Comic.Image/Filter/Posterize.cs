@@ -27,15 +27,9 @@ namespace Fredin.Comic.Image.Filter
 			this.Value = value;
 
 			this._formatTransalations = new Dictionary<PixelFormat, PixelFormat>();
-			this.FormatTransalations.Add(PixelFormat.Format16bppArgb1555, PixelFormat.Format16bppArgb1555);
 			this.FormatTransalations.Add(PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb);
 			this.FormatTransalations.Add(PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb);
-			this.FormatTransalations.Add(PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb);
-			this.FormatTransalations.Add(PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb);
 			this.FormatTransalations.Add(PixelFormat.Format48bppRgb, PixelFormat.Format48bppRgb);
-			this.FormatTransalations.Add(PixelFormat.Format4bppIndexed, PixelFormat.Format4bppIndexed);
-			this.FormatTransalations.Add(PixelFormat.Format64bppArgb, PixelFormat.Format64bppArgb);
-			this.FormatTransalations.Add(PixelFormat.Format64bppPArgb, PixelFormat.Format64bppPArgb);
 		}
 
 		protected override unsafe void ProcessFilter(UnmanagedImage image)

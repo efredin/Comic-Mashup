@@ -10,6 +10,7 @@ using System.Web;
 using System.Xml.Linq;
 
 using Fredin.Comic;
+using Fredin.Comic.Image;
 using AForge.Imaging.Filters;
 
 namespace Fredin.Comic.Render
@@ -71,10 +72,9 @@ namespace Fredin.Comic.Render
 			rawPhoto = this.ResizeToMax(rawPhoto);
 
 			// Convert bitmap to color
-			if (rawPhoto.PixelFormat == PixelFormat.Format16bppGrayScale)
+			if (rawPhoto.PixelFormat != PixelFormat.Format24bppRgb)
 			{
-				GrayscaleToRGB converter = new GrayscaleToRGB();
-				rawPhoto = converter.Apply(rawPhoto);
+				rawPhoto = rawPhoto.ConvertFormat(PixelFormat.Format24bppRgb);
 			}
 	
 			// Convert 

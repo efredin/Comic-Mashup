@@ -350,8 +350,8 @@
     		console.log('Changing theme to ' + themeName);
     		$('#cssTheme').attr('href', this.options.themeBase + '/' + themeName + '/jquery.ui.theme.min.css');
 
-    		$.ajax(
-			{
+    		$.ajax
+			({
 				dataType: 'json',
 				url: this.options.baseHref + 'User/ChangeTheme',
 				data: { theme: themeName }
@@ -363,6 +363,14 @@
     		console.debug(arguments);
     		$('#dialog-error-message').html(message);
     		this.errorDialog.dialog('open');
+    		$.ajax
+			({
+				dataType: 'json',
+				type: 'POST',
+				url: this.options.baseHref + 'Error/LogError',
+				data: $.postify({ x: message }),
+				error: function (xhr, textStatus, x){ } // If recording error fails give up. don't want to create an super-loop
+			});
     	},
 
     	warn: function ()
